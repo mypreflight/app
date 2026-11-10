@@ -1,6 +1,6 @@
 {
   "name": "flight-tracker-app",
-  "version": "2.124.4",
+  "version": "2.124.5",
   "private": true,
   "homepage": "https://app.mypreflight.io",
   "author": "Oskar Barcz",
@@ -65,7 +65,8 @@
     "flowbite-react": {
       "deepmerge-ts": "^8.0.1"
     },
-    "minimatch": "^11.0.4"
+    "minimatch": "^11.0.4",
+    "glob@>=9.0.0 <14.0.2": "^14.0.4"
   },
   "allowScripts": {
     "fsevents@2.3.3": true
