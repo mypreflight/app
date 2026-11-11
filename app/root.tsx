@@ -48,6 +48,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <ThemeModeScript />
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+        <meta name="theme-color" content="#ffffff" media="(min-width: 768px) and (prefers-color-scheme: light)" />
+        <meta name="theme-color" content="#111827" media="(min-width: 768px) and (prefers-color-scheme: dark)" />
         <meta name="theme-color" content="#f3f4f6" media="(prefers-color-scheme: light)" />
         <meta name="theme-color" content="#030712" media="(prefers-color-scheme: dark)" />
         <meta name="mobile-web-app-capable" content="yes" />

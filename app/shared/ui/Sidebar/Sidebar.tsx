@@ -21,12 +21,12 @@ export function Sidebar() {
   return (
     <div
       data-collapsed={isCollapsed}
-      className="group relative hidden w-60 shrink-0 transition-[width] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] data-[collapsed=true]:w-0 data-[collapsed=true]:duration-200 motion-reduce:transition-none md:block xl:w-72"
+      className="group relative hidden w-60 shrink-0 transition-[width] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] data-[collapsed=true]:w-2 data-[collapsed=true]:duration-200 motion-reduce:transition-none md:block xl:w-72"
     >
       <div className="h-full overflow-hidden">
         <aside
           inert={isCollapsed}
-          className="flex h-full w-60 flex-col border-e border-gray-200 bg-white px-3 pt-4 pb-[calc(1rem_+_env(safe-area-inset-bottom))] text-gray-700 transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-data-[collapsed=true]:-translate-x-full group-data-[collapsed=true]:duration-200 motion-reduce:transition-none md:px-4 xl:w-72 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-200"
+          className="flex h-full w-60 flex-col px-3 pt-4 pb-[calc(1rem_+_env(safe-area-inset-bottom))] text-gray-700 transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-data-[collapsed=true]:-translate-x-full group-data-[collapsed=true]:duration-200 motion-reduce:transition-none md:px-4 xl:w-72 dark:text-gray-200"
         >
           <div className="mb-4 flex flex-col items-center gap-3 px-2">
             <TopBarLogo />

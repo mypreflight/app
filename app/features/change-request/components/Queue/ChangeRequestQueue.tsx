@@ -121,7 +121,10 @@ export function ChangeRequestQueue({
   };
 
   return (
-    <Container padding="none" className="min-h-0 gap-0 lg:sticky lg:top-6 lg:max-h-[calc(100dvh-3rem)]">
+    <Container
+      padding="none"
+      className="min-h-0 gap-0 lg:sticky lg:top-6 lg:max-h-[calc(100dvh_-_3.5rem_-_2px_-_max(0.5rem,env(safe-area-inset-bottom)))]"
+    >
       <TabLinkNav
         label="Queue status"
         activeKey={view.tab}
