@@ -7,7 +7,8 @@ import { usePlannedRoute } from "~/features/route/hooks/useRouteBriefing";
 import { fixName } from "~/features/route/lib/fixName";
 import { fuelReportTone } from "~/features/route/lib/fuelReportStanding";
 import { ABSENT, formatSignedTonnesFromKilograms } from "~/features/route/lib/routeFigures";
-import type { PlannedRouteFix } from "~/features/route/model";
+import type { PlannedRouteFix, PlannedRouteFuelReport } from "~/features/route/model";
+import { FormattedIcaoTime } from "~/shared/ui/Date/FormattedIcaoTime";
 
 const DIVIDER = "border-t border-gray-200 pt-3 dark:border-gray-800";
 const COLUMN_HEADING = "pb-0.5 align-bottom text-2xs font-normal text-gray-500 dark:text-gray-400";
@@ -17,9 +18,7 @@ type ListProps = {
 };
 
 export function FuelReportList({ fixes }: ListProps) {
-  const reports = fixes.flatMap((fix) =>
-    fix.fuelReport === null ? [] : [{ fix, actualOnBoard: fix.fuelReport.actualOnBoard }],
-  );
+  const reports = fixes.flatMap((fix) => (fix.fuelReport === null ? [] : [{ fix, report: fix.fuelReport }]));
 
   if (reports.length === 0) {
     return null;
@@ -34,6 +33,9 @@ export function FuelReportList({ fixes }: ListProps) {
               <th scope="col" className={twMerge(COLUMN_HEADING, "text-left")}>
                 Fix
               </th>
+              <th scope="col" className={twMerge(COLUMN_HEADING, "w-14 text-right")}>
+                Time
+              </th>
               <th scope="col" className={twMerge(COLUMN_HEADING, "w-20 text-right")}>
                 Actual
               </th>
@@ -43,8 +45,8 @@ export function FuelReportList({ fixes }: ListProps) {
             </tr>
           </thead>
           <tbody>
-            {reports.map(({ fix, actualOnBoard }) => (
-              <FuelReportRow key={fix.ordinal} fix={fix} actualOnBoard={actualOnBoard} />
+            {reports.map(({ fix, report }) => (
+              <FuelReportRow key={fix.ordinal} fix={fix} report={report} />
             ))}
           </tbody>
         </table>
@@ -53,7 +55,8 @@ export function FuelReportList({ fixes }: ListProps) {
   );
 }
 
-function FuelReportRow({ fix, actualOnBoard }: { fix: PlannedRouteFix; actualOnBoard: number }) {
+function FuelReportRow({ fix, report }: { fix: PlannedRouteFix; report: PlannedRouteFuelReport }) {
+  const { actualOnBoard } = report;
   const plannedOnBoard = fix.fuel.plannedOnBoard;
   const tone = fuelReportTone(fix);
 
@@ -62,6 +65,9 @@ function FuelReportRow({ fix, actualOnBoard }: { fix: PlannedRouteFix; actualOnB
       <th scope="row" className="py-0.5 text-left text-xs font-normal text-gray-500 dark:text-gray-400">
         <span className="font-mono">{fixName(fix.ident)}</span>
       </th>
+      <td className="py-0.5 text-right text-sm leading-5 tabular-nums text-gray-700 dark:text-gray-300">
+        <FormattedIcaoTime date={new Date(report.reportedAt)} />
+      </td>
       <td className="py-0.5 text-right leading-5">
         <span className={tone}>
           <BelowMinimumIcon fix={fix} />

@@ -3,6 +3,7 @@ import { expect, fn, userEvent, waitFor, within } from "storybook/test";
 import { FixInfoCard } from "~/features/route/components/Chart/FixInfoCard";
 import { buildFixInsights, type FixInsight } from "~/features/route/lib/routeInsights";
 import type { PlannedRouteFix } from "~/features/route/model";
+import { dateToIcaoTime } from "~/shared/ui/Date/FormattedIcaoTime";
 import { atWidth } from "../support/frames";
 
 const OCEANIC_FIX: PlannedRouteFix = {
@@ -55,10 +56,20 @@ const TOP_OF_CLIMB: PlannedRouteFix = {
   wind: { direction: null, speed: null, levels: [] },
 };
 
+const MINUTE = 60_000;
+
+function minutesFromNow(minutes: number): Date {
+  return new Date((Math.floor(Date.now() / MINUTE) + minutes) * MINUTE);
+}
+
+const REPORTED_AT = minutesFromNow(-20);
+
 const REPORTED_FIX: PlannedRouteFix = {
   ...OCEANIC_FIX,
-  fuelReport: { actualOnBoard: 36_900, reportedAt: "2026-11-02T14:05:00.000Z" },
+  fuelReport: { actualOnBoard: 36_900, reportedAt: REPORTED_AT.toISOString() },
 };
+
+const TAKEOFF = minutesFromNow(-60);
 
 function insightOf(fix: PlannedRouteFix): FixInsight {
   return buildFixInsights([fix])[0];
@@ -90,7 +101,10 @@ const meta = {
     onPrevious: { description: "Called by the back arrow. Left out at the first fix, which disables the arrow." },
     onNext: { description: "Called by the forward arrow. Left out at the last fix, which disables the arrow." },
     canReportFuel: { description: "Whether the flight is in cruise, the only time actual fuel can be saved." },
-    onReportFuel: { description: "Called with the fix's ordinal and the fuel on board in kilograms." },
+    takeoffTime: { control: false, description: "The flight's actual takeoff, the earliest time a report can carry." },
+    onReportFuel: {
+      description: "Called with the fix's ordinal, the fuel on board in kilograms and the time it was read.",
+    },
   },
   parameters: {
     docs: {
@@ -261,7 +275,7 @@ export const ReportingFuelInCruise: Story = {
     docs: {
       description: {
         story:
-          "While the flight is in cruise, a small button below the plan opens a modal that takes the fuel on board read at this fix, in tonnes, with the plan's EFOB beside it. The field has focus when the modal opens, and focus returns to the button when it closes.",
+          "While the flight is in cruise, a small button below the plan opens a modal that takes the fuel on board read at this fix, in tonnes, with the plan's EFOB below it, and beside it the time it was read, in UTC, which starts at the current minute. The fuel field has focus when the modal opens, and focus returns to the button when it closes.",
       },
     },
   },
@@ -271,7 +285,9 @@ export const ReportingFuelInCruise: Story = {
     const report = canvas.getByRole("button", { name: "Report actual fuel at 5620N" });
 
     await expect(canvas.getByText("Actual")).toBeVisible();
+    await expect(canvas.getByText("Time")).toBeVisible();
 
+    const opened = new Date();
     await userEvent.click(report);
 
     const dialog = await openedDialog();
@@ -282,13 +298,100 @@ export const ReportingFuelInCruise: Story = {
     await expect(dialog.getByText("Fuel Report")).toBeInTheDocument();
     await expect(dialog.getByText("5620N fix")).toBeInTheDocument();
     await waitFor(() => expect(dialog.getByText("Flight plan EFOB")).toBeVisible());
+    await expect([dateToIcaoTime(opened), dateToIcaoTime(new Date())]).toContain(
+      (dialog.getByRole("textbox", { name: "Time" }) as HTMLInputElement).value,
+    );
+    await expect(dialog.getByRole("textbox", { name: "Time" }).getBoundingClientRect().top).toBe(
+      input.getBoundingClientRect().top,
+    );
 
     await userEvent.type(input, "36.9");
     await userEvent.click(dialog.getByRole("button", { name: "Save" }));
 
-    await waitFor(() => expect(args.onReportFuel).toHaveBeenCalledWith(11, 36_900));
+    await waitFor(() =>
+      expect(args.onReportFuel).toHaveBeenCalledWith(11, { actualOnBoard: 36_900, reportedAt: expect.any(Date) }),
+    );
     await waitFor(() => expect(body.queryByRole("dialog")).toBeNull());
     await waitFor(() => expect(report).toHaveFocus());
+  },
+};
+
+export const ReportingFuelReadEarlier: Story = {
+  args: { canReportFuel: true, onReportFuel: fn(async () => {}) },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "A pilot who reads the fuel over the fix and reports it later types the time it was read in UTC, as HH:mm or HHmm. It counts as the latest such time, so a fix passed before midnight and reported after it keeps the day before.",
+      },
+    },
+  },
+  play: async ({ args, canvasElement }) => {
+    const canvas = within(canvasElement);
+    const readAt = minutesFromNow(-30);
+
+    await userEvent.click(canvas.getByRole("button", { name: "Report actual fuel at 5620N" }));
+
+    const dialog = await openedDialog();
+    const time = dialog.getByRole("textbox", { name: "Time" });
+
+    await userEvent.type(dialog.getByRole("spinbutton", { name: "Fuel on board" }), "36.9");
+    await userEvent.clear(time);
+    await userEvent.type(time, dateToIcaoTime(readAt).replace(":", ""));
+    await userEvent.click(dialog.getByRole("button", { name: "Save" }));
+
+    await waitFor(() =>
+      expect(args.onReportFuel).toHaveBeenCalledWith(11, { actualOnBoard: 36_900, reportedAt: readAt }),
+    );
+  },
+};
+
+export const RefusesATimeOutsideTheFlight: Story = {
+  args: { canReportFuel: true, takeoffTime: TAKEOFF, onReportFuel: fn(async () => {}) },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "A time that is not a clock time, or falls before takeoff, stays in the modal with a message below it. A time later than now counts as yesterday's, so it falls before takeoff too.",
+      },
+    },
+  },
+  play: async ({ args, canvasElement }) => {
+    const canvas = within(canvasElement);
+    const outsideTheFlight = `Must be between takeoff (${dateToIcaoTime(TAKEOFF)}Z) and now`;
+
+    await userEvent.click(canvas.getByRole("button", { name: "Report actual fuel at 5620N" }));
+
+    const dialog = await openedDialog();
+    const time = dialog.getByRole("textbox", { name: "Time" });
+    const enter = async (value: string) => {
+      await userEvent.clear(time);
+      if (value !== "") {
+        await userEvent.type(time, value);
+      }
+      await userEvent.tab();
+    };
+
+    await userEvent.type(dialog.getByRole("spinbutton", { name: "Fuel on board" }), "36.9");
+
+    await enter("");
+    await waitFor(() => expect(dialog.getByText("Enter the time as HH:mm")).toBeVisible());
+
+    await enter("25:00");
+    await waitFor(() => expect(dialog.getByText("Enter the time as HH:mm")).toBeVisible());
+
+    await enter(dateToIcaoTime(minutesFromNow(-90)));
+    await waitFor(() => expect(dialog.getByText(outsideTheFlight)).toBeVisible());
+
+    await enter(dateToIcaoTime(minutesFromNow(-30)));
+    await waitFor(() => expect(dialog.queryByText(outsideTheFlight)).toBeNull());
+
+    await enter(dateToIcaoTime(minutesFromNow(10)));
+    await waitFor(() => expect(dialog.getByText(outsideTheFlight)).toBeVisible());
+
+    await userEvent.click(dialog.getByRole("button", { name: "Save" }));
+
+    await expect(args.onReportFuel).not.toHaveBeenCalled();
   },
 };
 
@@ -326,7 +429,7 @@ export const ReportedFuelInCruise: Story = {
     docs: {
       description: {
         story:
-          "A saved figure shows below the plan, directly under EFOB, and stays editable while the flight is in cruise. Saving again replaces it.",
+          "A saved figure shows below the plan, directly under EFOB, with the time it was read, and stays editable while the flight is in cruise. The modal opens on the saved figure and time, and saving again replaces both.",
       },
     },
   },
@@ -341,6 +444,7 @@ export const ReportedFuelInCruise: Story = {
     await expect(section.getByText("36.90")).toBeVisible();
     await expect(section.getByText("36.90")).toHaveClass("text-amber-800");
     await expect(section.getByText("−0.17")).toBeVisible();
+    await expect(section.getByText(dateToIcaoTime(REPORTED_AT))).toBeVisible();
     await expect(section.getByText("Actual").getBoundingClientRect().left).toBe(
       section.getByText("EFOB").getBoundingClientRect().left,
     );
@@ -351,6 +455,7 @@ export const ReportedFuelInCruise: Story = {
 
     await expect(firstOpen.getByText("5620N fix")).toBeInTheDocument();
     await expect(firstOpen.getByRole("spinbutton", { name: "Fuel on board" })).toHaveValue(36.9);
+    await expect(firstOpen.getByRole("textbox", { name: "Time" })).toHaveValue(dateToIcaoTime(REPORTED_AT));
 
     await userEvent.click(firstOpen.getByRole("button", { name: "Cancel" }));
     await waitFor(() => expect(body.queryByRole("dialog")).toBeNull());
@@ -364,7 +469,12 @@ export const ReportedFuelInCruise: Story = {
     await userEvent.type(input, "36.85");
     await userEvent.click(secondOpen.getByRole("button", { name: "Save" }));
 
-    await waitFor(() => expect(args.onReportFuel).toHaveBeenCalledWith(11, 36_850));
+    await waitFor(() =>
+      expect(args.onReportFuel).toHaveBeenCalledWith(11, {
+        actualOnBoard: 36_850,
+        reportedAt: REPORTED_AT,
+      }),
+    );
     await waitFor(() => expect(body.queryByRole("dialog")).toBeNull());
   },
 };
@@ -402,6 +512,7 @@ export const ReportedFuelAfterCruise: Story = {
 
     await expect(canvas.getByText("Actual")).toBeVisible();
     await expect(canvas.getByText("36.90")).toBeVisible();
+    await expect(canvas.getByText(dateToIcaoTime(REPORTED_AT))).toBeVisible();
     await expect(canvas.queryByRole("button", { name: /actual fuel/ })).toBeNull();
   },
 };

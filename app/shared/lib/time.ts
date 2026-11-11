@@ -23,6 +23,21 @@ export function formatCompactDuration(minutes: number): string {
   return hours > 0 ? `${hours}h ${padZero(total % 60)}m` : `${total}m`;
 }
 
+const UTC_CLOCK_TIME = /^([01]\d|2[0-3]):?([0-5]\d)$/;
+const DAY_MS = 86_400_000;
+
+export function latestAtUtcClockTime(clockTime: string, now: Date): Date | null {
+  const match = UTC_CLOCK_TIME.exec(clockTime.trim());
+
+  if (match === null) {
+    return null;
+  }
+
+  const today = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), Number(match[1]), Number(match[2]));
+
+  return new Date(today > now.getTime() ? today - DAY_MS : today);
+}
+
 export function formatDate(date: Date): string {
   const day = padZero(date.getUTCDate());
   const month = padZero(date.getUTCMonth() + 1);

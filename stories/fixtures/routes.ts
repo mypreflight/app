@@ -201,6 +201,7 @@ export function routeBriefingState(briefing: EtopsBriefing, airports = new Map<s
     summary: null,
     margin: null,
     canReportFuel: false,
+    takeoffTime: null,
     reportFixFuel: async () => {},
     selectedOrdinal: null,
     select: fn(),

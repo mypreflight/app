@@ -48,6 +48,7 @@ export function RouteBriefingPanel({ flight, alternatesHref, airportHref, withCh
     selectedOrdinal,
     select,
     canReportFuel,
+    takeoffTime,
     reportFixFuel,
   } = state;
 
@@ -137,6 +138,7 @@ export function RouteBriefingPanel({ flight, alternatesHref, airportHref, withCh
                 selectedOrdinal={selectedOrdinal}
                 onSelect={select}
                 canReportFuel={canReportFuel}
+                takeoffTime={takeoffTime}
                 onReportFuel={reportFixFuel}
               />
             </div>

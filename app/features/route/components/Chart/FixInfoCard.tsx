@@ -18,7 +18,7 @@ import {
   formatWind,
 } from "~/features/route/lib/routeFigures";
 import type { FixInsight } from "~/features/route/lib/routeInsights";
-import type { PlannedRouteWindLevel } from "~/features/route/model";
+import type { PlannedRouteWindLevel, ReportFixFuel } from "~/features/route/model";
 import { formatCoordinates } from "~/shared/lib/formatGeo";
 
 type SectionProps = {
@@ -148,7 +148,8 @@ type Props = {
   onPrevious?: () => void;
   onNext?: () => void;
   canReportFuel?: boolean;
-  onReportFuel?: (ordinal: number, actualOnBoard: number) => Promise<void>;
+  takeoffTime?: Date | null;
+  onReportFuel?: ReportFixFuel;
   className?: string;
 };
 
@@ -159,6 +160,7 @@ export function FixInfoCard({
   onPrevious,
   onNext,
   canReportFuel = false,
+  takeoffTime = null,
   onReportFuel,
   className,
 }: Props) {
@@ -240,7 +242,13 @@ export function FixInfoCard({
             <FixFigure label="Leg burn" value={formatTonnesFromKilograms(fix.fuel.leg)} suffix="t" />
           </dl>
           <div className="-mx-4 mt-1.5 border-t border-gray-200 px-4 pt-1.5 empty:hidden dark:border-gray-800">
-            <FixFuelReport key={fix.ordinal} fix={fix} canReport={canReportFuel} onReport={onReportFuel} />
+            <FixFuelReport
+              key={fix.ordinal}
+              fix={fix}
+              canReport={canReportFuel}
+              takeoffTime={takeoffTime}
+              onReport={onReportFuel}
+            />
           </div>
         </FixSection>
 

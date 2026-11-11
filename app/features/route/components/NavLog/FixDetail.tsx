@@ -12,6 +12,7 @@ import {
   formatWind,
 } from "~/features/route/lib/routeFigures";
 import type { FixInsight } from "~/features/route/lib/routeInsights";
+import type { ReportFixFuel } from "~/features/route/model";
 import { FieldLabel } from "~/shared/ui/Display/FieldLabel";
 
 type Props = {
@@ -19,7 +20,8 @@ type Props = {
   columnCount: number;
   detailId: string;
   canReportFuel: boolean;
-  onReportFuel: (ordinal: number, actualOnBoard: number) => Promise<void>;
+  takeoffTime: Date | null;
+  onReportFuel: ReportFixFuel;
 };
 
 function DetailField({ label, value, unit }: { label: string; value: string; unit?: string }) {
@@ -31,7 +33,7 @@ function DetailField({ label, value, unit }: { label: string; value: string; uni
   );
 }
 
-export function FixDetail({ insight, columnCount, detailId, canReportFuel, onReportFuel }: Props) {
+export function FixDetail({ insight, columnCount, detailId, canReportFuel, takeoffTime, onReportFuel }: Props) {
   const { fix } = insight;
 
   return (
@@ -39,7 +41,7 @@ export function FixDetail({ insight, columnCount, detailId, canReportFuel, onRep
       <td colSpan={columnCount} className="px-3 py-3">
         {(canReportFuel || fix.fuelReport !== null) && (
           <div className="mb-3 max-w-sm border-b border-gray-200 pb-3 dark:border-gray-800">
-            <FixFuelReport fix={fix} canReport={canReportFuel} onReport={onReportFuel} />
+            <FixFuelReport fix={fix} canReport={canReportFuel} takeoffTime={takeoffTime} onReport={onReportFuel} />
           </div>
         )}
 

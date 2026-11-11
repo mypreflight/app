@@ -26,6 +26,13 @@ export type PlannedRouteFuelReport = {
   reportedAt: string;
 };
 
+export type FixFuelReading = {
+  actualOnBoard: number;
+  reportedAt: Date;
+};
+
+export type ReportFixFuel = (ordinal: number, reading: FixFuelReading) => Promise<void>;
+
 export type PlannedRouteFix = {
   ordinal: number;
   ident: string;

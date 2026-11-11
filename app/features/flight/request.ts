@@ -45,6 +45,7 @@ export type CloseFlightRequest = {
 
 export type ReportFixFuelRequest = {
   actualOnBoard: number;
+  reportedAt: string;
 };
 
 export type ApiFlightLoadsheetResponse = {

@@ -9,7 +9,7 @@ import {
   summariseFuelMargin,
   summariseRoute,
 } from "~/features/route/lib/routeInsights";
-import type { EtopsBriefing } from "~/features/route/model";
+import type { EtopsBriefing, FixFuelReading, ReportFixFuel } from "~/features/route/model";
 import { type AssignedRunways, useAssignedRunways } from "~/features/runway/hooks/useAssignedRunways";
 import { isNotFound } from "~/shared/api/api.service";
 import { useApi } from "~/shared/api/useApi";
@@ -19,12 +19,13 @@ type Return = {
   airports: Map<string, Airport>;
   loading: boolean;
   error: Error | null;
-  reportFixFuel: (ordinal: number, actualOnBoard: number) => Promise<void>;
+  reportFixFuel: ReportFixFuel;
 };
 
 export type RouteBriefingState = Return & {
   runways: AssignedRunways;
   canReportFuel: boolean;
+  takeoffTime: Date | null;
   insights: FixInsight[];
   summary: RouteSummary | null;
   margin: FuelMarginSummary | null;
@@ -125,12 +126,12 @@ function useRouteBriefing(flightId: string | null): Return {
   }, [flightId, flightService, airportService]);
 
   const reportFixFuel = useCallback(
-    async (ordinal: number, actualOnBoard: number) => {
+    async (ordinal: number, reading: FixFuelReading) => {
       if (flightId === null) {
         return;
       }
 
-      const route = await flightService.reportFixFuel(flightId, ordinal, actualOnBoard);
+      const route = await flightService.reportFixFuel(flightId, ordinal, reading);
       setBriefing((current) => (current === null ? null : { ...current, route }));
     },
     [flightId, flightService],
@@ -178,6 +179,7 @@ export function RouteBriefingProvider({ flight, canReportFuel = false, children 
     ...analysis,
     runways,
     canReportFuel,
+    takeoffTime: flight?.timesheet.actual?.takeoffTime ?? null,
     selectedOrdinal: chosenOrdinal ?? emphasisedOrdinal(analysis.insights, analysis.margin),
     select: setChosenOrdinal,
   };

@@ -212,7 +212,10 @@ MapLibre loads lazily (`LazyFlightGlobeMap` and the per-map `React.lazy` imports
   fix.
 - **Actual fuel:** while the flight is `in_cruise`, cabin crew save the fuel on board per fix through a small button in
   the fix card's Fuel section or the nav log's expanded row (`FixFuelReport`), which opens `FixFuelReportModal`, in
-  tonnes; the API takes kilograms. Saving again replaces the figure. The gate is the flight's status, not the fix's
+  tonnes; the API takes kilograms. The modal also takes the time the fuel was read, in UTC, which starts at the current
+  minute for a new report and at the saved time for an update, so the field shows exactly what is saved; the API
+  refuses a time in the future or before the actual takeoff. The time shows beside the figure in `FixFuelReport` and
+  in its own column of `FuelReports`. Saving again replaces the figure and the time. The gate is the flight's status, not the fix's
   stage, so climb and descent fixes count too. Only the Tracking dashboard passes `canReportFuel` to
   `RouteBriefingProvider`. Saved figures show read-only everywhere else, and the nav log's Actual column appears only
   while reporting is possible or once a figure exists. The Fuel card lists every report (`FuelReports`) through

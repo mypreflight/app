@@ -54,6 +54,7 @@ const meta = {
     selectedOrdinal: null,
     onSelect: fn(),
     canReportFuel: false,
+    takeoffTime: null,
     onReportFuel: fn(async () => {}),
   },
   parameters: {
@@ -108,7 +109,9 @@ export const ReportingInCruise: Story = {
     await userEvent.type(dialog.getByRole("spinbutton", { name: "Fuel on board" }), "7.95");
     await userEvent.click(dialog.getByRole("button", { name: "Save" }));
 
-    await waitFor(() => expect(args.onReportFuel).toHaveBeenCalledWith(3, 7_950));
+    await waitFor(() =>
+      expect(args.onReportFuel).toHaveBeenCalledWith(3, { actualOnBoard: 7_950, reportedAt: expect.any(Date) }),
+    );
     await waitFor(() => expect(within(document.body).queryByRole("dialog")).toBeNull());
   },
 };
@@ -119,7 +122,7 @@ export const ReportedAfterCruise: Story = {
     docs: {
       description: {
         story:
-          "After the flight, the figures saved during cruise read beside the plan: pale amber below it, and red with a warning icon below minimum fuel.",
+          "After the flight, the figures saved during cruise read beside the plan: pale amber below it, and red with a warning icon below minimum fuel. A fix's expanded row also shows the time its figure was read.",
       },
     },
   },
@@ -133,5 +136,9 @@ export const ReportedAfterCruise: Story = {
 
     await expect(warning.closest("td")).toHaveClass("text-red-700");
     await expect(warning.closest("td")).toHaveTextContent("1.50");
+
+    await userEvent.click(canvas.getByRole("button", { name: "SAX" }));
+
+    await expect(canvas.getByText("14:05")).toBeVisible();
   },
 };
