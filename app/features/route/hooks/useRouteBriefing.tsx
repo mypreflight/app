@@ -140,7 +140,7 @@ function useRouteBriefing(flightId: string | null): Return {
   return { briefing, airports, loading, error, reportFixFuel };
 }
 
-const RouteBriefing = createContext<RouteBriefingState | null>(null);
+export const RouteBriefingContext = createContext<RouteBriefingState | null>(null);
 
 const NO_ANALYSIS = { insights: [] as FixInsight[], summary: null, margin: null };
 
@@ -184,11 +184,11 @@ export function RouteBriefingProvider({ flight, canReportFuel = false, children 
     select: setChosenOrdinal,
   };
 
-  return <RouteBriefing.Provider value={state}>{children}</RouteBriefing.Provider>;
+  return <RouteBriefingContext.Provider value={state}>{children}</RouteBriefingContext.Provider>;
 }
 
 export function useRouteBriefingState(): RouteBriefingState {
-  const state = useContext(RouteBriefing);
+  const state = useContext(RouteBriefingContext);
 
   if (state === null) {
     throw new Error("useRouteBriefingState must be used within a RouteBriefingProvider");
@@ -198,5 +198,5 @@ export function useRouteBriefingState(): RouteBriefingState {
 }
 
 export function usePlannedRoute(): RouteBriefingState | null {
-  return useContext(RouteBriefing);
+  return useContext(RouteBriefingContext);
 }

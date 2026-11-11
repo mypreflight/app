@@ -109,6 +109,7 @@ Routes use React Router's compositional config API (`layout()`, `route()`, `inde
 - Return after sign-in: `AuthGuard`, and a failed token refresh, send the visitor to `/sign-in?returnTo=<path>`, and password, Google and Discord sign-in all land back on that path (Discord carries it through the OAuth round trip in its stored flow state). `app/shared/lib/signInReturn.ts` accepts only same-origin paths outside `/`, the sign-in and sign-out routes, `/confirm-email` and `/auth/*`; anything else falls back to the role's landing page
 - `OperationsLayout` / `PilotLayout` — role-specific nested layouts; `AuthGuard` takes `allowOnly` (one role or a list) to gate by role
 - `ReviewLayout` — shared by Operations and Admin; holds the data change review queue at `/data-changes`, which is also the Admin landing page
+- Flight history (`PilotLayout`) — `/flight-history` lists closed flights; from 1024px a preview pane beside the list follows the hovered or focused row (a static globe, block events against schedule, air time, fuel burned). `/flight-history/:id/:view?/:tab?` is a closed flight, built like the Tracking view frozen at on-block: History (the default, no slug) is the full-bleed map with the vertical profile docked at its bottom, Documents (`/documents/<tab>`) holds the briefing it was flown on. `app/features/flight/lib/historyView.ts` resolves the slugs and redirects to the canonical path. Tracking redirects a closed flight here. The header opens with a `Flight history › <flight number>` breadcrumb, "Flown <date>" and the Closed badge, so the page never reads as a live flight
 
 ### Code Style
 
@@ -126,7 +127,7 @@ Routes use React Router's compositional config API (`layout()`, `route()`, `inde
 ### Storybook
 
 Storybook 10 (`@storybook/react-vite`) documents components in isolation. Config is in `.storybook/`, stories in
-`stories/`, grouped the way the sidebar shows them (`dashboard/`, `tracking/`, `maps/`, `account/`, `shared/`), with
+`stories/`, grouped the way the sidebar shows them (`dashboard/`, `tracking/`, `history/`, `maps/`, `account/`, `shared/`), with
 `stories/Introduction.mdx` as the landing page.
 
 - **Vite config:** Storybook reuses `vite.config.ts` and strips the React Router, prerender and PWA plugins in
@@ -164,6 +165,14 @@ version (`GroundStopMap`), which only use the globe.
 MapLibre loads lazily (`LazyFlightGlobeMap` and the per-map `React.lazy` imports), so it never reaches the entry chunk;
 `app/shared/lib/maplibreSetup.ts` points MapLibre at its worker through a `?url` import.
 
+- **Route maps:** the Tracking view (`MapBox`) and flight history (`HistoryMapBox`) draw the same props-driven pair,
+  `FlightRouteMap` (Leaflet) and `FlightRouteGlobeMap`, with `MapFixCard` above them. Each box passes the flight, its
+  track and the insets of its own floating cards. `aircraftPath` places the aircraft apart from the drawn track, so the
+  history profile can move it to any recorded point without refitting the camera.
+- **Vertical profile:** `VerticalProfile` charts a recorded track's altitude (flight levels) and ground speed over UTC,
+  from the actual off-block to the actual on-block, with taxi out and taxi in shaded. It is a slider: pointing at it or
+  using the arrow keys picks the nearest recorded point, and `HistoryMapBox` puts the aircraft there. From 768px it
+  floats at the bottom of the map; on phones it is its own card below the map, so the map stays clear.
 - **Projection:** a Mercator / Globe switch, in Map options where a map has them and in the map top bar otherwise, stored
   per map under `map-projection.<map>` by `useMapProjection`; the globe is the default. Switching keeps the view: both
   renderers report a `MapCameraView` (the centre of the area below the floating cards, in Leaflet's zoom scale) and the
@@ -192,9 +201,9 @@ MapLibre loads lazily (`LazyFlightGlobeMap` and the per-map `React.lazy` imports
   entry, equal-time, critical and exit points are drawn exactly like fixes, as `(ETP IN)`, `(ETP)`, `(CP)` and
   `(ETP OUT)`, from the same `routeFixMarks` list. They have no nav log row, so clicking one selects nothing and shows
   no pointer.
-- **Fix card:** on the Tracking view, clicking a fix's dot or name, flat or globe, opens `FixInfoCard` at the top right,
-  below the floating cards. It stays open until it is closed or another fix is clicked. `MapBox` only keeps whether it is
-  open; the fix shown is the briefing state's selected one, so the card and the highlighted dot always agree. The card
+- **Fix card:** on the Tracking view and flight history, clicking a fix's dot or name, flat or globe, opens
+  `FixInfoCard` at the top right, below the floating cards. It stays open until it is closed or another fix is clicked.
+  `MapBox` and `HistoryMapBox` only keep whether it is open; the fix shown is the briefing state's selected one, so the card and the highlighted dot always agree. The card
   hides while Map options hides the flight route. On the globe a clicked name wins over a fix dot under it, because the
   name is drawn on top. Other maps pass no `onFixClick`, so their names stay passive. Its figures sit in four sections,
   Meta, Flight fix, Fuel, and Wind and environment. The first three share one four-column grid (`FIX_GRID`) with each

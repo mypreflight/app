@@ -8,7 +8,7 @@ export function HistoryEventsTab() {
   if (!flight) return null;
 
   return (
-    <div className="mt-4">
+    <div>
       <FlightEventsTimeline events={events} serviceType={flight.serviceType} />
     </div>
   );

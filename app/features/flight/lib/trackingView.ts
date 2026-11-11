@@ -20,7 +20,7 @@ export type TrackingLocation = {
 
 type ActiveEnd = "departure" | "destination";
 
-const WHOLE_ROUTE: MapView = {
+export const WHOLE_ROUTE: MapView = {
   centerOn: "route",
   autoCenter: true,
   runwayDisplay: "assigned",

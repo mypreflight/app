@@ -15,10 +15,12 @@ const CompactGlobeMap = React.lazy(() =>
 type Props = {
   flight: Flight;
   path: FlightPathElement[];
+  href?: string;
+  label?: string;
   className?: string;
 };
 
-export function CompactFlightMap({ flight, path, className }: Props) {
+export function CompactFlightMap({ flight, path, href, label, className }: Props) {
   return (
     <div className={twMerge("group relative isolate overflow-hidden", className)}>
       <div inert className="absolute inset-0">
@@ -28,9 +30,9 @@ export function CompactFlightMap({ flight, path, className }: Props) {
       </div>
 
       <Link
-        to={trackFlightPath(flight.id, TrackingView.Tracking)}
+        to={href ?? trackFlightPath(flight.id, TrackingView.Tracking)}
         viewTransition
-        aria-label={`Open the tracking map for ${flight.flightNumber}`}
+        aria-label={label ?? `Open the tracking map for ${flight.flightNumber}`}
         className="absolute inset-0 z-10 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-indigo-500 dark:focus-visible:ring-indigo-400"
       >
         <span className="absolute right-2 top-2 flex size-8 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-700 transition-colors group-hover:border-indigo-200 group-hover:bg-indigo-50 group-hover:text-indigo-700 motion-reduce:transition-none dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200 dark:group-hover:border-indigo-800 dark:group-hover:bg-gray-800 dark:group-hover:text-indigo-300">

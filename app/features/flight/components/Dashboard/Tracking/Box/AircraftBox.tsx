@@ -1,6 +1,6 @@
 import React from "react";
 import { FaCircleInfo } from "react-icons/fa6";
-import { AircraftSummaryCard } from "~/features/flight/components/Dashboard/History/Box/AircraftSummaryCard";
+import { AircraftSummaryCard } from "~/features/flight/components/Dashboard/Tracking/Box/AircraftSummaryCard";
 import { useTrackedFlight } from "~/features/flight/hooks/useTrackedFlight";
 import { CardHeader } from "~/shared/ui/Layout/CardHeader";
 import { Container } from "~/shared/ui/Layout/Container";

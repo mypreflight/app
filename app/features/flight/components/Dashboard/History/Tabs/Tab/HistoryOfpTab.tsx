@@ -19,7 +19,7 @@ export function HistoryOfpTab() {
   if (!flight) return null;
 
   return (
-    <Container padding="none" className="mt-4 gap-0">
+    <Container padding="none" className="gap-0">
       <header className="flex items-center gap-2 border-b border-gray-100 px-5 py-3 text-indigo-600 dark:text-indigo-400 dark:border-gray-800">
         <FaFileLines size={13} />
         <span className="text-xs font-bold uppercase tracking-widest">Operational flight plan</span>

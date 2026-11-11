@@ -1,38 +1,44 @@
-import { useMemo } from "react";
-import { useAdsbData } from "~/features/adsb/hooks/useAdsbData";
+import type { Diversion } from "~/features/diversion";
+import type { Flight, FlightPathElement } from "~/features/flight";
 import { FlightGlobeMap } from "~/features/flight/components/Map/Box/FlightGlobeMap";
 import { useAuthorizedLayoutServices } from "~/features/flight/hooks/useAirportLayoutData";
-import { useTrackedFlight } from "~/features/flight/hooks/useTrackedFlight";
 import { usePlannedRoute } from "~/features/route/hooks/useRouteBriefing";
+import type { GlobeInsets } from "~/shared/lib/globeCamera";
 import type { MapCameraView } from "~/shared/lib/mapCameraView";
 import type { MapFocus } from "~/shared/lib/mapFocus";
 
 type Props = {
-  topInset: number;
+  flight: Flight;
+  diversion: Diversion | null;
+  flightPath: FlightPathElement[];
+  aircraftPath?: FlightPathElement[];
+  insets: GlobeInsets;
   initialView: MapCameraView | null;
   onViewChange: (view: MapCameraView) => void;
   onFixClick: (ordinal: number) => void;
   focus: MapFocus | null;
 };
 
-const BOTTOM_BAR_HEIGHT = 88;
-
-export function TrackingGlobeMap({ topInset, initialView, onViewChange, onFixClick, focus }: Props) {
-  const { flight, diversion } = useTrackedFlight();
-  const { flightPath } = useAdsbData();
+export function FlightRouteGlobeMap({
+  flight,
+  diversion,
+  flightPath,
+  aircraftPath,
+  insets,
+  initialView,
+  onViewChange,
+  onFixClick,
+  focus,
+}: Props) {
   const plannedRoute = usePlannedRoute();
   const layoutServices = useAuthorizedLayoutServices();
-  const insets = useMemo(() => ({ top: topInset, bottom: BOTTOM_BAR_HEIGHT }), [topInset]);
-
-  if (!flight) {
-    return null;
-  }
 
   return (
     <FlightGlobeMap
       flight={flight}
       diversion={diversion}
       flightPath={flightPath}
+      aircraftPath={aircraftPath}
       plannedRoute={plannedRoute}
       layoutServices={layoutServices}
       insets={insets}

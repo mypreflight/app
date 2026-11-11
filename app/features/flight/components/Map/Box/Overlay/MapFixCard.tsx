@@ -7,27 +7,27 @@ import type { PlannedRouteFix } from "~/features/route/model";
 import { useFloatingPanel } from "~/shared/hooks/useFloatingPanel";
 import type { MapFocus, MapFocusInsets } from "~/shared/lib/mapFocus";
 
-const BOTTOM_BAR_HEIGHT = 88;
 const FIX_ZOOM = 8;
 
 type Props = {
   isOpen: boolean;
   topInset: number;
+  bottomInset: number;
   onClose: () => void;
   onFocus: (focus: MapFocus) => void;
 };
 
-function freeMapArea(area: DOMRect, card: DOMRect, topInset: number): MapFocusInsets {
+function freeMapArea(area: DOMRect, card: DOMRect, topInset: number, bottomInset: number): MapFocusInsets {
   const isBesideCard = card.width < area.width / 2;
 
   return {
     top: isBesideCard ? topInset : topInset + card.bottom - area.top,
     right: isBesideCard ? area.right - card.left : 0,
-    bottom: BOTTOM_BAR_HEIGHT,
+    bottom: bottomInset,
   };
 }
 
-export function TrackingFixCard({ isOpen, topInset, onClose, onFocus }: Props) {
+export function MapFixCard({ isOpen, topInset, bottomInset, onClose, onFocus }: Props) {
   const plannedRoute = usePlannedRoute();
   const { mapSettings, updateMapSettings, intent } = useMapSettings();
   const areaRef = useRef<HTMLDivElement>(null);
@@ -50,7 +50,7 @@ export function TrackingFixCard({ isOpen, topInset, onClose, onFocus }: Props) {
     const card = panelRef.current?.getBoundingClientRect();
 
     if (area !== undefined && card !== undefined) {
-      onFocus({ position: [latitude, longitude], zoom, insets: freeMapArea(area, card, topInset) });
+      onFocus({ position: [latitude, longitude], zoom, insets: freeMapArea(area, card, topInset, bottomInset) });
     }
   };
 
@@ -69,7 +69,7 @@ export function TrackingFixCard({ isOpen, topInset, onClose, onFocus }: Props) {
     <div
       ref={areaRef}
       className="pointer-events-none absolute inset-x-0 z-20 md:overflow-hidden md:[scrollbar-gutter:stable]"
-      style={{ top: topInset, bottom: BOTTOM_BAR_HEIGHT }}
+      style={{ top: topInset, bottom: bottomInset }}
     >
       <div className="mx-auto flex h-full max-w-7xl items-start justify-end px-3 pt-3 md:px-6">
         <div

@@ -33,13 +33,13 @@ const POLAR_NAVLOG: Waypoint[] = [
   POLAR_WAYPOINTS[POLAR_WAYPOINTS.length - 1],
 ];
 
-function plannedFix({ ident, latitude, longitude }: Waypoint, index: number): PlannedRouteFix {
+function plannedFix({ ident, latitude, longitude }: Waypoint, index: number, navlog: Waypoint[]): PlannedRouteFix {
   return {
     ordinal: index + 1,
     ident,
     latitude,
     longitude,
-    altitude: 36_000,
+    altitude: index === 0 || index === navlog.length - 1 ? 0 : 36_000,
     elapsedSeconds: index * 3_600,
     distanceNm: index === 0 ? null : 500,
     trackTrue: null,
