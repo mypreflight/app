@@ -190,9 +190,10 @@ Tailwind v4 colours.
 - **Hairline** (`gray-200`): panel edges and dividers in light mode.
 - **Paper** (`#ffffff`): cards, table rows and modals in light mode.
 - **Paper Band** (`gray-50`): card header bands, empty-state wells and input fills.
-- **Canvas** (`gray-100`): the app background in light mode.
+- **Canvas** (`gray-100`): the app background behind the cards in light mode — the content panel from 768px, the whole
+  screen below it.
 - **Night Canvas** (`gray-950`), **Night Paper** (`gray-900`), **Night Band** (`gray-800`): the dark-mode canvas, card
-  surface, and card header band and edge. **Night Muted** (`gray-400`) is muted text in dark mode, 6.99:1 on Night
+  surface and app frame, and card header band and edge. **Night Muted** (`gray-400`) is muted text in dark mode, 6.99:1 on Night
   Paper.
 
 ### Semantic
@@ -256,6 +257,13 @@ Content sits in a centred column capped at 1280px (`max-w-7xl`), with a 12px gut
 from 768px. A persistent sidebar holds navigation from 768px up; below that, a floating top bar and a bottom navigation
 bar take over, and the page pads itself clear of both, including safe-area insets.
 
+From 768px the app is a frame and a content panel. The frame is Paper (Night Paper in dark mode) and holds the sidebar,
+which has no edge of its own. The page sits in a Canvas panel (Night Canvas) with a 1px Hairline (Night Band) edge and
+16px corners, inset 8px from the top, right and bottom of the window, and from the left when the sidebar is collapsed.
+The bottom inset grows to the safe-area inset where one exists. The panel scrolls, and a full-bleed view such as the
+Tracking map, or a maximised map, fills it and is clipped to its corners. Below 768px there is no frame: the page fills
+the screen on Canvas.
+
 Spacing runs on a 6 / 12 / 16 / 24px rhythm. Cards in a grid sit 12px apart; label-to-value pairs sit 6px apart. The
 cabin crew dashboard steps from one column to two at 1024px and to three at 1280px, with the flight cards spanning two.
 Density comes from tight groups inside cards, not from shrinking type.
@@ -266,7 +274,8 @@ inline links gain vertical padding cancelled by negative margin, so the target g
 ## Elevation & Depth
 
 Flat, with overlays that lift. A card is Paper on Canvas, separated by a 1px Hairline and a one-step tonal change; in dark
-mode it is Night Paper on Night Canvas with a Night Band edge. Nothing at rest carries a shadow. Only things that float
+mode it is Night Paper on Night Canvas with a Night Band edge. The content panel is the same step the other way: Canvas
+set into a Paper frame, with the same edge. Nothing at rest carries a shadow. Only things that float
 above the page — modals and toasts — take a soft ambient shadow, and the modal shadow deepens in dark mode because it
 sits on a near-black scrim.
 
@@ -283,7 +292,7 @@ shadow. Shadow belongs only to an overlay leaving the page.
 ## Shapes
 
 Corners soften by size: 4px on heatmap tiles and inline focus targets, 8px on buttons, inputs, toasts and icon tiles,
-12px on modals, sidebar items, inner panels and empty-state wells, and 16px on cards. Badges and status pills are fully
+12px on modals, sidebar items, inner panels and empty-state wells, and 16px on cards and the content panel. Badges and status pills are fully
 round. Cards clip their content to their corners, so anything drawn at a card's edge — a focus ring on a full-width
 footer link — must sit inset, and on the corners it shares with the card it takes the card's radius minus the 1px
 border (15px inside a 16px card), or the clip cuts the ring where the curve begins. Dashed hairlines mark empty and placeholder wells, and the route line between two airports.
