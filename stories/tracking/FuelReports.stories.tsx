@@ -92,17 +92,17 @@ export const Listed: Story = {
     docs: {
       description: {
         story:
-          "Reported fixes in flown order, with the difference from EFOB signed. A fix the plan has no figure for shows a dash.",
+          "Reported fixes in flown order, with the time each figure was read, in UTC, and the difference from EFOB signed. A fix the plan has no figure for shows a dash.",
       },
     },
   },
   play: async ({ canvasElement }) => {
     await expect(rowsOf(canvasElement)).toEqual([
-      ["Fix", "Actual", "Against EFOB"],
-      ["CMK", "7.90t", "−0.15t"],
-      ["SAX", "7.40t", "+0.25t"],
-      ["ARD", "6.44t", "0.00t"],
-      ["(TOD)", "6.10t", "—"],
+      ["Fix", "Time", "Actual", "Against EFOB"],
+      ["CMK", "14:05Z", "7.90t", "−0.15t"],
+      ["SAX", "14:20Z", "7.40t", "+0.25t"],
+      ["ARD", "14:35Z", "6.44t", "0.00t"],
+      ["(TOD)", "14:50Z", "6.10t", "—"],
     ]);
   },
 };

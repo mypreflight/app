@@ -3,6 +3,7 @@ import { useField } from "formik";
 import React, {
   type ChangeEvent,
   type FocusEvent,
+  type HTMLAttributes,
   type HTMLInputAutoCompleteAttribute,
   type HTMLInputTypeAttribute,
   type ReactNode,
@@ -20,6 +21,7 @@ type ManagedFloatingInputBlock = {
   required?: boolean;
   helperText?: string;
   type?: HTMLInputTypeAttribute;
+  inputMode?: HTMLAttributes<HTMLInputElement>["inputMode"];
   autoComplete?: HTMLInputAutoCompleteAttribute;
   disabled?: boolean;
   inputRef?: Ref<HTMLInputElement>;
@@ -67,6 +69,7 @@ export function ManagedFloatingInputBlock({
   required = true,
   autoComplete,
   type = "text",
+  inputMode,
   helperText,
   disabled = false,
   inputRef,
@@ -136,6 +139,7 @@ export function ManagedFloatingInputBlock({
           sizing={density.floatingSizing}
           autoComplete={autoComplete}
           type={type}
+          inputMode={inputMode}
           required={required}
           className="whitespace-nowrap dark:bg-gray-800"
           color={isError ? "error" : undefined}

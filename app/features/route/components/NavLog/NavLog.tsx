@@ -13,6 +13,7 @@ import {
   formatWind,
 } from "~/features/route/lib/routeFigures";
 import type { FixInsight } from "~/features/route/lib/routeInsights";
+import type { ReportFixFuel } from "~/features/route/model";
 
 const ACTUAL_FUEL_COLUMN = { key: "actualOnBoard", label: "Actual t", numeric: true, hideOnNarrow: true };
 
@@ -34,7 +35,8 @@ type Props = {
   selectedOrdinal: number | null;
   onSelect: (ordinal: number) => void;
   canReportFuel: boolean;
-  onReportFuel: (ordinal: number, actualOnBoard: number) => Promise<void>;
+  takeoffTime: Date | null;
+  onReportFuel: ReportFixFuel;
 };
 
 function stageRuns(insights: FixInsight[]): FixInsight[][] {
@@ -61,7 +63,7 @@ function columnsFor(showsActualFuel: boolean) {
   return [...COLUMNS.slice(0, afterPlannedFuel), ACTUAL_FUEL_COLUMN, ...COLUMNS.slice(afterPlannedFuel)];
 }
 
-export function NavLog({ insights, selectedOrdinal, onSelect, canReportFuel, onReportFuel }: Props) {
+export function NavLog({ insights, selectedOrdinal, onSelect, canReportFuel, takeoffTime, onReportFuel }: Props) {
   const showsActualFuel = canReportFuel || insights.some(({ fix }) => fix.fuelReport !== null);
   const columns = columnsFor(showsActualFuel);
   const [expandedOrdinal, setExpandedOrdinal] = useState<number | null>(null);
@@ -212,6 +214,7 @@ export function NavLog({ insights, selectedOrdinal, onSelect, canReportFuel, onR
                     columnCount={columns.length}
                     detailId={detailId}
                     canReportFuel={canReportFuel}
+                    takeoffTime={takeoffTime}
                     onReportFuel={onReportFuel}
                   />
                 )}
