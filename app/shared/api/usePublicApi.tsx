@@ -1,6 +1,7 @@
 import { AdsbService } from "~/features/adsb/service";
 import { PublicFlightService } from "~/features/flight/service";
 import { PublicGateService } from "~/features/gate/service";
+import { PublicOceanicTrackService } from "~/features/oceanic-track/service";
 import { PublicParkingPositionService } from "~/features/parking-position/service";
 import { PublicRunwayService } from "~/features/runway/service";
 import { PublicTerminalService } from "~/features/terminal/service";
@@ -11,6 +12,7 @@ const services = {
   publicTerminalService: new PublicTerminalService(),
   publicParkingPositionService: new PublicParkingPositionService(),
   publicGateService: new PublicGateService(),
+  publicOceanicTrackService: new PublicOceanicTrackService(),
   adsbService: new AdsbService(),
 };
 
