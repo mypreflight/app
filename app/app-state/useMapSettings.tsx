@@ -24,6 +24,7 @@ export type FlightDataSettings = {
 
 export type AirspaceSettings = {
   firDisplay: FlightDataDisplay;
+  oceanicTrackDisplay: FlightDataDisplay;
 };
 
 export type MapSettings = MapView &
@@ -49,6 +50,7 @@ const defaultMapSettings: MapSettings = {
   routeDisplay: "show",
   etopsDisplay: "show",
   firDisplay: "hide",
+  oceanicTrackDisplay: "hide",
 };
 
 function migrate(raw: Partial<MapSettings> & Record<string, unknown>): MapSettings {

@@ -28,6 +28,8 @@ import {
 } from "~/features/flight/lib/airportLayoutFilters";
 import { type GlobeAirportScene, globeAirportOverlay, globeZoom } from "~/features/flight/lib/globeAirportOverlay";
 import { directRouteOverlay, diversionOverlay, flightPathOverlay } from "~/features/flight/lib/globeTrackingOverlay";
+import { useOceanicTracks } from "~/features/oceanic-track/hooks/useOceanicTracks";
+import { oceanicTrackOverlay } from "~/features/oceanic-track/lib/oceanicTrackOverlay";
 import {
   fixGlobeMarkers,
   hoveredFixKey,
@@ -159,6 +161,8 @@ export function FlightGlobeMap({
   const lastPoint = flightPath.at(-1);
   const firDisplay = withAirspace ? mapSettings.firDisplay : "hide";
   const firPolarLines = useFirPolarLines(firDisplay !== "hide");
+  const trackDisplay = withAirspace ? mapSettings.oceanicTrackDisplay : "hide";
+  const tracks = useOceanicTracks(trackDisplay !== "hide");
 
   const scene = useMemo(() => {
     const needsScene = showsRoute || showsEtopsRings;
@@ -193,6 +197,7 @@ export function FlightGlobeMap({
     () =>
       mergeOverlays(
         firBoundaryOverlay(firDisplay, computedMode === "dark" ? "dark" : "light", firPolarLines),
+        oceanicTrackOverlay(trackDisplay, computedMode === "dark" ? "dark" : "light", tracks),
         globeAirportOverlay(airportScenes, computedMode),
         greatCircleDisplay === "hide"
           ? NO_OVERLAY
@@ -205,6 +210,8 @@ export function FlightGlobeMap({
     [
       firDisplay,
       firPolarLines,
+      trackDisplay,
+      tracks,
       airportScenes,
       greatCircleDisplay,
       scene,

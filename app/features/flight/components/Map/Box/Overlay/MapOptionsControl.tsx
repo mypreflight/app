@@ -20,6 +20,7 @@ import {
   LuSpline,
   LuSquareParking,
   LuTrainTrack,
+  LuWaypoints,
 } from "react-icons/lu";
 import { twMerge } from "tailwind-merge";
 import {
@@ -34,6 +35,7 @@ import {
 import { MapProjectionSwitch } from "~/features/flight/components/Map/Element/MapProjectionSwitch";
 import { SegmentedControl } from "~/features/flight/components/Map/Element/SegmentedControl";
 import type { MapProjection } from "~/features/flight/hooks/useMapProjection";
+import { OceanicTrackKey } from "~/features/oceanic-track/components/OceanicTrackKey";
 import { useFloatingPanel } from "~/shared/hooks/useFloatingPanel";
 import { VATSPY_DATA_PROJECT } from "~/shared/ui/Map/MapAttribution";
 
@@ -71,7 +73,10 @@ const layerRows: { key: LayerKey; label: string; icon: IconType }[] = [
   { key: "parkingPositionDisplay", label: "Parking", icon: LuSquareParking },
 ];
 
-const airspaceRows: MatrixRow<AirspaceKey>[] = [{ key: "firDisplay", label: "FIRs", icon: LuHexagon }];
+const airspaceRows: MatrixRow<AirspaceKey>[] = [
+  { key: "firDisplay", label: "FIRs", icon: LuHexagon },
+  { key: "oceanicTrackDisplay", label: "PACOTS", icon: LuWaypoints },
+];
 
 const flightDataOptions: { value: FlightDataDisplay; label: string }[] = [
   { value: "show", label: "Yes" },
@@ -402,6 +407,7 @@ export function MapOptionsControl({
           , {VATSPY_DATA_PROJECT.license}
         </p>
       )}
+      {mapSettings.oceanicTrackDisplay !== "hide" && <OceanicTrackKey />}
     </div>,
   ];
 
