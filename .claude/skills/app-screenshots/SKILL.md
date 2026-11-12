@@ -45,7 +45,7 @@ CDP_PORT=9333 node $K/scripts/cdp.mjs signin cabin-crew@example.com 'P@$$w0rd'
 Commands are chained with `--` and run in order **inside one process**:
 
 ```bash
-CDP_PORT=9333 CDP_CLOCK=2025-01-01T14:40:07Z node $K/scripts/cdp.mjs \
+CDP_PORT=9333 CDP_CLOCK=2026-01-01T13:51:00Z node $K/scripts/cdp.mjs \
   front -- viewport 1440 900 -- theme dark -- \
   nav /track/2d1c92f6-8ed1-4921-9a70-f71b1ed2e72d/tracking 9000 -- \
   shot $S/shots/after-tracking-dark.png -- \
@@ -83,7 +83,7 @@ Each of these cost a wrong screenshot or a hung run before it was understood.
 
 - **Every override lives only as long as the process.** The clock script, reduced-motion, touch and focus emulation are attached to the DevTools session and vanish when `cdp.mjs` exits. If the page reloads afterwards (Vite does this on its own), the next screenshot shows the real date and the real media settings. Put a whole capture sequence — `nav` through the last `shot` — in one command.
 - **A hidden window stops animations.** Chrome pauses `requestAnimationFrame` for a window covered by other windows, so a Leaflet `flyTo` freezes after its first frame and the map looks wrongly placed. Run `front` first and check it prints `visible`, or use `CDP_MOTION=reduce` when the animation itself is not what you are capturing.
-- **Seeded flights are in the past.** Without a clock shift the tracking page reads "ARRIVAL OVERDUE 15919:51:09". Read the flight's timesheet (`GET /api/v1/flight/:id`) and set `CDP_CLOCK` to a moment in the phase you want to show. AA4912 (`2d1c92f6-8ed1-4921-9a70-f71b1ed2e72d`) is in cruise with mock ADS-B data; `2025-01-01T14:40:07Z` puts it 1h 15m after takeoff. Graphics then carry the footer "Seeded demo flights, shown on the day they fly. Times in UTC."
+- **Seeded flights are in the past.** Without a clock shift the tracking page reads "ARRIVAL OVERDUE 15919:51:09". Read the flight's timesheet (`GET /api/v1/flight/:id`) and set `CDP_CLOCK` to a moment in the phase you want to show. AA4912 (`2d1c92f6-8ed1-4921-9a70-f71b1ed2e72d`) is in cruise with mock ADS-B data generated from its nav log; `2026-01-01T13:51:00Z` is its last reported position, 25 minutes after takeoff at FL330. Graphics then carry the footer "Seeded demo flights, shown on the day they fly. Times in UTC."
 - **The theme is not a media query.** The app's dark mode is Flowbite's `flowbite-theme-mode` in `localStorage`; emulating `prefers-color-scheme` changes nothing. Use `theme`.
 - **Vite reloads a fresh page by itself.** On the first visit after a server start it re-optimises dependencies and reloads ("optimized dependencies changed. reloading" in the server log). A script waiting on a promise in the old document never returns; `cdp.mjs` exits after `CDP_TIMEOUT_MS` instead of hanging. Load the page once and let it settle before a capture run.
 - **High-DPI comes from the screenshot, not the viewport.** A `deviceScaleFactor` override did not survive between runs; `shot` renders a clip at `CDP_SCALE` instead, which always works.
