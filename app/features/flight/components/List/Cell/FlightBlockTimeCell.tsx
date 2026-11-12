@@ -1,7 +1,7 @@
 import React from "react";
 import type { Flight } from "~/features/flight";
 import { actualScheduleOf, airMinutesOf, blockMinutesOf } from "~/features/flight/lib/flightListTimes";
-import { formatDuration } from "~/shared/lib/time";
+import { formatClockDuration } from "~/shared/lib/time";
 
 type Props = {
   flight: Flight;
@@ -11,7 +11,7 @@ export function blockTimeLabelOf(flight: Flight): string {
   const actual = actualScheduleOf(flight);
   if (actual === null) return "block time unavailable";
 
-  return `block ${formatDuration(blockMinutesOf(actual))}, air ${formatDuration(airMinutesOf(actual))}`;
+  return `block ${formatClockDuration(blockMinutesOf(actual))}, air ${formatClockDuration(airMinutesOf(actual))}`;
 }
 
 export function FlightBlockTimeCell({ flight }: Props) {
@@ -24,10 +24,10 @@ export function FlightBlockTimeCell({ flight }: Props) {
   return (
     <span className="block min-w-0 px-1 py-2.5 @xl:px-3">
       <span className="block font-mono text-sm font-bold tabular-nums text-gray-900 dark:text-white">
-        {formatDuration(blockMinutesOf(actual))}
+        {formatClockDuration(blockMinutesOf(actual))}
       </span>
       <span className="mt-0.5 block font-mono text-xs tabular-nums text-gray-500 dark:text-gray-400">
-        Air {formatDuration(airMinutesOf(actual))}
+        air {formatClockDuration(airMinutesOf(actual))}
       </span>
     </span>
   );

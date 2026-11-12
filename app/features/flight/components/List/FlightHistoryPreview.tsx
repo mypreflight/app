@@ -9,7 +9,7 @@ import { TrackingRoute } from "~/features/flight/components/Dashboard/Tracking/H
 import { FlightIdentity } from "~/features/flight/components/FlightIdentity";
 import { CompactFlightMap } from "~/features/flight/components/Map/Box/CompactFlightMap";
 import { useFlightPathCache } from "~/features/flight/hooks/useFlightPathCache";
-import { blockEventRecords, formatSignedMinutes, formatTonnes } from "~/features/flight/lib/flightRecord";
+import { blockEventRecords, describeDeviation, formatTonnes } from "~/features/flight/lib/flightRecord";
 import { historyFlightPath } from "~/features/flight/lib/historyView";
 import { durationMinutes, formatDuration } from "~/shared/lib/time";
 import { FormattedIcaoDate } from "~/shared/ui/Date/FormattedIcaoDate";
@@ -99,7 +99,7 @@ export function FlightHistoryPreview({ flight, className }: Props) {
                   record.deltaMinutes === null ? "text-gray-500 dark:text-gray-400" : deltaTone(record.deltaMinutes),
                 )}
               >
-                {record.deltaMinutes === null ? "—" : formatSignedMinutes(record.deltaMinutes)}
+                {record.deltaMinutes === null ? "—" : describeDeviation(record.deltaMinutes)}
               </dd>
             </div>
           ))}

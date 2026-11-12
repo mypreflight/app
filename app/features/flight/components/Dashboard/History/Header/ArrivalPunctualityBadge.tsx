@@ -20,13 +20,13 @@ function Description({ punctuality }: { punctuality: Punctuality }) {
     case "late":
       return (
         <>
-          <Figure>{`+${punctuality.minutes}m`}</Figure>late
+          <Figure>{`+${punctuality.minutes} min`}</Figure>late
         </>
       );
     case "early":
       return (
         <>
-          <Figure>{`${punctuality.minutes}m`}</Figure>early
+          <Figure>{`${punctuality.minutes} min`}</Figure>early
         </>
       );
   }

@@ -4,8 +4,8 @@ import type { Flight, Loadsheets } from "~/features/flight";
 import {
   type BlockEventRecord,
   blockEventRecords,
+  describeDeviation,
   type FuelRecord,
-  formatSignedMinutes,
   formatSignedTonnes,
   formatTonnes,
   fuelRecord,
@@ -59,7 +59,7 @@ function BlockEventFigure({ record, referenceDay }: { record: BlockEventRecord; 
                 deltaTone(record.deltaMinutes),
               )}
             >
-              {formatSignedMinutes(record.deltaMinutes)}
+              {describeDeviation(record.deltaMinutes)}
             </span>
           )}
         </span>

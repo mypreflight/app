@@ -79,10 +79,10 @@ export function formatSignedTonnes(value: number): string {
   return rounded > 0 ? `+${rounded}` : `−${-rounded}`;
 }
 
-export function formatSignedMinutes(minutes: number): string {
+export function describeDeviation(minutes: number): string {
   if (minutes === 0) {
-    return "0m";
+    return "On time";
   }
 
-  return minutes > 0 ? `+${minutes}m` : `−${-minutes}m`;
+  return minutes > 0 ? `+${minutes} min late` : `${-minutes} min early`;
 }
