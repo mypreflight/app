@@ -49,7 +49,13 @@ import type { GlobeInsets } from "~/shared/lib/globeCamera";
 import { type GlobeOverlay, mergeOverlays } from "~/shared/lib/globeStyle";
 import type { MapCameraView } from "~/shared/lib/mapCameraView";
 import type { MapFocus } from "~/shared/lib/mapFocus";
-import { type GlobeCameraTarget, GlobeMap, type GlobeMarker } from "~/shared/ui/Globe/GlobeMap";
+import {
+  type GlobeCameraState,
+  type GlobeCameraTarget,
+  type GlobeEntryCamera,
+  GlobeMap,
+  type GlobeMarker,
+} from "~/shared/ui/Globe/GlobeMap";
 
 type Props = {
   flight: Flight;
@@ -65,6 +71,9 @@ type Props = {
   focus?: MapFocus | null;
   aircraftLabel?: ReactNode;
   withAirspace?: boolean;
+  entryCamera?: GlobeEntryCamera | null;
+  onCameraChange?: (camera: GlobeCameraState) => void;
+  onReady?: () => void;
 };
 const NO_OVERLAY: GlobeOverlay = { sources: {}, layers: [] };
 
@@ -141,6 +150,9 @@ export function FlightGlobeMap({
   focus = null,
   aircraftLabel,
   withAirspace = false,
+  entryCamera = null,
+  onCameraChange,
+  onReady,
 }: Props) {
   const { computedMode } = useThemeMode();
   const { mapSettings, updateMapSettings, intent } = useMapSettings();
@@ -313,6 +325,9 @@ export function FlightGlobeMap({
       onViewChange={onViewChange}
       focus={focus}
       basemapLabels={firDisplay === "hide"}
+      entryCamera={entryCamera}
+      onCameraChange={onCameraChange}
+      onReady={onReady}
     />
   );
 }

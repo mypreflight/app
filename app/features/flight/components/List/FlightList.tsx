@@ -13,21 +13,9 @@ type Props = {
   onPageChange: (page: number) => void;
   links: FlightListLinks;
   trailingColumn: FlightListTrailingColumn;
-  previewedId?: string | null;
-  onPreview?: (flight: Flight) => void;
 };
 
-export function FlightList({
-  flights,
-  loading,
-  page,
-  totalPages,
-  onPageChange,
-  links,
-  trailingColumn,
-  previewedId = null,
-  onPreview,
-}: Props) {
+export function FlightList({ flights, loading, page, totalPages, onPageChange, links, trailingColumn }: Props) {
   return (
     <RecordList
       layout={trailingColumn.layout}
@@ -37,14 +25,7 @@ export function FlightList({
       onPageChange={onPageChange}
     >
       {flights.map((flight) => (
-        <FlightListRow
-          key={flight.id}
-          flight={flight}
-          links={links}
-          trailingColumn={trailingColumn}
-          previewed={flight.id === previewedId}
-          onPreview={onPreview}
-        />
+        <FlightListRow key={flight.id} flight={flight} links={links} trailingColumn={trailingColumn} />
       ))}
     </RecordList>
   );

@@ -1,4 +1,4 @@
-import React, { type Ref, Suspense, useCallback, useMemo, useRef, useState } from "react";
+import React, { type Ref, Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { HiInformationCircle } from "react-icons/hi";
 import { twMerge } from "tailwind-merge";
 import { MapSettingsProvider } from "~/app-state/useMapSettings";
@@ -9,6 +9,7 @@ import { MapFixCard } from "~/features/flight/components/Map/Box/Overlay/MapFixC
 import { MapOptionsControl } from "~/features/flight/components/Map/Box/Overlay/MapOptionsControl";
 import { MapShareLinks } from "~/features/flight/components/Map/Box/Overlay/MapShareLinks";
 import { VerticalProfile } from "~/features/flight/components/Profile/VerticalProfile";
+import { useFlightHistoryEntry } from "~/features/flight/hooks/useFlightHistoryStage";
 import { useHistoryFlight } from "~/features/flight/hooks/useHistoryFlight";
 import { useMapProjection } from "~/features/flight/hooks/useMapProjection";
 import { HISTORY_MAP_INTENT } from "~/features/flight/lib/historyView";
@@ -19,11 +20,14 @@ import { hasEtopsRings, hasFiledWaypoints } from "~/shared/lib/flightData";
 import type { MapCameraView } from "~/shared/lib/mapCameraView";
 import type { MapFocus } from "~/shared/lib/mapFocus";
 import { FieldLabel } from "~/shared/ui/Display/FieldLabel";
+import { GLOBE_GLIDE_MS } from "~/shared/ui/Globe/GlobeMap";
 
+const REVEAL_MS = 220;
+const REVEAL_FALLBACK_MS = 2500;
+
+const loadFlightRouteGlobeMap = () => import("~/features/flight/components/Map/Box/FlightRouteGlobeMap");
 const FlightRouteGlobeMap = React.lazy(() =>
-  import("~/features/flight/components/Map/Box/FlightRouteGlobeMap").then((module) => ({
-    default: module.FlightRouteGlobeMap,
-  })),
+  loadFlightRouteGlobeMap().then((module) => ({ default: module.FlightRouteGlobeMap })),
 );
 
 type Props = {
@@ -93,12 +97,53 @@ export function HistoryMapBox({ ref, className, topInset }: Props) {
     () => (cursorIndex === null ? flightPath : flightPath.slice(0, cursorIndex + 1)),
     [flightPath, cursorIndex],
   );
+  const entry = useFlightHistoryEntry();
+  const isGlobe = projection === "globe";
+  const handoff = entry?.handoff ?? null;
+  const [handoffCamera, setHandoffCamera] = useState(() =>
+    handoff !== null && handoff.flightId === flight?.id ? handoff.camera : null,
+  );
+  const [isRevealed, setIsRevealed] = useState(handoffCamera === null || !isGlobe);
+  const [isEntering] = useState(handoffCamera !== null);
+  const [isGlobeDeferred, setIsGlobeDeferred] = useState(handoffCamera !== null && isGlobe);
+  const completeHandoff = entry?.completeHandoff;
+  const flightId = flight?.id;
+  const reveal = useCallback(() => {
+    setIsRevealed(true);
+    setHandoffCamera(null);
+    if (flightId !== undefined) window.setTimeout(() => completeHandoff?.(flightId), REVEAL_MS);
+  }, [completeHandoff, flightId]);
+
+  const reportFlightInsets = entry?.reportFlightInsets;
+  useEffect(() => {
+    if (insets.top > 0) reportFlightInsets?.(insets);
+  }, [insets, reportFlightInsets]);
+
+  const handoffStartedAt = handoff?.startedAt;
+  useEffect(() => {
+    if (!isGlobeDeferred) return;
+
+    void loadFlightRouteGlobeMap();
+    const remaining = handoffStartedAt === undefined ? 0 : handoffStartedAt + GLOBE_GLIDE_MS - performance.now();
+    const timer = window.setTimeout(() => setIsGlobeDeferred(false), Math.max(0, remaining));
+    return () => window.clearTimeout(timer);
+  }, [isGlobeDeferred, handoffStartedAt]);
+
+  useEffect(() => {
+    if (handoffCamera === null || isGlobeDeferred) return;
+    if (!isGlobe) {
+      reveal();
+      return;
+    }
+
+    const fallback = window.setTimeout(reveal, REVEAL_FALLBACK_MS);
+    return () => window.clearTimeout(fallback);
+  }, [isGlobe, isGlobeDeferred, handoffCamera, reveal]);
 
   if (!flight) {
     return null;
   }
 
-  const isGlobe = projection === "globe";
   const canShare = flight.tracking !== Tracking.Disabled;
   const mapProps = {
     flight,
@@ -111,18 +156,29 @@ export function HistoryMapBox({ ref, className, topInset }: Props) {
     onFixClick: openFixCard,
     focus: fixFocus,
   };
+  const globeProps = {
+    ...mapProps,
+    entryCamera: handoffCamera,
+    onCameraChange: entry?.rememberFlightCamera,
+    onReady: handoffCamera === null ? undefined : reveal,
+  };
 
   return (
     <div ref={ref} className={twMerge("relative flex flex-col gap-3", className)}>
       <MapSettingsProvider intent={HISTORY_MAP_INTENT}>
         <div
           ref={strip.coverRef}
-          className="relative h-[clamp(24rem,62dvh,40rem)] overflow-hidden rounded-2xl border border-gray-200 md:h-full md:rounded-none md:border-0 dark:border-gray-800"
+          className={twMerge(
+            "relative h-[clamp(24rem,62dvh,40rem)] overflow-hidden rounded-2xl border border-gray-200 transition-opacity duration-200 motion-reduce:transition-none md:h-full md:rounded-none md:border-0 dark:border-gray-800",
+            !isRevealed && "opacity-0",
+          )}
         >
           {isGlobe ? (
-            <Suspense fallback={<div className="h-full w-full animate-pulse bg-gray-100 dark:bg-gray-900" />}>
-              <FlightRouteGlobeMap {...mapProps} />
-            </Suspense>
+            !isGlobeDeferred && (
+              <Suspense fallback={<div className="h-full w-full animate-pulse bg-gray-100 dark:bg-gray-900" />}>
+                <FlightRouteGlobeMap {...globeProps} />
+              </Suspense>
+            )
           ) : (
             <FlightRouteMap {...mapProps} />
           )}
@@ -134,7 +190,12 @@ export function HistoryMapBox({ ref, className, topInset }: Props) {
             onFocus={setFixFocus}
           />
         </div>
-        <div ref={strip.targetRef} className="z-20 md:pointer-events-none md:absolute md:inset-x-0 md:bottom-0 md:pb-6">
+        <div
+          ref={strip.targetRef}
+          data-history-profile=""
+          data-entering={isEntering || undefined}
+          className="z-20 md:pointer-events-none md:absolute md:inset-x-0 md:bottom-0 md:pb-6"
+        >
           <div className="md:mx-auto md:max-w-7xl md:px-6">
             <section
               aria-label="Vertical profile"

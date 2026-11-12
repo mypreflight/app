@@ -9,6 +9,8 @@ export type GlobeCamera = {
 export type GlobeInsets = {
   top: number;
   bottom: number;
+  left?: number;
+  right?: number;
 };
 
 export type GlobeViewport = {
@@ -47,7 +49,8 @@ export function globeCamera(points: LatLngTuple[], { width, height, insets, marg
     return { center: [0, 0], zoom: 0 };
   }
 
-  const visible = Math.max(Math.min(width, height - insets.top - insets.bottom) / 2 - margin, 1);
+  const freeWidth = width - (insets.left ?? 0) - (insets.right ?? 0);
+  const visible = Math.max(Math.min(freeWidth, height - insets.top - insets.bottom) / 2 - margin, 1);
   const cameraDistance = CAMERA_DISTANCE_PER_HEIGHT * height;
   const angle = Math.max(spread.angularRadius, MIN_ANGULAR_RADIUS);
   const wholeGlobe = radiusShowingWholeGlobe(visible, cameraDistance);

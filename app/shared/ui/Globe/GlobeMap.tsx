@@ -26,6 +26,19 @@ export type GlobeMarker = {
   onClick?: () => void;
 };
 
+export type GlobeCameraState = {
+  center: [number, number];
+  zoom: number;
+  bearing: number;
+  pitch: number;
+  padding: { top: number; bottom: number; left: number; right: number };
+};
+
+export type GlobeEntryCamera = {
+  key: string;
+  read: () => GlobeCameraState | null;
+};
+
 export type GlobeCameraTarget =
   | { key: string; kind: "fit"; points: LatLngTuple[]; maxZoom?: number; glideMs?: number }
   | { key: string; kind: "point"; position: LatLngTuple; zoom?: number; glideMs?: number };
@@ -46,6 +59,9 @@ type Props = {
   onViewChange?: (view: MapCameraView) => void;
   focus?: MapFocus | null;
   basemapLabels?: boolean;
+  entryCamera?: GlobeEntryCamera | null;
+  onCameraChange?: (camera: GlobeCameraState) => void;
+  onReady?: () => void;
 };
 
 type PlacedMarker = {
@@ -57,11 +73,15 @@ type CameraState = {
   lastKey: string | null;
   chosenZoom: number | null;
   detached: boolean;
+  glideIn: boolean;
+  gliding: boolean;
 };
 
 const FIT_MARGIN = 32;
 const MAX_ZOOM = 14.5;
-const GLIDE_MS = 900;
+export const GLOBE_GLIDE_MS = 900;
+const GLIDE_MS = GLOBE_GLIDE_MS;
+const SETTLE_TIMEOUT_MS = 1500;
 const HEADING_PROBE_RADIANS = 0.0005;
 const PAN_KEYS = new Set(["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"]);
 const SVG_NAMESPACE = "http://www.w3.org/2000/svg";
@@ -81,7 +101,12 @@ function applyTarget(
   chosenZoom: number | null,
   glide: boolean,
 ) {
-  const padding = { top: insets.top, bottom: target.kind === "fit" ? insets.bottom : 0, left: 0, right: 0 };
+  const padding = {
+    top: insets.top,
+    bottom: target.kind === "fit" ? insets.bottom : 0,
+    left: insets.left ?? 0,
+    right: insets.right ?? 0,
+  };
   let center: [number, number];
   let zoom: number;
 
@@ -105,6 +130,23 @@ function applyTarget(
   } else {
     map.jumpTo({ center, zoom, padding });
   }
+}
+
+function cameraSnapshot(map: MapLibreMap): GlobeCameraState {
+  const { lng, lat } = map.getCenter();
+  const { top, bottom, left, right } = map.getPadding();
+
+  return {
+    center: [lng, lat],
+    zoom: map.getZoom(),
+    bearing: map.getBearing(),
+    pitch: map.getPitch(),
+    padding: { top: top ?? 0, bottom: bottom ?? 0, left: left ?? 0, right: right ?? 0 },
+  };
+}
+
+function cameraOptions({ center, zoom, bearing, pitch, padding }: GlobeCameraState) {
+  return { center, zoom, bearing, pitch, padding };
 }
 
 function screenRotation(map: MapLibreMap, { position, heading, upright }: GlobeMarker): number {
@@ -164,6 +206,28 @@ function createShapeElement(shape: ScreenShape): ScreenElement {
   circle.setAttribute("stroke-opacity", String(shape.strokeOpacity));
   circle.dataset.layer = shape.layer;
   return circle;
+}
+
+function cameraSignature(map: MapLibreMap): string {
+  const { lng, lat } = map.getCenter();
+  const { top, bottom, left, right } = map.getPadding();
+  const canvas = map.getCanvas();
+
+  return [
+    lng,
+    lat,
+    map.getZoom(),
+    map.getBearing(),
+    map.getPitch(),
+    top,
+    bottom,
+    left,
+    right,
+    canvas.width,
+    canvas.height,
+  ]
+    .map(String)
+    .join("|");
 }
 
 function drawScreenShapes(map: MapLibreMap, elements: Map<string, ScreenElement>, shapes: ScreenShape[]) {
@@ -269,6 +333,9 @@ export function GlobeMap({
   onViewChange,
   focus = null,
   basemapLabels = true,
+  entryCamera = null,
+  onCameraChange,
+  onReady,
 }: Props) {
   const { computedMode } = useThemeMode();
   const basemaps = use(loadBasemapStyles()) ?? OFFLINE_BASEMAP_STYLES;
@@ -283,6 +350,8 @@ export function GlobeMap({
   );
   const [initialStyle] = useState(style);
   const [restoredView] = useState(initialView);
+  const [openingEntry] = useState(entryCamera);
+  const [isSettled, setIsSettled] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const [map, setMap] = useState<MapLibreMap | null>(null);
   const latest = useRef({
@@ -295,12 +364,21 @@ export function GlobeMap({
     onFeatureHover,
     onUserPan,
     onViewChange,
+    onCameraChange,
+    onReady,
   });
-  const camera = useRef<CameraState>({ lastKey: null, chosenZoom: null, detached: false });
+  const camera = useRef<CameraState>({
+    lastKey: null,
+    chosenZoom: null,
+    detached: false,
+    glideIn: false,
+    gliding: false,
+  });
   const placed = useRef(new Map<string, PlacedMarker>());
   const screenLayer = useRef<SVGSVGElement | null>(null);
   const screenElements = useRef(new Map<string, ScreenElement>());
   const handledFocus = useRef(focus);
+  const handledEntry = useRef(openingEntry?.key ?? null);
 
   useEffect(() => {
     latest.current = {
@@ -313,6 +391,8 @@ export function GlobeMap({
       onFeatureHover,
       onUserPan,
       onViewChange,
+      onCameraChange,
+      onReady,
     };
   }, [
     target,
@@ -324,6 +404,8 @@ export function GlobeMap({
     onFeatureHover,
     onUserPan,
     onViewChange,
+    onCameraChange,
+    onReady,
   ]);
 
   useEffect(() => {
@@ -351,7 +433,7 @@ export function GlobeMap({
 
     const reframe = () => {
       const { target: current, insets: currentInsets } = latest.current;
-      if (current === null || camera.current.detached) return;
+      if (current === null || camera.current.detached || camera.current.glideIn) return;
       applyTarget(instance, current, currentInsets, camera.current.chosenZoom, false);
     };
 
@@ -367,6 +449,13 @@ export function GlobeMap({
     instance.once("style.load", () => {
       limitZoomOut(instance);
       camera.current.lastKey = latest.current.target?.key ?? null;
+
+      const entryStart = restoredView === null ? (openingEntry?.read() ?? null) : null;
+      if (entryStart !== null) {
+        instance.jumpTo(cameraOptions(entryStart));
+        camera.current.glideIn = true;
+        return;
+      }
 
       if (restoredView === null) {
         const { target: current, initialTarget: opening, insets: currentInsets } = latest.current;
@@ -389,6 +478,7 @@ export function GlobeMap({
       });
     });
     instance.on("moveend", () => {
+      camera.current.gliding = false;
       const width = container.clientWidth;
       const height = container.clientHeight;
       const top = Math.min(latest.current.insets.top, height / 2);
@@ -399,8 +489,21 @@ export function GlobeMap({
       limitZoomOut(instance);
       reframe();
     });
-    instance.on("move", () => refreshMarkers(instance, markersOnMap));
-    instance.on("render", () => drawScreenShapes(instance, shapeElements, latest.current.screenShapes));
+    instance.on("move", () => {
+      refreshMarkers(instance, markersOnMap);
+      latest.current.onCameraChange?.(cameraSnapshot(instance));
+    });
+    let drawnFor: { signature: string; shapes: ScreenShape[] } | null = null;
+    instance.on("render", () => {
+      const shapes = latest.current.screenShapes;
+      if (shapes.length === 0) return;
+
+      const signature = cameraSignature(instance);
+      if (drawnFor !== null && drawnFor.signature === signature && drawnFor.shapes === shapes) return;
+
+      drawnFor = { signature, shapes };
+      drawScreenShapes(instance, shapeElements, shapes);
+    });
     instance.on("dragstart", leaveTarget);
     instance.on("zoomend", (event) => {
       if (event.originalEvent === undefined) return;
@@ -436,9 +539,27 @@ export function GlobeMap({
       });
     }
 
-    instance.once("load", () => setMap(instance));
+    let settleTimer: number | undefined;
+    instance.once("load", () => {
+      setMap(instance);
+
+      const settle = () => {
+        if (settleTimer === undefined) return;
+        window.clearTimeout(settleTimer);
+        settleTimer = undefined;
+        if (camera.current.glideIn) {
+          const entryNow = openingEntry?.read() ?? null;
+          if (entryNow !== null) instance.jumpTo(cameraOptions(entryNow));
+          setIsSettled(true);
+        }
+        latest.current.onReady?.();
+      };
+      settleTimer = window.setTimeout(settle, SETTLE_TIMEOUT_MS);
+      instance.once("idle", settle);
+    });
 
     return () => {
+      window.clearTimeout(settleTimer);
       for (const entry of markersOnMap.values()) {
         entry.marker.remove();
       }
@@ -449,7 +570,7 @@ export function GlobeMap({
       setMap(null);
       instance.remove();
     };
-  }, [initialStyle, restoredView, clickableLayer, interactive]);
+  }, [initialStyle, restoredView, openingEntry, clickableLayer, interactive]);
 
   useEffect(() => {
     map?.setStyle(style);
@@ -467,12 +588,27 @@ export function GlobeMap({
   }, [map, interactive, target, onUserPan]);
 
   useEffect(() => {
-    if (map === null || target === null) {
-      if (target === null) camera.current.lastKey = null;
-      return;
-    }
+    if (map === null) return;
 
     const state = camera.current;
+    let entered = false;
+
+    if (entryCamera !== null && entryCamera.key !== handledEntry.current) {
+      handledEntry.current = entryCamera.key;
+      const start = entryCamera.read();
+      if (start !== null) {
+        map.jumpTo(cameraOptions(start));
+        state.detached = false;
+        entered = true;
+      }
+    }
+
+    if (target === null) {
+      state.lastKey = null;
+      return;
+    }
+    if (state.glideIn && !isSettled) return;
+
     const switched = state.lastKey !== target.key;
 
     if (switched) {
@@ -481,10 +617,19 @@ export function GlobeMap({
     }
     if (state.detached) return;
 
-    const glide = state.lastKey !== null && (switched || target.key === "aircraft");
+    const glide =
+      (state.lastKey !== null && (switched || target.key === "aircraft")) || state.glideIn || state.gliding || entered;
     state.lastKey = target.key;
-    applyTarget(map, target, { top: insets.top, bottom: insets.bottom }, state.chosenZoom, glide);
-  }, [map, target, insets.top, insets.bottom]);
+    state.glideIn = false;
+    applyTarget(
+      map,
+      target,
+      { top: insets.top, bottom: insets.bottom, left: insets.left, right: insets.right },
+      state.chosenZoom,
+      glide,
+    );
+    state.gliding = glide;
+  }, [map, target, insets.top, insets.bottom, insets.left, insets.right, isSettled, entryCamera]);
 
   useEffect(() => {
     if (map === null || focus === null || focus === handledFocus.current) {

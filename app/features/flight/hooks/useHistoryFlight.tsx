@@ -19,16 +19,19 @@ export const HistoryFlightContext = createContext<HistoryFlightContextType | nul
 
 type Props = {
   flightId: string;
+  initialFlight?: Flight | null;
+  initialPath?: FlightPathElement[] | null;
   children: ReactNode;
 };
 
-export function HistoryFlightProvider({ flightId, children }: Props) {
+export function HistoryFlightProvider({ flightId, initialFlight = null, initialPath = null, children }: Props) {
   const { flightService, diversionService } = useApi();
-  const [flight, setFlight] = useState<Flight | null>(null);
+  const [seededPath] = useState(initialPath);
+  const [flight, setFlight] = useState<Flight | null>(initialFlight);
   const [loadsheets, setLoadsheets] = useState<Loadsheets>(NO_LOADSHEETS);
   const [events, setEvents] = useState<FlightEvent[]>([]);
   const [diversion, setDiversion] = useState<Diversion | null>(null);
-  const [flightPath, setFlightPath] = useState<FlightPathElement[]>([]);
+  const [flightPath, setFlightPath] = useState<FlightPathElement[]>(seededPath ?? []);
   const [loading, setLoading] = useState(true);
   const [loadFailed, setLoadFailed] = useState(false);
   const [pathLoadFailed, setPathLoadFailed] = useState(false);
@@ -37,7 +40,7 @@ export function HistoryFlightProvider({ flightId, children }: Props) {
     let cancelled = false;
     setLoading(true);
     setLoadFailed(false);
-    setFlightPath([]);
+    setFlightPath(seededPath ?? []);
     setPathLoadFailed(false);
     flightService
       .fetchById(flightId)
@@ -48,13 +51,15 @@ export function HistoryFlightProvider({ flightId, children }: Props) {
           flightService.fetchEventsByFlightId(flightId),
           f.isFlightDiverted ? diversionService.getByFlight(flightId) : Promise.resolve(null),
           flightService.fetchLoadsheets(flightId),
-          f.hasFlightPath
-            ? flightService.fetchFlightPath(flightId).catch((error) => {
-                console.error("Failed to load the flight path", error);
-                if (!cancelled) setPathLoadFailed(true);
-                return [];
-              })
-            : Promise.resolve([]),
+          seededPath !== null
+            ? Promise.resolve(seededPath)
+            : f.hasFlightPath
+              ? flightService.fetchFlightPath(flightId).catch((error) => {
+                  console.error("Failed to load the flight path", error);
+                  if (!cancelled) setPathLoadFailed(true);
+                  return [];
+                })
+              : Promise.resolve([]),
         ]);
         if (cancelled) return;
         setEvents(e);
@@ -72,7 +77,7 @@ export function HistoryFlightProvider({ flightId, children }: Props) {
     return () => {
       cancelled = true;
     };
-  }, [flightService, diversionService, flightId]);
+  }, [flightService, diversionService, flightId, seededPath]);
 
   return (
     <HistoryFlightContext.Provider

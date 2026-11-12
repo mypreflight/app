@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Defines the single row used by every flight list in the app — what each of its four columns shows, how it adapts between phone and desktop widths, where clicking it goes, and how it is announced to assistive technology. One contract so the upcoming, current, finished and pilot-history lists stay identical in shape while differing only in their trailing column.
+Defines the single row used by every Operations flight list — what each of its four columns shows, how it adapts between phone and desktop widths, where clicking it goes, and how it is announced to assistive technology. One contract so the upcoming, current and finished lists stay identical in shape while differing only in their trailing column. The pilot's flight history is a separate, narrower list beside a globe and does not use this row.
 
 ## Requirements
 
@@ -116,7 +116,7 @@ The row SHALL keep all four columns visible and vertically aligned across widths
 
 ### Requirement: Row navigation with in-row exceptions
 
-The whole row SHALL act as a navigation target opening that flight's detail page — `/flights/{flightId}/overview` on Operations lists, `/flight-history/{flightId}` on the pilot history list — and SHALL do so as a real link, so opening in a new tab, copying the address and modified clicks all behave normally.
+The whole row SHALL act as a navigation target opening that flight's detail page, `/flights/{flightId}/overview`, and SHALL do so as a real link, so opening in a new tab, copying the address and modified clicks all behave normally.
 
 Within the row, the departure and destination IATA codes SHALL link to their airports and the aircraft registration SHALL link to that aircraft, each overriding the row target when clicked. These SHALL also be real links, and no link SHALL be nested inside another.
 
@@ -145,12 +145,10 @@ Within the row, the departure and destination IATA codes SHALL link to their air
 - **WHEN** a flight row renders
 - **THEN** no anchor is a descendant of another anchor
 
-#### Scenario: Targets differ by role
+#### Scenario: In-row targets
 
-- **WHEN** the list is an Operations list
+- **WHEN** a flight row renders
 - **THEN** airport codes open `/airports/{id}` and the registration opens that operator's aircraft page
-- **WHEN** the list is the pilot history list
-- **THEN** airport codes open `/airports-library/{id}` and the registration opens `/aircraft-history/{id}`
 
 ### Requirement: Accessible row naming
 

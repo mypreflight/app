@@ -13,10 +13,3 @@ export const operationsLinks: FlightListLinks = {
   aircraft: (flight) => `/operators/${flight.operator.id}/aircraft/${flight.aircraft.id}`,
   operator: (flight) => `/operators/${flight.operator.id}/fleet`,
 };
-
-export const pilotLinks: FlightListLinks = {
-  flight: (flight) => `/flight-history/${flight.id}`,
-  airport: (airportId) => `/airports-library/${airportId}`,
-  aircraft: (flight) => `/aircraft-history/${flight.aircraft.id}`,
-  operator: () => null,
-};

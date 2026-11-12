@@ -133,7 +133,22 @@ function separateFeature(feature: Feature<Geometry>, parts: PolarParts): Feature
   return [feature];
 }
 
-function separateSource(source: SourceSpecification): { source: SourceSpecification; parts: PolarParts | null } {
+type SeparatedSource = { source: SourceSpecification; parts: PolarParts | null };
+
+const separatedSources = new WeakMap<SourceSpecification, SeparatedSource>();
+
+function separateSource(source: SourceSpecification): SeparatedSource {
+  const cached = separatedSources.get(source);
+  if (cached !== undefined) {
+    return cached;
+  }
+
+  const separated = splitSource(source);
+  separatedSources.set(source, separated);
+  return separated;
+}
+
+function splitSource(source: SourceSpecification): SeparatedSource {
   if (source.type !== "geojson" || !isFeatureCollection(source.data)) {
     return { source, parts: null };
   }
@@ -184,8 +199,9 @@ function lineShape(layer: LayerSpecification, line: PolarLine, index: number): S
   const { paint, layout } = styleOf(layer);
   const color = colorOr(resolve(paint["line-color"], line.properties), "#000000");
   const width = numberOr(resolve(paint["line-width"], line.properties), 1);
+  const opacity = numberOr(resolve(paint["line-opacity"], line.properties), 1);
 
-  if (color === null) {
+  if (color === null || opacity === 0) {
     return null;
   }
 
@@ -196,7 +212,7 @@ function lineShape(layer: LayerSpecification, line: PolarLine, index: number): S
     path: line.path,
     color,
     width,
-    opacity: numberOr(resolve(paint["line-opacity"], line.properties), 1),
+    opacity,
     dash: dashOf(paint["line-dasharray"], width),
     cap: typeof layout["line-cap"] === "string" ? layout["line-cap"] : "butt",
     join: typeof layout["line-join"] === "string" ? layout["line-join"] : "miter",

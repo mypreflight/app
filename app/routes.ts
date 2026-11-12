@@ -22,8 +22,10 @@ export default [
       route("rotations", "routes/pilot/rotations/PilotRotationsRoute.tsx"),
       route("rotations/:rotationId", "routes/pilot/rotations/PilotRotationDetailsRoute.tsx"),
       route("stats", "routes/pilot/stats/PilotStatsRoute.tsx"),
-      route("flight-history", "routes/pilot/history/FlightHistoryListRoute.tsx"),
-      route("flight-history/:id/:view?/:tab?", "routes/pilot/history/FlightHistoryRoute.tsx"),
+      route("flight-history", "routes/pilot/history/FlightHistoryLayout.tsx", [
+        index("routes/pilot/history/FlightHistoryListRoute.tsx"),
+        route(":id/:view?/:tab?", "routes/pilot/history/FlightHistoryRoute.tsx"),
+      ]),
       route("aircraft-history", "routes/pilot/history/AircraftHistoryListRoute.tsx"),
       route("aircraft-history/:id", "routes/pilot/history/AircraftHistoryDetailsRoute.tsx"),
       route("travels", "routes/pilot/travels/TravelLogRoute.tsx"),

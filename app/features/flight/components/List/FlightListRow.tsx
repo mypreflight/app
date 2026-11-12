@@ -11,11 +11,9 @@ type Props = {
   flight: Flight;
   links: FlightListLinks;
   trailingColumn: FlightListTrailingColumn;
-  previewed?: boolean;
-  onPreview?: (flight: Flight) => void;
 };
 
-export function FlightListRow({ flight, links, trailingColumn, previewed, onPreview }: Props) {
+export function FlightListRow({ flight, links, trailingColumn }: Props) {
   const label = `${flight.flightNumber}, ${flight.departureAirport.iataCode} to ${flight.destinationAirport.iataCode}, ${trailingColumn.label(flight)}`;
 
   return (
@@ -24,8 +22,6 @@ export function FlightListRow({ flight, links, trailingColumn, previewed, onPrev
       href={links.flight(flight)}
       label={label}
       trailing={trailingColumn.render(flight)}
-      previewed={previewed}
-      onPreview={onPreview && (() => onPreview(flight))}
     >
       <FlightListDateCell flight={flight} />
       <FlightListFlightCell flight={flight} links={links} />
