@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
 import { MapSettingsProvider } from "~/app-state/useMapSettings";
 import { useAdsbData } from "~/features/adsb/hooks/useAdsbData";
-import type { Flight } from "~/features/flight";
+import { type Flight, type FlightPathElement, isInFlightStatus } from "~/features/flight";
 import { FullScreenMap } from "~/features/flight/components/Map/FullScreen/FullScreenMap";
 import { MapHeader } from "~/features/flight/components/Map/FullScreen/MapHeader";
 import MapSplash from "~/routes/public/MapSplash";
@@ -17,6 +17,7 @@ export default function MapRoute({ params }: Route.ClientLoaderArgs) {
   const [flight, setFlight] = useState<Flight | null>(null);
   const [notFound, setNotFound] = useState<boolean>(false);
   const [showSplash, setShowSplash] = useState<boolean>(true);
+  const [storedPath, setStoredPath] = useState<FlightPathElement[]>([]);
   const hasLoadedFlight = useRef<boolean>(false);
 
   const fetchFlight = useCallback(async () => {
@@ -24,7 +25,7 @@ export default function MapRoute({ params }: Route.ClientLoaderArgs) {
       const flightData = await publicFlightService.fetchById(params.id);
       hasLoadedFlight.current = true;
       setFlight(flightData);
-      if (flightData) {
+      if (flightData && isInFlightStatus(flightData.status)) {
         setCallsign(flightData.callsign);
         await loadFlightPath();
       }
@@ -39,6 +40,19 @@ export default function MapRoute({ params }: Route.ClientLoaderArgs) {
   useEffect(() => {
     fetchFlight().then();
   }, [fetchFlight]);
+
+  const flightId = flight?.id;
+  const inFlight = flight ? isInFlightStatus(flight.status) : false;
+  const hasStoredPath = flight?.hasFlightPath ?? false;
+
+  useEffect(() => {
+    if (!flightId || inFlight || !hasStoredPath) return;
+
+    publicFlightService
+      .fetchFlightPath(flightId)
+      .then(setStoredPath)
+      .catch((error: unknown) => console.error("Error fetching flight path:", error));
+  }, [flightId, inFlight, hasStoredPath, publicFlightService]);
 
   useEffect(() => {
     if (!flight) return;
@@ -81,7 +95,7 @@ export default function MapRoute({ params }: Route.ClientLoaderArgs) {
   return (
     <div className="relative h-dvh-safe w-full overflow-hidden bg-gray-200 dark:bg-gray-950">
       <MapSettingsProvider>
-        <FullScreenMap flight={flight} path={flightPath} />
+        <FullScreenMap flight={flight} path={inFlight ? flightPath : storedPath} />
       </MapSettingsProvider>
       <MapHeader />
     </div>

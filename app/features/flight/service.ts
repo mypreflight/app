@@ -292,6 +292,10 @@ export class PublicFlightService extends AbstractApiService {
     return new Flight(response);
   }
 
+  async fetchFlightPath(id: string): Promise<FlightPathElement[]> {
+    return this.request<FlightPathElement[]>(`/api/v1/flight/${id}/path`);
+  }
+
   async fetchOfpByFlightId(id: string): Promise<FlightOfp> {
     return this.request<FlightOfp>(`/api/v1/flight/${id}/ofp`);
   }

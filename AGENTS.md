@@ -258,6 +258,7 @@ MapLibre loads lazily (`LazyFlightGlobeMap` and the per-map `React.lazy` imports
   timed return to the target. This holds on both renderers (`MapEventsHandler`, `GlobeMap`).
 - **Runway markings:** threshold bars are drawn only once a bar is at least 2.5 device pixels wide; below that each
   threshold shows one band at the bars' average tone, which removes the moiré of sub-pixel stripes.
+- **Flown path:** the Tracking view and the public flight page poll the live ADS-B server (`useAdsbData`, by callsign) only while the flight is taxiing out, in cruise or taxiing in. Otherwise the public flight page and flight history draw the path the API stored (`GET /api/v1/flight/:id/path`, open without sign-in unless tracking is disabled), because the live server forgets a callsign soon after the flight.
 - **FIR boundaries:** the Tracking view, flight history, the public flight page and the Operations route map draw FIRs
   when Map options says so, flat and globe, through the same MapLibre layers (`firBoundaryOverlay`): the Leaflet maps add them to the
   vector basemap's style (`MapTileLayer withAirspace`), the globe to its overlay (`FlightGlobeMap withAirspace`). Other
