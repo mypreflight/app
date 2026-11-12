@@ -1,13 +1,13 @@
-import React, { type Ref, Suspense, useCallback, useRef, useState } from "react";
+import React, { type Ref, Suspense, useCallback, useMemo, useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { type MapIntent, MapSettingsProvider } from "~/app-state/useMapSettings";
 import { useAdsbData } from "~/features/adsb/hooks/useAdsbData";
 import { Tracking } from "~/features/flight";
+import { FlightRouteMap } from "~/features/flight/components/Map/Box/FlightRouteMap";
 import { LiveTelemetry } from "~/features/flight/components/Map/Box/Overlay/LiveTelemetry";
+import { MapFixCard } from "~/features/flight/components/Map/Box/Overlay/MapFixCard";
 import { MapOptionsControl } from "~/features/flight/components/Map/Box/Overlay/MapOptionsControl";
 import { MapShareLinks } from "~/features/flight/components/Map/Box/Overlay/MapShareLinks";
-import { TrackingFixCard } from "~/features/flight/components/Map/Box/Overlay/TrackingFixCard";
-import { TrackingFlightMap } from "~/features/flight/components/Map/Box/TrackingFlightMap";
 import { useMapProjection } from "~/features/flight/hooks/useMapProjection";
 import { useTrackedFlight } from "~/features/flight/hooks/useTrackedFlight";
 import { usePlannedRoute } from "~/features/route/hooks/useRouteBriefing";
@@ -16,11 +16,13 @@ import type { MapCameraView } from "~/shared/lib/mapCameraView";
 import type { MapFocus } from "~/shared/lib/mapFocus";
 import type { ContainerClassProps } from "~/shared/ui/Layout/Container";
 
-const TrackingGlobeMap = React.lazy(() =>
-  import("~/features/flight/components/Map/Box/TrackingGlobeMap").then((module) => ({
-    default: module.TrackingGlobeMap,
+const FlightRouteGlobeMap = React.lazy(() =>
+  import("~/features/flight/components/Map/Box/FlightRouteGlobeMap").then((module) => ({
+    default: module.FlightRouteGlobeMap,
   })),
 );
+
+const BOTTOM_BAR_HEIGHT = 88;
 
 type MapBoxProps = ContainerClassProps & {
   ref?: Ref<HTMLDivElement>;
@@ -29,7 +31,7 @@ type MapBoxProps = ContainerClassProps & {
 };
 
 export function MapBox({ ref, className, mapIntent, topInset }: MapBoxProps) {
-  const { flight } = useTrackedFlight();
+  const { flight, diversion } = useTrackedFlight();
   const { flightPath } = useAdsbData();
   const plannedRoute = usePlannedRoute();
   const [projection, setProjection] = useMapProjection("map-projection.tracking");
@@ -40,6 +42,7 @@ export function MapBox({ ref, className, mapIntent, topInset }: MapBoxProps) {
   }, []);
   const [isFixCardOpen, setIsFixCardOpen] = useState(false);
   const [fixFocus, setFixFocus] = useState<MapFocus | null>(null);
+  const insets = useMemo(() => ({ top: topInset, bottom: BOTTOM_BAR_HEIGHT }), [topInset]);
   const selectFix = plannedRoute?.select;
   const openFixCard = useCallback(
     (ordinal: number) => {
@@ -61,8 +64,11 @@ export function MapBox({ ref, className, mapIntent, topInset }: MapBoxProps) {
       <MapSettingsProvider intent={mapIntent}>
         {isGlobe ? (
           <Suspense fallback={<div className="h-full w-full animate-pulse bg-gray-100 dark:bg-gray-900" />}>
-            <TrackingGlobeMap
-              topInset={topInset}
+            <FlightRouteGlobeMap
+              flight={flight}
+              diversion={diversion}
+              flightPath={flightPath}
+              insets={insets}
               initialView={view.current}
               onViewChange={rememberView}
               onFixClick={openFixCard}
@@ -70,17 +76,21 @@ export function MapBox({ ref, className, mapIntent, topInset }: MapBoxProps) {
             />
           </Suspense>
         ) : (
-          <TrackingFlightMap
-            topInset={topInset}
+          <FlightRouteMap
+            flight={flight}
+            diversion={diversion}
+            flightPath={flightPath}
+            insets={insets}
             initialView={view.current}
             onViewChange={rememberView}
             onFixClick={openFixCard}
             focus={fixFocus}
           />
         )}
-        <TrackingFixCard
+        <MapFixCard
           isOpen={isFixCardOpen}
           topInset={topInset}
+          bottomInset={BOTTOM_BAR_HEIGHT}
           onClose={() => setIsFixCardOpen(false)}
           onFocus={setFixFocus}
         />

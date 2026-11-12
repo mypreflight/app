@@ -8,10 +8,11 @@ import { formatDuration } from "~/shared/lib/time";
 type Props = {
   flight: Flight;
   diverted: boolean;
+  showsBlockTime?: boolean;
   className?: string;
 };
 
-export function TrackingRoute({ flight, diverted, className }: Props) {
+export function TrackingRoute({ flight, diverted, showsBlockTime = true, className }: Props) {
   const block = blockTimeSummary(flight.timesheet);
   const blockTime = formatDuration(block.minutes);
   const scheduledBlockTime = formatDuration(block.scheduledMinutes);
@@ -25,16 +26,18 @@ export function TrackingRoute({ flight, diverted, className }: Props) {
           className="absolute inset-x-0 top-1/2 border-t border-dashed border-gray-300 dark:border-gray-600"
           aria-hidden={true}
         />
-        <span
-          title="Block time"
-          className="relative flex flex-col items-center bg-white px-2 leading-tight dark:bg-gray-900"
-        >
-          <span className="sr-only">Block time</span>
-          <BlockTime provenance={primaryProvenance} value={blockTime} emphasised />
-          {blockTime !== scheduledBlockTime && (
-            <BlockTime provenance="scheduled" value={scheduledBlockTime} emphasised={false} />
-          )}
-        </span>
+        {showsBlockTime && (
+          <span
+            title="Block time"
+            className="relative flex flex-col items-center bg-white px-2 leading-tight dark:bg-gray-900"
+          >
+            <span className="sr-only">Block time</span>
+            <BlockTime provenance={primaryProvenance} value={blockTime} emphasised />
+            {blockTime !== scheduledBlockTime && (
+              <BlockTime provenance="scheduled" value={scheduledBlockTime} emphasised={false} />
+            )}
+          </span>
+        )}
       </div>
       <AirportColumn
         iata={flight.destinationAirport.iataCode}

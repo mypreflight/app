@@ -1,13 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router";
 import { useDataRefresh } from "~/app-state/useDataRefresh";
 import { type Flight, FlightPhase } from "~/features/flight";
+import { FlightHistoryPreview } from "~/features/flight/components/List/FlightHistoryPreview";
 import { FlightList } from "~/features/flight/components/List/FlightList";
 import { blockTimeColumn } from "~/features/flight/components/List/FlightListColumns";
 import { pilotLinks } from "~/features/flight/components/List/FlightListLinks";
 import { useApi } from "~/shared/api/useApi";
 
 const PAGE_SIZE = 10;
+const PREVIEW_DELAY_MS = 120;
 
 export function PilotFlightHistoryList() {
   const { flightService } = useApi();
@@ -17,6 +19,15 @@ export function PilotFlightHistoryList() {
   const [loading, setLoading] = useState(true);
   const [searchParams, setSearchParams] = useSearchParams();
   const page = Number.parseInt(searchParams.get("page") ?? "1", 10);
+  const [previewedId, setPreviewedId] = useState<string | null>(null);
+  const previewTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => () => clearTimeout(previewTimer.current ?? undefined), []);
+
+  const preview = (flight: Flight) => {
+    clearTimeout(previewTimer.current ?? undefined);
+    previewTimer.current = setTimeout(() => setPreviewedId(flight.id), PREVIEW_DELAY_MS);
+  };
 
   useEffect(() => {
     let cancelled = false;
@@ -51,15 +62,22 @@ export function PilotFlightHistoryList() {
     );
   }
 
+  const previewed = flights.find((flight) => flight.id === previewedId) ?? flights[0] ?? null;
+
   return (
-    <FlightList
-      flights={flights}
-      loading={loading}
-      page={page}
-      totalPages={Math.ceil(totalCount / PAGE_SIZE)}
-      onPageChange={onPageChange}
-      links={pilotLinks}
-      trailingColumn={blockTimeColumn}
-    />
+    <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_22rem]">
+      <FlightList
+        flights={flights}
+        loading={loading}
+        page={page}
+        totalPages={Math.ceil(totalCount / PAGE_SIZE)}
+        onPageChange={onPageChange}
+        links={pilotLinks}
+        trailingColumn={blockTimeColumn}
+        previewedId={previewed?.id ?? null}
+        onPreview={preview}
+      />
+      {previewed !== null && <FlightHistoryPreview flight={previewed} className="hidden lg:flex lg:sticky lg:top-6" />}
+    </div>
   );
 }

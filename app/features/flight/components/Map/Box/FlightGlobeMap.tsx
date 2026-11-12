@@ -55,6 +55,7 @@ type Props = {
   flight: Flight;
   diversion?: Diversion | null;
   flightPath: FlightPathElement[];
+  aircraftPath?: FlightPathElement[];
   plannedRoute?: RouteBriefingState | null;
   layoutServices: AirportLayoutServices;
   insets: GlobeInsets;
@@ -130,6 +131,7 @@ export function FlightGlobeMap({
   flight,
   diversion = null,
   flightPath,
+  aircraftPath = flightPath,
   plannedRoute = null,
   layoutServices,
   insets,
@@ -233,8 +235,8 @@ export function FlightGlobeMap({
   );
 
   const markers = useMemo(() => {
-    const aircraft = aircraftGlobeMarker(flightPath);
-    const label = aircraftLabelHtml === null ? null : aircraftLabelGlobeMarker(flightPath, aircraftLabelHtml);
+    const aircraft = aircraftGlobeMarker(aircraftPath);
+    const label = aircraftLabelHtml === null ? null : aircraftLabelGlobeMarker(aircraftPath, aircraftLabelHtml);
 
     return [
       ...airportLayoutGlobeMarkers(airportScenes),
@@ -256,7 +258,7 @@ export function FlightGlobeMap({
     showsEtopsRings,
     routeEmphasis,
     ringsEmphasis,
-    flightPath,
+    aircraftPath,
     aircraftLabelHtml,
     hoveredFix,
     onFixClick,

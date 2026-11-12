@@ -1,3 +1,4 @@
+import type { LatLngTuple } from "leaflet";
 import { fn } from "storybook/test";
 import {
   Flight,
@@ -12,6 +13,7 @@ import type { TrackedFlightContextType } from "~/features/flight/hooks/useTracke
 import { airportRoute } from "~/features/flight/lib/flightMapBounds";
 import type { ApiFlightResponse } from "~/features/flight/request";
 import type { GsxSettingsResponse } from "~/features/user/request";
+import { greatCirclePath } from "~/shared/lib/greatCircle";
 import bostonPhiladelphia from "./boston-philadelphia.json";
 import bostonPhiladelphiaTrack from "./boston-philadelphia-track.json";
 import frankfurtNewYork from "./frankfurt-new-york.json";
@@ -159,6 +161,98 @@ export function syntheticTrack(flight: Flight, fraction: number, points = 40): F
     groundSpeed: 480,
     isOnGround: false,
   }));
+}
+
+const CLIMB_MINUTES = 26;
+const DESCENT_MINUTES = 32;
+const INITIAL_CRUISE = 35_000;
+const FINAL_CRUISE = 37_000;
+
+function between(from: number, to: number, fraction: number): number {
+  return from + (to - from) * Math.min(Math.max(fraction, 0), 1);
+}
+
+function initialBearing([fromLatitude, fromLongitude]: LatLngTuple, [toLatitude, toLongitude]: LatLngTuple): number {
+  const radians = Math.PI / 180;
+  const deltaLongitude = (toLongitude - fromLongitude) * radians;
+  const y = Math.sin(deltaLongitude) * Math.cos(toLatitude * radians);
+  const x =
+    Math.cos(fromLatitude * radians) * Math.sin(toLatitude * radians) -
+    Math.sin(fromLatitude * radians) * Math.cos(toLatitude * radians) * Math.cos(deltaLongitude);
+
+  return (((Math.atan2(y, x) / radians) % 360) + 360) % 360;
+}
+
+function groundPoint(flight: Flight, [latitude, longitude]: LatLngTuple, at: Date): FlightPathElement {
+  return {
+    callsign: flight.callsign,
+    date: at.toISOString(),
+    latitude,
+    longitude,
+    altitude: 0,
+    groundSpeed: 14,
+    isOnGround: true,
+  };
+}
+
+export function flownTrack(flight: Flight, waypoints?: LatLngTuple[], points = 180): FlightPathElement[] {
+  const { actual } = flight.timesheet;
+  const takeoff = actual?.takeoffTime?.getTime();
+  const arrival = actual?.arrivalTime?.getTime();
+
+  if (takeoff === undefined || arrival === undefined || !actual?.offBlockTime || !actual.onBlockTime) {
+    return [];
+  }
+
+  const route =
+    waypoints === undefined
+      ? airportRoute(flight.departureAirport, flight.destinationAirport)
+      : greatCirclePath(waypoints);
+  const total = (arrival - takeoff) / MINUTE;
+  const stepAt = total * 0.55;
+  const descentAt = total - DESCENT_MINUTES;
+
+  const positionAt = (fraction: number) => route[Math.round(Math.min(Math.max(fraction, 0), 1) * (route.length - 1))];
+
+  const airborne = Array.from({ length: points }, (_, index): FlightPathElement => {
+    const fraction = index / (points - 1);
+    const minutes = fraction * total;
+    const [latitude, longitude] = positionAt(fraction);
+    const [nextLatitude, nextLongitude] = positionAt(fraction + 1 / points);
+    const climbing = minutes < CLIMB_MINUTES;
+    const descending = minutes > descentAt;
+    const cruise = minutes < stepAt ? INITIAL_CRUISE : FINAL_CRUISE;
+
+    return {
+      callsign: flight.callsign,
+      date: new Date(takeoff + minutes * MINUTE).toISOString(),
+      latitude,
+      longitude,
+      altitude: Math.round(
+        climbing
+          ? between(800, INITIAL_CRUISE, minutes / CLIMB_MINUTES)
+          : descending
+            ? between(FINAL_CRUISE, 600, (minutes - descentAt) / DESCENT_MINUTES)
+            : cruise,
+      ),
+      groundSpeed: Math.round(
+        climbing
+          ? between(165, 455, minutes / CLIMB_MINUTES)
+          : descending
+            ? between(455, 145, (minutes - descentAt) / DESCENT_MINUTES)
+            : 478 + 22 * Math.sin(fraction * 11),
+      ),
+      verticalRate: climbing ? 2_400 : descending ? -1_900 : 0,
+      track: Math.round(initialBearing([latitude, longitude], [nextLatitude, nextLongitude])),
+      isOnGround: false,
+    };
+  });
+
+  return [
+    groundPoint(flight, route[0], actual.offBlockTime),
+    ...airborne,
+    groundPoint(flight, route[route.length - 1], actual.onBlockTime),
+  ];
 }
 
 export function livePositionEvents(): FlightEvent[] {

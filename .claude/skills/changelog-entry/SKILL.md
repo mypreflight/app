@@ -105,7 +105,7 @@ Use the `app-screenshots` skill in this repo. Its Discord graphics and this entr
 - Never fake the UI or edit a rendered value. If demo data looks broken, fix the data.
 - If a shot needs a typed value, type it against the local API only and say so in `footnote`. Open dialogs and cancel them, and say that too. Nothing else goes in a footnote: demo data, the shifted clock and UTC are how every shot is made, not news to the reader.
 
-Good subjects in the seed: AA4912 (`2d1c92f6-8ed1-4921-9a70-f71b1ed2e72d`), Boston to Philadelphia, in cruise with a planned route at `CDP_CLOCK=2025-01-01T14:40:07Z`; LH102 (`1e9f4176-188f-41a5-a9d1-25a96579f46d`), New York JFK to Frankfurt, for long-haul maps at the same clock; the cabin crew dashboard at `2025-01-01T12:20:00Z`.
+Good subjects in the seed: AA4912 (`2d1c92f6-8ed1-4921-9a70-f71b1ed2e72d`), Boston to Philadelphia, in cruise with a planned route at `CDP_CLOCK=2026-01-01T13:51:00Z`; LH102 (`1e9f4176-188f-41a5-a9d1-25a96579f46d`), New York JFK to Frankfurt, for long-haul maps at `2026-01-01T14:17:00Z`; the cabin crew dashboard at `2026-01-01T12:20:00Z`. Finished flights such as AA4917 (`d085c107-308d-48e6-9c93-beca6552a8a3`) and LH40 (`48760636-9520-4863-b32f-f3618556feb7`) need no clock for flight history.
 
 Encode to AVIF and name the files after their role:
 

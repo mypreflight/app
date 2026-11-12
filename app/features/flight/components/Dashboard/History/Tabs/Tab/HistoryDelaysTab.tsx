@@ -38,7 +38,7 @@ export function HistoryDelaysTab({ flightId }: Props) {
   }, [delayService, flightId]);
 
   return (
-    <div className="mt-4 flex flex-col gap-4">
+    <div className="flex flex-col gap-4">
       <Container padding="condensed" header={<CardHeader title="Delay allocation" />}>
         {loading ? (
           <p className="text-sm text-gray-500 dark:text-gray-400">Loading…</p>
