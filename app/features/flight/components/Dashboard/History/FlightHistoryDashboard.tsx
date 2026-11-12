@@ -13,6 +13,7 @@ import { HistoryOfpTab } from "~/features/flight/components/Dashboard/History/Ta
 import { HistoryPassengersTab } from "~/features/flight/components/Dashboard/History/Tabs/Tab/HistoryPassengersTab";
 import { HistoryRouteTab } from "~/features/flight/components/Dashboard/History/Tabs/Tab/HistoryRouteTab";
 import { HistoryRunwayAnalysisTab } from "~/features/flight/components/Dashboard/History/Tabs/Tab/HistoryRunwayAnalysisTab";
+import { useFlightHistoryEntry } from "~/features/flight/hooks/useFlightHistoryStage";
 import { useHistoryFlight } from "~/features/flight/hooks/useHistoryFlight";
 import {
   defaultHistoryTab,
@@ -61,6 +62,8 @@ type Props = {
 
 export function FlightHistoryDashboard({ flightId, viewSlug, tabSlug }: Props) {
   const { flight, diversion, loadsheets, loadFailed } = useHistoryFlight();
+  const entry = useFlightHistoryEntry();
+  const [isEntering] = useState(entry?.handoff?.flightId === flightId);
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const isSimbriefAvailable = flight?.source === FlightSource.SimBrief;
@@ -108,7 +111,12 @@ export function FlightHistoryDashboard({ flightId, viewSlug, tabSlug }: Props) {
     <RouteBriefingProvider flight={flight}>
       <div data-full-bleed={isHistoryView || undefined} className={isHistoryView ? MAP_OVERLAY : undefined}>
         <div className={isHistoryView ? MAP_OVERLAY_COLUMN : undefined}>
-          <div ref={mapCover.coverRef} className="mb-4 flex flex-col gap-3">
+          <div
+            ref={mapCover.coverRef}
+            data-history-cards=""
+            data-entering={isEntering || undefined}
+            className="mb-4 flex flex-col gap-3"
+          >
             <FlightHistoryHeader flight={flight} diversion={diversion} views={views} activeView={view} />
             <FlightRecordCard
               flight={flight}

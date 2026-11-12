@@ -6,6 +6,7 @@ import { usePlannedRoute } from "~/features/route/hooks/useRouteBriefing";
 import type { GlobeInsets } from "~/shared/lib/globeCamera";
 import type { MapCameraView } from "~/shared/lib/mapCameraView";
 import type { MapFocus } from "~/shared/lib/mapFocus";
+import type { GlobeCameraState, GlobeEntryCamera } from "~/shared/ui/Globe/GlobeMap";
 
 type Props = {
   flight: Flight;
@@ -17,6 +18,9 @@ type Props = {
   onViewChange: (view: MapCameraView) => void;
   onFixClick: (ordinal: number) => void;
   focus: MapFocus | null;
+  entryCamera?: GlobeEntryCamera | null;
+  onCameraChange?: (camera: GlobeCameraState) => void;
+  onReady?: () => void;
 };
 
 export function FlightRouteGlobeMap({
@@ -29,6 +33,9 @@ export function FlightRouteGlobeMap({
   onViewChange,
   onFixClick,
   focus,
+  entryCamera,
+  onCameraChange,
+  onReady,
 }: Props) {
   const plannedRoute = usePlannedRoute();
   const layoutServices = useAuthorizedLayoutServices();
@@ -47,6 +54,9 @@ export function FlightRouteGlobeMap({
       onFixClick={onFixClick}
       focus={focus}
       withAirspace={true}
+      entryCamera={entryCamera}
+      onCameraChange={onCameraChange}
+      onReady={onReady}
     />
   );
 }

@@ -1009,3 +1009,48 @@ button:not(:disabled),
   outline: 1px solid var(--image-outline);
   outline-offset: -1px;
 }
+
+/* Flight history: the flight cards on the way in from the list, and out by the breadcrumb (View Transitions) */
+[data-history-cards] {
+  view-transition-name: history-cards;
+}
+[data-history-profile] {
+  view-transition-name: history-profile;
+}
+[data-history-cards][data-entering] > * {
+  animation: history-cards-in 420ms cubic-bezier(0.16, 1, 0.3, 1) 60ms both;
+}
+[data-history-profile][data-entering] > * {
+  animation: history-profile-in 420ms cubic-bezier(0.16, 1, 0.3, 1) 120ms both;
+}
+::view-transition-old(history-cards):only-child,
+::view-transition-old(history-profile):only-child {
+  animation: history-fade-out 200ms ease-in both;
+}
+@keyframes history-cards-in {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+}
+@keyframes history-profile-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+@keyframes history-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-history-cards][data-entering] > *,
+  [data-history-profile][data-entering] > * {
+    animation: none;
+  }
+  ::view-transition-old(history-cards),
+  ::view-transition-old(history-profile) {
+    animation-duration: 0.01ms;
+  }
+}

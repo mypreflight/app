@@ -78,7 +78,7 @@ On CabinCrew screens, wherever an aircraft registration is displayed, it SHALL b
 
 #### Scenario: CabinCrew activates a registration
 
-- **WHEN** a CabinCrew user activates an aircraft registration on any screen (flight history list, flight history detail, dashboard, live tracking, or the aircraft history table)
+- **WHEN** a CabinCrew user activates an aircraft registration on any screen (flight history detail, dashboard, live tracking, or the aircraft history table)
 - **THEN** the app navigates to `/aircraft-history/{aircraftId}` for that aircraft
 
 #### Scenario: Non-CabinCrew sees plain text
