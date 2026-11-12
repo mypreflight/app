@@ -300,7 +300,8 @@ MapLibre loads lazily (`LazyFlightGlobeMap` and the per-map `React.lazy` imports
 
 The service worker answers every navigation with its precached `index.html` until a new version activates, which
 happens when every tab is closed, when a hidden tab applies the waiting update, or from the installed app's update
-toast (`app/shared/pwa/UpdatePrompt.tsx`). After a deploy the old shell still points at the previous build's hashed
+notice (`app/shared/pwa/UpdatePrompt.tsx`, `UpdateNotice`: a card centred at the bottom with What's new, which opens
+the website changelog, and Reload). After a deploy the old shell still points at the previous build's hashed
 chunks, and GitHub Pages no longer serves them. When a route module fails to import, React Router calls
 `window.location.reload()` with no guard, the stale shell is served again, and the page reloads forever. Chrome also
 keeps postponing the update check while the page navigates, so the new version never gets to wait, let alone activate.

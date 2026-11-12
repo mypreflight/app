@@ -1,8 +1,7 @@
 import { useRegisterSW } from "virtual:pwa-register/react";
 import { useEffect } from "react";
-import { toast } from "react-toastify";
 import { useInstalledApp } from "~/shared/hooks/useInstalledApp";
-import { UpdateToast } from "./UpdateToast";
+import { UpdateNotice } from "./UpdateNotice";
 
 const updateCheckIntervalMs = 60_000;
 
@@ -48,17 +47,6 @@ function applyUpdateOnceHidden(applyUpdate: () => void): (() => void) | undefine
   return () => document.removeEventListener("visibilitychange", applyIfHidden);
 }
 
-function showUpdateToast(applyUpdate: () => void) {
-  toast.info(<UpdateToast onReload={applyUpdate} />, {
-    toastId: "pwa-update",
-    icon: false,
-    autoClose: false,
-    closeOnClick: false,
-    closeButton: false,
-    draggable: false,
-  });
-}
-
 export function UpdatePrompt() {
   const isInstalledApp = useInstalledApp();
   const {
@@ -71,15 +59,16 @@ export function UpdatePrompt() {
       return;
     }
 
-    const applyUpdate = () => updateServiceWorker(true);
-
     if (isInstalledApp) {
-      showUpdateToast(applyUpdate);
       return;
     }
 
-    return applyUpdateOnceHidden(applyUpdate);
+    return applyUpdateOnceHidden(() => updateServiceWorker(true));
   }, [needRefresh, isInstalledApp, updateServiceWorker]);
 
-  return null;
+  if (!needRefresh || !isInstalledApp) {
+    return null;
+  }
+
+  return <UpdateNotice onReload={() => updateServiceWorker(true)} />;
 }
