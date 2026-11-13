@@ -75,7 +75,8 @@ const layerRows: { key: LayerKey; label: string; icon: IconType }[] = [
 
 const airspaceRows: MatrixRow<AirspaceKey>[] = [
   { key: "firDisplay", label: "FIRs", icon: LuHexagon },
-  { key: "oceanicTrackDisplay", label: "PACOTS", icon: LuWaypoints },
+  { key: "natDisplay", label: "NATs", icon: LuWaypoints },
+  { key: "pacotsDisplay", label: "PACOTS", icon: LuWaypoints },
 ];
 
 const flightDataOptions: { value: FlightDataDisplay; label: string }[] = [
@@ -407,7 +408,7 @@ export function MapOptionsControl({
           , {VATSPY_DATA_PROJECT.license}
         </p>
       )}
-      {mapSettings.oceanicTrackDisplay !== "hide" && <OceanicTrackKey />}
+      {(mapSettings.natDisplay !== "hide" || mapSettings.pacotsDisplay !== "hide") && <OceanicTrackKey />}
     </div>,
   ];
 
