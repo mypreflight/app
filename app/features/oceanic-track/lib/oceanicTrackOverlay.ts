@@ -2,7 +2,7 @@ import type { LatLngTuple } from "leaflet";
 import type { ExpressionSpecification, LayerSpecification } from "maplibre-gl";
 import type { FlightDataDisplay } from "~/app-state/useMapSettings";
 import { trackArrows } from "~/features/oceanic-track/lib/trackArrows";
-import type { OceanicTrack, OceanicTrackFix } from "~/features/oceanic-track/model";
+import type { OceanicTrack, OceanicTrackFix, OceanicTrackSystem } from "~/features/oceanic-track/model";
 import { OceanicDirection } from "~/features/route/model";
 import { emphasisOf } from "~/shared/lib/flightData";
 import { type GlobeOverlay, type GlobePoint, lineSource, pointSource } from "~/shared/lib/globeStyle";
@@ -54,6 +54,12 @@ const palette: Record<BasemapTheme, Palette> = {
 
 const NO_OVERLAY: GlobeOverlay = { sources: {}, layers: [] };
 
+export type OceanicTrackDisplays = Record<OceanicTrackSystem, FlightDataDisplay>;
+
+const emphasis: ExpressionSpecification = ["get", "emphasis"];
+
+const SHOWN: (FlightDataDisplay | undefined)[] = ["show", "dim"];
+
 const lineWidth: ExpressionSpecification = ["interpolate", ["linear"], ["zoom"], 2, 1.4, 6, 2, 10, 2.6];
 
 const fixRadius: ExpressionSpecification = ["interpolate", ["linear"], ["zoom"], FIX_MIN_ZOOM, 2, 8, 3.5];
@@ -78,21 +84,26 @@ function position({ latitude, longitude }: OceanicTrackFix): LatLngTuple {
   return [latitude, longitude];
 }
 
-function uniqueFixes(tracks: OceanicTrack[]): GlobePoint[] {
+function uniqueFixes(tracks: OceanicTrack[], displays: OceanicTrackDisplays): GlobePoint[] {
   const fixes = new Map<string, GlobePoint>();
 
-  for (const fix of tracks.flatMap((track) => track.fixes)) {
-    const key = `${fix.ident}:${fix.latitude.toFixed(3)}:${fix.longitude.toFixed(3)}`;
+  for (const track of tracks) {
+    for (const fix of track.fixes) {
+      const key = `${fix.ident}:${fix.latitude.toFixed(3)}:${fix.longitude.toFixed(3)}`;
 
-    if (!fixes.has(key)) {
-      fixes.set(key, { position: position(fix), properties: { name: fix.ident } });
+      if (!fixes.has(key)) {
+        fixes.set(key, {
+          position: position(fix),
+          properties: { name: fix.ident, emphasis: emphasisOf(displays[track.system]) },
+        });
+      }
     }
   }
 
   return [...fixes.values()];
 }
 
-function trackLine(theme: BasemapTheme, emphasis: number): LayerSpecification {
+function trackLine(theme: BasemapTheme): LayerSpecification {
   return {
     id: "oceanic-track-line",
     type: "line",
@@ -101,12 +112,12 @@ function trackLine(theme: BasemapTheme, emphasis: number): LayerSpecification {
     paint: {
       "line-color": byDirection(theme, "line"),
       "line-width": lineWidth,
-      "line-opacity": LINE_OPACITY * emphasis,
+      "line-opacity": ["*", LINE_OPACITY, emphasis],
     },
   };
 }
 
-function trackName(theme: BasemapTheme, emphasis: number): LayerSpecification {
+function trackName(theme: BasemapTheme): LayerSpecification {
   return {
     id: "oceanic-track-name",
     type: "symbol",
@@ -130,7 +141,7 @@ function trackName(theme: BasemapTheme, emphasis: number): LayerSpecification {
   };
 }
 
-function arrowLayers(theme: BasemapTheme, emphasis: number): LayerSpecification[] {
+function arrowLayers(theme: BasemapTheme): LayerSpecification[] {
   return ARROW_TIERS.map(({ rank, minzoom }) => ({
     id: `oceanic-track-arrow-${rank}`,
     type: "symbol",
@@ -156,7 +167,7 @@ function arrowLayers(theme: BasemapTheme, emphasis: number): LayerSpecification[
   }));
 }
 
-function fixDot(theme: BasemapTheme, emphasis: number): LayerSpecification {
+function fixDot(theme: BasemapTheme): LayerSpecification {
   const colors = palette[theme];
 
   return {
@@ -175,7 +186,7 @@ function fixDot(theme: BasemapTheme, emphasis: number): LayerSpecification {
   };
 }
 
-function fixName(theme: BasemapTheme, emphasis: number): LayerSpecification {
+function fixName(theme: BasemapTheme): LayerSpecification {
   const colors = palette[theme];
 
   return {
@@ -200,35 +211,40 @@ function fixName(theme: BasemapTheme, emphasis: number): LayerSpecification {
   };
 }
 
+export function showsOceanicTracks(displays: OceanicTrackDisplays): boolean {
+  return Object.values(displays).some((display) => display !== "hide");
+}
+
 export function oceanicTrackOverlay(
-  display: FlightDataDisplay,
+  displays: OceanicTrackDisplays,
   theme: BasemapTheme,
   tracks: OceanicTrack[],
 ): GlobeOverlay {
-  if (display === "hide" || tracks.length === 0) {
+  const shown = tracks.filter((track) => SHOWN.includes(displays[track.system]));
+
+  if (shown.length === 0) {
     return NO_OVERLAY;
   }
 
-  const emphasis = emphasisOf(display);
-  const lines = tracks.map((track) => ({
+  const lines = shown.map((track) => ({
     path: greatCirclePath(track.fixes.map(position)),
-    properties: { identifier: track.identifier, direction: track.direction },
+    properties: {
+      identifier: track.identifier,
+      direction: track.direction,
+      emphasis: emphasisOf(displays[track.system]),
+    },
   }));
 
   return {
     sources: {
       [OCEANIC_TRACK_LINES_SOURCE]: lineSource(lines),
       [OCEANIC_TRACK_ARROWS_SOURCE]: pointSource(
-        lines.flatMap(({ path, properties }) => trackArrows(path, { direction: properties.direction })),
+        lines.flatMap(({ path, properties }) =>
+          trackArrows(path, { direction: properties.direction, emphasis: properties.emphasis }),
+        ),
       ),
-      [OCEANIC_TRACK_FIXES_SOURCE]: pointSource(uniqueFixes(tracks)),
+      [OCEANIC_TRACK_FIXES_SOURCE]: pointSource(uniqueFixes(shown, displays)),
     },
-    layers: [
-      trackLine(theme, emphasis),
-      ...arrowLayers(theme, emphasis),
-      fixDot(theme, emphasis),
-      trackName(theme, emphasis),
-      fixName(theme, emphasis),
-    ],
+    layers: [trackLine(theme), ...arrowLayers(theme), fixDot(theme), trackName(theme), fixName(theme)],
   };
 }
