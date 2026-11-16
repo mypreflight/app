@@ -10,7 +10,7 @@ type Props = {
   isActive: boolean;
 };
 
-const LABEL = "text-2xs font-medium leading-none";
+const LABEL = "text-xs font-medium leading-none";
 
 const SHAPE =
   "bottom-nav-pill flex flex-col items-center justify-end gap-1.5 overflow-hidden rounded-2xl [-webkit-tap-highlight-color:transparent]";

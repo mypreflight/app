@@ -13,7 +13,7 @@ type Props = {
 function Stat({ label, value }: { label: string; value: string }) {
   return (
     <span className="flex items-baseline gap-1 whitespace-nowrap">
-      <span className="text-2xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">{label}</span>
+      <span className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">{label}</span>
       <span className="font-mono text-xs font-semibold tabular-nums text-gray-800 dark:text-gray-100">{value}</span>
     </span>
   );

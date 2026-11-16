@@ -2,6 +2,7 @@ import { Modal, ModalBody, ModalHeader } from "flowbite-react";
 import React from "react";
 import { HiOutlineTrash } from "react-icons/hi";
 import type { ParkingPosition } from "~/features/parking-position";
+import { standName } from "~/features/parking-position/lib/standName";
 import { ModalActions } from "~/shared/ui/Modal/ModalActions";
 import { ModalTitle } from "~/shared/ui/Modal/ModalTitle";
 
@@ -20,7 +21,7 @@ export function RemoveParkingPositionModal({ parkingPosition, remove, cancel, is
       </ModalHeader>
       <ModalBody>
         <p>
-          Remove parking stand <span className="font-mono font-bold">{parkingPosition.name}</span>?
+          Remove parking stand <span className="font-mono font-bold">{standName(parkingPosition.name)}</span>?
         </p>
         <p className="mt-3">This cannot be undone.</p>
       </ModalBody>

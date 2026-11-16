@@ -110,7 +110,7 @@ export function FuelPlan({ fuel, timesheet }: Props) {
 export function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div>
-      <h3 className="mb-1 text-2xs font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400">{title}</h3>
+      <h3 className="mb-1 text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400">{title}</h3>
       {children}
     </div>
   );

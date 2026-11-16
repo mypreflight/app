@@ -6,10 +6,10 @@ export function ParkingPositionEmptyPanel() {
     <div className="rounded-lg border border-dashed border-gray-300 bg-gray-50/40 dark:border-gray-700 dark:bg-gray-900/40">
       <div className="flex items-center gap-2 border-b border-dashed border-gray-300/70 px-3 py-2 dark:border-gray-700/70">
         <HiLocationMarker className="text-gray-500 dark:text-gray-400" size={14} />
-        <span className="text-2xs font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400">
+        <span className="text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400">
           Parking stand
         </span>
-        <span className="ms-auto text-2xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+        <span className="ms-auto text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
           Not assigned
         </span>
       </div>

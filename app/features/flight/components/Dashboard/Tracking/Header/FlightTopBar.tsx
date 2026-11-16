@@ -37,7 +37,7 @@ export function FlightTopBarIdentity({ flight, diverted, showsBlockTime = true, 
       <h1 className="whitespace-nowrap font-mono text-lg font-bold leading-none text-gray-900 dark:text-white">
         {flight.flightNumber}
       </h1>
-      <span className="whitespace-nowrap font-mono text-[0.9375rem] font-bold leading-none text-gray-900 dark:text-white">
+      <span className="whitespace-nowrap font-mono text-base font-bold leading-none text-gray-900 dark:text-white">
         {departureAirport.iataCode}
         <span aria-hidden={true}> – </span>
         <span className="sr-only"> to </span>
@@ -45,7 +45,7 @@ export function FlightTopBarIdentity({ flight, diverted, showsBlockTime = true, 
       </span>
       <span
         className={twMerge(
-          "flex items-center gap-2 whitespace-nowrap text-[0.8125rem] text-gray-700 dark:text-gray-300",
+          "flex items-center gap-2 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300",
           citiesClassName,
         )}
       >
@@ -67,7 +67,7 @@ export function FlightTopBarIdentity({ flight, diverted, showsBlockTime = true, 
         <span className={twMerge(diverted && STRUCK)}>{destinationAirport.city.name}</span>
       </span>
       <span className="size-1 shrink-0 rounded-full bg-gray-400 dark:bg-gray-600" aria-hidden={true} />
-      <span className="whitespace-nowrap text-[0.8125rem] text-gray-500 dark:text-gray-400">
+      <span className="whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
         <AircraftRegistrationLink
           aircraftId={aircraft.id}
           registration={aircraft.registration}

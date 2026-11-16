@@ -22,7 +22,7 @@ export function HistoryRunwayAnalysisTab() {
       )}
       {ofp?.runwayAnalysis && (
         <RawHtml
-          className="max-h-186 overflow-auto font-mono text-[13px] leading-tight text-gray-700 dark:text-gray-300"
+          className="max-h-186 overflow-auto font-mono text-xs leading-tight text-gray-700 dark:text-gray-300"
           html={unescapeRunwayAnalysis(ofp.runwayAnalysis)}
         />
       )}

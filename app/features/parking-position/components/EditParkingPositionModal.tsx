@@ -5,6 +5,7 @@ import { useToast } from "~/app-state/useToast";
 import type { Airport } from "~/features/airport";
 import type { CreateParkingPositionFormData, ParkingPosition } from "~/features/parking-position";
 import { ParkingPositionFormFields } from "~/features/parking-position/components/ParkingPositionFormFields";
+import { standName } from "~/features/parking-position/lib/standName";
 import { createParkingPositionSchema } from "~/features/parking-position/schema";
 import { parkingPositionFormDataToRequest, parkingPositionToFormData } from "~/features/parking-position/transformer";
 import type { Terminal } from "~/features/terminal";
@@ -30,7 +31,7 @@ export function EditParkingPositionModal({ airport, parkingPosition, terminals, 
   ) => {
     try {
       await parkingPositionService.update(airport.id, parkingPosition.id, parkingPositionFormDataToRequest(values));
-      success(`Parking stand ${parkingPosition.name} updated.`);
+      success(`Parking stand ${standName(parkingPosition.name)} updated.`);
       close();
       revalidator.revalidate();
     } catch (err) {
@@ -48,7 +49,7 @@ export function EditParkingPositionModal({ airport, parkingPosition, terminals, 
   return (
     <FormModal<CreateParkingPositionFormData>
       context="Parking stand"
-      title={`Edit ${parkingPosition.name}`}
+      title={`Edit ${standName(parkingPosition.name)}`}
       submitLabel="Save changes"
       initialValues={parkingPositionToFormData(parkingPosition)}
       validationSchema={createParkingPositionSchema}

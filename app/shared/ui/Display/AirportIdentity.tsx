@@ -27,7 +27,7 @@ export function AirportIdentity({ iataCode, name, city, country, shape, href, si
         <AirportShape shape={shape} />
       </OptionAvatarFrame>
       <div className="min-w-0">
-        <div className="flex min-w-0 items-baseline gap-2">
+        <div className="flex min-w-0 items-center gap-2">
           {href ? (
             <Link
               to={href}
@@ -42,7 +42,7 @@ export function AirportIdentity({ iataCode, name, city, country, shape, href, si
           <span className="shrink-0 text-gray-300 dark:text-gray-600">|</span>
           <span className="truncate text-sm font-medium text-gray-700 dark:text-gray-200">{name}</span>
         </div>
-        <div className="truncate text-sm text-gray-500 dark:text-gray-400">
+        <div className="truncate text-xs text-gray-500 dark:text-gray-400">
           {city}, {country}
         </div>
       </div>

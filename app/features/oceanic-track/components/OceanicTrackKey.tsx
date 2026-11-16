@@ -10,7 +10,7 @@ export function OceanicTrackKey() {
   const theme = computedMode === "dark" ? "dark" : "light";
 
   return (
-    <ul className="flex gap-4 text-2xs text-gray-500 dark:text-gray-400">
+    <ul className="flex gap-4 text-xs text-gray-500 dark:text-gray-400">
       {DIRECTIONS.map((direction) => (
         <li key={direction} className="flex items-center gap-1.5">
           <span

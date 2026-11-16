@@ -3,6 +3,7 @@ import { LuPencil, LuTrash2 } from "react-icons/lu";
 import { type Gate, gateCategoryOptions } from "~/features/gate";
 import { groupGatesByTerminal } from "~/features/gate/lib/gateGroups";
 import type { ParkingPosition } from "~/features/parking-position";
+import { standName } from "~/features/parking-position/lib/standName";
 import type { Terminal } from "~/features/terminal";
 import { CollapsibleTerminalSection } from "~/features/terminal/components/CollapsibleTerminalSection";
 import { RowActionButton, RowActionLink } from "~/shared/ui/Button/RowAction";
@@ -86,7 +87,7 @@ export function GateList({
                 <dl>
                   <FactRow label="Stand">
                     {parkingPosition ? (
-                      <span className="font-mono">{parkingPosition.name}</span>
+                      <span className="font-mono">{standName(parkingPosition.name)}</span>
                     ) : (
                       <span className="text-gray-500 dark:text-gray-400">Not linked</span>
                     )}

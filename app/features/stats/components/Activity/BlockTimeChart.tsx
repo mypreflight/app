@@ -61,7 +61,7 @@ export function BlockTimeChart({ buckets, currentLabel, previousLabel }: Props) 
             tickLine={false}
             axisLine={false}
             interval={0}
-            tick={{ fontSize: 11, fill: "currentColor" }}
+            tick={{ fontSize: 12, fill: "currentColor" }}
             className="text-gray-500 dark:text-gray-400"
           />
           <YAxis
@@ -71,7 +71,7 @@ export function BlockTimeChart({ buckets, currentLabel, previousLabel }: Props) 
             tickLine={false}
             axisLine={false}
             width={58}
-            tick={{ fontSize: 11, fill: "currentColor" }}
+            tick={{ fontSize: 12, fill: "currentColor" }}
             className="text-gray-500 dark:text-gray-400"
           />
           <Tooltip

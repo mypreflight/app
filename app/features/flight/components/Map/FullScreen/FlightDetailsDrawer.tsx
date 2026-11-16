@@ -19,7 +19,7 @@ const TIMES_LABELS: Record<TimeProvenance, string> = {
 function DetailBlock({ label, children }: { label: string; children: ReactNode }) {
   return (
     <div>
-      <div className="text-2xs font-bold uppercase tracking-[0.08em] text-gray-500 dark:text-gray-400">{label}</div>
+      <div className="text-xs font-bold uppercase tracking-[0.08em] text-gray-500 dark:text-gray-400">{label}</div>
       <div className="mt-1">{children}</div>
     </div>
   );
@@ -28,7 +28,7 @@ function DetailBlock({ label, children }: { label: string; children: ReactNode }
 function Endpoint({ label, time, code, align }: { label: string; time: string; code: string; align: "start" | "end" }) {
   return (
     <div className={align === "end" ? "text-right" : ""}>
-      <div className="text-2xs font-bold uppercase tracking-[0.08em] text-gray-500 dark:text-gray-400">{label}</div>
+      <div className="text-xs font-bold uppercase tracking-[0.08em] text-gray-500 dark:text-gray-400">{label}</div>
       <div className={`mt-1 flex items-baseline gap-1.5 ${align === "end" ? "justify-end" : ""}`}>
         <span className="font-mono text-lg font-bold tabular-nums text-gray-900 dark:text-white">{time}</span>
         <span className="text-xs text-gray-500 dark:text-gray-400">{code}</span>
@@ -135,7 +135,7 @@ export function FlightDetailsDrawer({ flight }: Props) {
             align="end"
           />
         </div>
-        <div className="mt-2 text-2xs text-gray-500 dark:text-gray-400">{timesLabel} · your local time</div>
+        <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">{timesLabel} · your local time</div>
       </div>
     </div>
   );

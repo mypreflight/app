@@ -53,7 +53,7 @@ export function MorePage({ sections }: Props) {
         .filter(({ items }) => items.length > 0)
         .map(({ label: sectionLabel, items }) => (
           <section key={sectionLabel} className="space-y-2">
-            <h2 className="px-1 text-2xs font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-400">
+            <h2 className="px-1 text-xs font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-400">
               {sectionLabel}
             </h2>
             <div className="divide-y divide-gray-200 overflow-hidden rounded-2xl border border-gray-200 bg-white dark:divide-gray-800 dark:border-gray-800 dark:bg-gray-900">
@@ -75,7 +75,7 @@ export function MorePage({ sections }: Props) {
         ))}
 
       <section className="space-y-2">
-        <h2 className="px-1 text-2xs font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-400">
+        <h2 className="px-1 text-xs font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-400">
           Appearance
         </h2>
         <div className="grid grid-cols-3 gap-1 rounded-2xl border border-gray-200 bg-white p-1 dark:border-gray-800 dark:bg-gray-900">

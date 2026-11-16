@@ -1,4 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect, within } from "storybook/test";
+import type { AirportWeatherReport } from "~/features/airport";
 import { AirportWeatherCard } from "~/features/airport/components/AirportWeatherCard";
 import { frankfurtWeather } from "../../fixtures/briefing";
 import { atWidth } from "../../support/frames";
@@ -17,7 +19,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "An airport's weather in a briefing column: the same reports as the airport library, with the source switch, laid out by the card's own width. The ICAO code links to the airport in the library. Seeded Frankfurt METAR and TAF.",
+          "An airport's weather in a briefing column, built from the same reports as the airport card: METAR and TAF from the source the switch picks, each TAF change group on its own line, then the SayIntentions ATIS. The ICAO code links to the airport in the library. Seeded Frankfurt reports.",
       },
     },
   },
@@ -37,6 +39,29 @@ export const NoReport: Story = {
   args: { city: "New York", icaoCode: "KJFK", weather: { status: "ready", reports: [] } },
 };
 
+export const LoadFailed: Story = {
+  args: { weather: { status: "failed" } },
+};
+
 export const WideColumn: Story = {
   decorators: [atWidth(900)],
+};
+
+const vatsimAtis = {
+  id: "5b0e7c1d-2a94-4f63-9d8e-1c7a3b6f0e22",
+  source: "vatsim",
+  informationType: "atis",
+  content: "THIS IS FRANKFURT INFORMATION LIMA. RUNWAY 25C FOR DEPARTURE.",
+  lastFetched: "2026-07-08T11:56:00.000Z",
+} as unknown as AirportWeatherReport;
+
+export const OtherAtisSources: Story = {
+  args: { weather: { status: "ready", reports: [vatsimAtis, ...frankfurtWeather] } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(await canvas.findByText(/Frankfurt information Kilo/)).toBeInTheDocument();
+    await expect(canvas.queryByText(/FRANKFURT INFORMATION LIMA/)).not.toBeInTheDocument();
+    await expect(canvas.queryByText(/undefined/)).not.toBeInTheDocument();
+  },
 };

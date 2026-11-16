@@ -67,7 +67,7 @@ function CrewSection({ label, members }: { label: string; members: CrewEntry[] }
 function CrewRow({ member }: { member: CrewEntry }) {
   return (
     <li className="flex items-center gap-2.5">
-      <span className="flex size-7 flex-none items-center justify-center rounded-full bg-gray-100 text-2xs font-bold text-gray-500 dark:bg-gray-800 dark:text-gray-400">
+      <span className="flex size-7 flex-none items-center justify-center rounded-full bg-gray-100 text-xs font-bold text-gray-500 dark:bg-gray-800 dark:text-gray-400">
         {crewInitials(member.name)}
       </span>
       <span className="min-w-0">

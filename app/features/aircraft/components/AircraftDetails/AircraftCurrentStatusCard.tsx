@@ -4,6 +4,7 @@ import { HiOutlinePaperAirplane, HiOutlineSwitchHorizontal } from "react-icons/h
 import type { Aircraft, FlightHistoryEntry } from "~/features/aircraft";
 import { LocationMap, MapPill, type MapTone } from "~/features/aircraft/components/AircraftDetails/LocationMap";
 import { type AircraftStatusView, deriveAircraftStatus } from "~/features/aircraft/lib/aircraftStatus";
+import { standName } from "~/features/parking-position/lib/standName";
 import { formatDate } from "~/shared/lib/time";
 import { CardHeader } from "~/shared/ui/Layout/CardHeader";
 import { CardToolbar } from "~/shared/ui/Layout/CardToolbar";
@@ -90,7 +91,7 @@ function Timeline({ steps }: { steps: TimelineStep[] }) {
               <span className="absolute -inset-0.5 rounded-full border-2 border-indigo-500 motion-safe:animate-ping" />
             )}
           </span>
-          <div className="text-2xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
+          <div className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
             {step.when}
           </div>
           <div className="mt-0.5 text-sm font-semibold text-gray-900 dark:text-white">{step.title}</div>
@@ -142,8 +143,8 @@ function ParkedView({
       <>
         {parkingPosition && (
           <>
-            Parking stand <span className="font-semibold text-gray-700 dark:text-gray-300">{parkingPosition.name}</span>{" "}
-            ·{" "}
+            Parking stand{" "}
+            <span className="font-semibold text-gray-700 dark:text-gray-300">{standName(parkingPosition.name)}</span> ·{" "}
           </>
         )}
         {airport.city.name}, {airport.country.name}

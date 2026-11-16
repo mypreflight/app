@@ -3,14 +3,35 @@
     "id": "e799cf41-0344-4b29-b111-ee9f635535e2",
     "source": "aviation_weather_gov",
     "informationType": "metar",
-    "content": "METAR EDDF 081200Z 24008KT 9999 FEW035 22/12 Q1018 NOSIG",
+    "content": "EDDF 081200Z 24008KT 9999 FEW035 22/12 Q1018 NOSIG",
     "lastFetched": "2026-07-08T12:00:00.000Z"
   },
   {
     "id": "f721308b-9a04-4b20-8af9-89b25fd1986e",
     "source": "aviation_weather_gov",
     "informationType": "taf",
-    "content": "TAF EDDF 081100Z 0812/0918 24010KT 9999 FEW035 BECMG 0815/0817 27012KT",
+    "content": "EDDF 081100Z 0812/0918 24010KT 9999 FEW035 BECMG 0815/0817 27012KT PROB30 TEMPO 0818/0822 4000 TSRA BKN030CB",
     "lastFetched": "2026-07-08T12:00:00.000Z"
+  },
+  {
+    "id": "0b6f3f7e-4c1d-4d5e-9a57-2f1d3b8e6c40",
+    "source": "say_intentions",
+    "informationType": "metar",
+    "content": "EDDF 081150Z 24008KT 9999 FEW035 22/12 Q1018 NOSIG",
+    "lastFetched": "2026-07-08T11:55:00.000Z"
+  },
+  {
+    "id": "6a2c9d41-8e7b-4f0a-b3c5-1d9e7f2a4b68",
+    "source": "say_intentions",
+    "informationType": "taf",
+    "content": "EDDF 081100Z 0812/0918 24010KT 9999 FEW035 BECMG 0815/0817 27012KT",
+    "lastFetched": "2026-07-08T11:55:00.000Z"
+  },
+  {
+    "id": "c4e8a2b6-3f71-4d09-8b5e-7a1c6d2f9e03",
+    "source": "say_intentions",
+    "informationType": "atis",
+    "content": "Frankfurt information Kilo, time one one five zero Zulu. Expect ILS approach runway two five left. Departure runways two five centre and one eight. Wind two four zero degrees, eight knots. Visibility one zero kilometres or more. Few clouds three thousand five hundred feet. Temperature two two, dew point one two. QNH one zero one eight. Transition level seven zero. Advise on initial contact you have information Kilo.",
+    "lastFetched": "2026-07-08T11:55:00.000Z"
   }
 ]

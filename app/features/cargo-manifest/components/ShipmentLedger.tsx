@@ -42,10 +42,7 @@ function FilterSelect({
 
   return (
     <div className="flex flex-col gap-1">
-      <label
-        htmlFor={selectId}
-        className="text-2xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400"
-      >
+      <label htmlFor={selectId} className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
         {label}
       </label>
       <Select id={selectId} sizing="sm" value={value} onChange={(event) => onChange(event.target.value)}>

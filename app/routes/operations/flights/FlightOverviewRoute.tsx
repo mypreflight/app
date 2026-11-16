@@ -237,7 +237,7 @@ export default function FlightOverviewRoute() {
 
       {openModal === "departureRunway" && canChangeDepartureRunway && (
         <SelectRunwayModal
-          airportId={flight.departureAirport.id}
+          airport={flight.departureAirport}
           kind="departure"
           currentSelectionId={flight.departureRunwayId}
           select={(runwayId) =>
@@ -252,8 +252,7 @@ export default function FlightOverviewRoute() {
       )}
       {openModal === "departureParkingPosition" && canChangeDepartureParkingPosition && (
         <SelectParkingPositionModal
-          airportId={flight.departureAirport.id}
-          kind="departure"
+          airport={flight.departureAirport}
           currentSelectionId={flight.departureParkingPositionId}
           select={(parkingPositionId) =>
             handleSelect(
@@ -267,7 +266,7 @@ export default function FlightOverviewRoute() {
       )}
       {openModal === "arrivalRunway" && canChangeArrivalRunway && (
         <SelectRunwayModal
-          airportId={flight.destinationAirport.id}
+          airport={flight.destinationAirport}
           kind="arrival"
           currentSelectionId={flight.arrivalRunwayId}
           select={(runwayId) =>
@@ -282,8 +281,7 @@ export default function FlightOverviewRoute() {
       )}
       {openModal === "arrivalParkingPosition" && canChangeArrivalParkingPosition && (
         <SelectParkingPositionModal
-          airportId={flight.destinationAirport.id}
-          kind="arrival"
+          airport={flight.destinationAirport}
           currentSelectionId={flight.arrivalParkingPositionId}
           select={(parkingPositionId) =>
             handleSelect(

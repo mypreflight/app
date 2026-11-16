@@ -12,6 +12,7 @@ import {
   parkingSpotTypeOptions,
   stairsOptions,
 } from "~/features/parking-position";
+import { standName } from "~/features/parking-position/lib/standName";
 import type { Terminal } from "~/features/terminal";
 import { formatCoordinates } from "~/shared/lib/formatGeo";
 
@@ -29,11 +30,11 @@ export function AssignedParkingPositionPanel({ parkingPosition, terminal }: Prop
     <div className="rounded-lg border border-emerald-200 bg-emerald-50/60 dark:border-emerald-900 dark:bg-emerald-950/40">
       <div className="flex items-center gap-2 border-b border-emerald-200/70 px-3 py-2 dark:border-emerald-900/70">
         <HiLocationMarker className="text-emerald-700 dark:text-emerald-400" size={14} />
-        <span className="text-2xs font-bold uppercase tracking-widest text-emerald-700 dark:text-emerald-400">
+        <span className="text-xs font-bold uppercase tracking-widest text-emerald-700 dark:text-emerald-400">
           Parking stand
         </span>
         <span className="ms-auto font-mono text-xl font-bold text-gray-900 dark:text-white">
-          {parkingPosition.name}
+          {standName(parkingPosition.name)}
         </span>
       </div>
       <dl className="grid grid-cols-1 gap-x-4 gap-y-1 px-3 py-2.5 text-xs lg:grid-cols-2">

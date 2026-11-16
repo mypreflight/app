@@ -11,7 +11,7 @@ import type { PlannedRouteFix, PlannedRouteFuelReport } from "~/features/route/m
 import { FormattedIcaoTime } from "~/shared/ui/Date/FormattedIcaoTime";
 
 const DIVIDER = "border-t border-gray-200 pt-3 dark:border-gray-800";
-const COLUMN_HEADING = "pb-0.5 align-bottom text-2xs font-normal text-gray-500 dark:text-gray-400";
+const COLUMN_HEADING = "pb-0.5 align-bottom text-xs font-normal text-gray-500 dark:text-gray-400";
 
 type ListProps = {
   fixes: PlannedRouteFix[];

@@ -46,7 +46,7 @@ function describeDay({ date, totals }: DayActivity): string {
 function DurationFigure({ minutes, size }: { minutes: number; size: "lg" | "sm" }) {
   const unit = twMerge(
     "font-normal text-gray-500 dark:text-gray-400",
-    size === "lg" ? "mx-1 text-sm" : "mx-0.5 text-2xs",
+    size === "lg" ? "mx-1 text-sm" : "mx-0.5 text-xs",
   );
 
   return (
@@ -229,7 +229,7 @@ function RecentDays() {
                 <span
                   key={toIsoDate(day.date)}
                   className={twMerge(
-                    "text-center font-mono text-2xs",
+                    "text-center font-mono text-xs",
                     isToday ? "font-bold text-gray-900 dark:text-white" : "text-gray-500 dark:text-gray-400",
                   )}
                 >

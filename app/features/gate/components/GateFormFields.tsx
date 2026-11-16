@@ -2,6 +2,7 @@ import { useFormikContext } from "formik";
 import React from "react";
 import { type CreateGateFormData, gateCategoryOptions } from "~/features/gate";
 import type { ParkingPosition } from "~/features/parking-position";
+import { standName } from "~/features/parking-position/lib/standName";
 import type { Terminal } from "~/features/terminal";
 import type { Coordinates } from "~/shared/models/coordinates";
 import { FormFieldGroup } from "~/shared/ui/Form/FormFieldGroup";
@@ -23,7 +24,10 @@ export function GateFormFields({ airportLocation, terminals, parkingPositions }:
   }));
   const parkingPositionOptions = [
     { value: "", label: "— No parking stand —" },
-    ...parkingPositions.map((parkingPosition) => ({ value: parkingPosition.id, label: parkingPosition.name })),
+    ...parkingPositions.map((parkingPosition) => ({
+      value: parkingPosition.id,
+      label: standName(parkingPosition.name),
+    })),
   ];
 
   return (

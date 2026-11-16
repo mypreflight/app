@@ -8,6 +8,7 @@ import type { ParkedAircraft } from "~/features/flight/components/Map/Box/Ground
 import { airportLayoutGlobeMarkers } from "~/features/flight/components/Map/Globe/globeMarkers";
 import { type GlobeAirportScene, globeAirportOverlay } from "~/features/flight/lib/globeAirportOverlay";
 import { operatorFinUrl } from "~/features/operator/components/OperatorFin";
+import { standName } from "~/features/parking-position/lib/standName";
 import type { GlobeInsets } from "~/shared/lib/globeCamera";
 import { destinationPoint } from "~/shared/lib/greatCircle";
 import { prefersReducedMotion } from "~/shared/lib/reducedMotion";
@@ -122,7 +123,7 @@ export function GroundStopGlobeMap({ airport, layout, aircraft }: Props) {
               id: "parked-aircraft",
               position: standPosition,
               html: ReactDOMServer.renderToString(
-                <ParkedAircraftLabel aircraft={aircraft} standName={layout.stand.name} />,
+                <ParkedAircraftLabel aircraft={aircraft} standName={standName(layout.stand.name)} />,
               ),
               layer: 10,
             },

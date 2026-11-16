@@ -128,7 +128,7 @@ export function LifecycleTrack({ steps, serviceType, compact = false, className 
             <span className={twMerge("sr-only flex-col gap-1", !compact && "@2xl:not-sr-only @2xl:flex")}>
               <span
                 className={twMerge(
-                  "whitespace-nowrap text-2xs font-bold uppercase tracking-wide",
+                  "whitespace-nowrap text-xs font-bold uppercase tracking-wide",
                   current ? "text-indigo-600 dark:text-indigo-400" : "text-gray-500 dark:text-gray-400",
                 )}
               >

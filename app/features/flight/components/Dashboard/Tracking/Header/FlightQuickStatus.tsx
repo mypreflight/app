@@ -63,7 +63,7 @@ function StatusReading({ label, description, reading, stacked }: StatusReadingPr
           )}
           aria-hidden={true}
         />
-        <span className={twMerge("text-2xs font-bold uppercase tracking-wider", reading.text)}>{reading.label}</span>
+        <span className={twMerge("text-xs font-bold uppercase tracking-wider", reading.text)}>{reading.label}</span>
       </dd>
     </div>
   );

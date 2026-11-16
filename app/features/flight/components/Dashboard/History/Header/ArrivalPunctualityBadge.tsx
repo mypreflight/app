@@ -48,7 +48,7 @@ export function ArrivalPunctualityBadge({ timesheet, className }: Props) {
     <span
       title="On-block against schedule"
       className={twMerge(
-        "inline-flex items-center whitespace-nowrap rounded-full px-2.5 py-0.5 text-2xs font-bold uppercase tracking-wide",
+        "inline-flex items-center whitespace-nowrap rounded-full px-2.5 py-0.5 text-xs font-bold uppercase tracking-wide",
         TONES[punctuality.kind],
         className,
       )}
