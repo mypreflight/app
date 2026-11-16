@@ -1,6 +1,7 @@
 import type { OceanicDirection } from "~/features/route/model";
 
 export enum OceanicTrackSystem {
+  Nat = "nat",
   Pacots = "pacots",
 }
 

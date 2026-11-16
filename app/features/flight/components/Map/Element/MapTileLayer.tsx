@@ -3,8 +3,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { TileLayer, useMap } from "react-leaflet";
 import { useMapSettings } from "~/app-state/useMapSettings";
 import { firBoundaryOverlay } from "~/features/airspace/lib/firBoundaryOverlay";
+import { useOceanicTrackDisplays } from "~/features/oceanic-track/hooks/useOceanicTrackDisplays";
 import { useOceanicTracks } from "~/features/oceanic-track/hooks/useOceanicTracks";
-import { oceanicTrackOverlay } from "~/features/oceanic-track/lib/oceanicTrackOverlay";
+import { oceanicTrackOverlay, showsOceanicTracks } from "~/features/oceanic-track/lib/oceanicTrackOverlay";
 import { getCartoApiKey } from "~/shared/lib/getCartoApiKey";
 import { mergeOverlays } from "~/shared/lib/globeStyle";
 import type { BasemapLook, VectorBasemap } from "~/shared/lib/leafletVectorBasemap";
@@ -47,11 +48,11 @@ export function MapTileLayer({ withAirspace = false }: Props) {
   const theme = useBasemapTheme();
   const { mapSettings } = useMapSettings();
   const firDisplay = withAirspace ? mapSettings.firDisplay : "hide";
-  const trackDisplay = withAirspace ? mapSettings.oceanicTrackDisplay : "hide";
-  const tracks = useOceanicTracks(trackDisplay !== "hide");
+  const trackDisplays = useOceanicTrackDisplays(withAirspace);
+  const tracks = useOceanicTracks(showsOceanicTracks(trackDisplays));
   const overlay = useMemo(
-    () => mergeOverlays(firBoundaryOverlay(firDisplay, theme), oceanicTrackOverlay(trackDisplay, theme, tracks)),
-    [firDisplay, trackDisplay, theme, tracks],
+    () => mergeOverlays(firBoundaryOverlay(firDisplay, theme), oceanicTrackOverlay(trackDisplays, theme, tracks)),
+    [firDisplay, trackDisplays, theme, tracks],
   );
   const labels = firDisplay === "hide";
   const lookRef = useRef<BasemapLook>({ theme, overlay, labels });

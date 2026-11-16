@@ -29,7 +29,7 @@ function rankOf(index: number): number {
   return index % 2 === 0 ? 1 : 2;
 }
 
-export function trackArrows(path: LatLngTuple[], properties: Record<string, string>): GlobePoint[] {
+export function trackArrows(path: LatLngTuple[], properties: Record<string, string | number>): GlobePoint[] {
   const arrows: GlobePoint[] = [];
   let travelled = 0;
   let next = ARROW_INTERVAL_NM / 2;

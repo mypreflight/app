@@ -24,7 +24,8 @@ export type FlightDataSettings = {
 
 export type AirspaceSettings = {
   firDisplay: FlightDataDisplay;
-  oceanicTrackDisplay: FlightDataDisplay;
+  natDisplay: FlightDataDisplay;
+  pacotsDisplay: FlightDataDisplay;
 };
 
 export type MapSettings = MapView &
@@ -50,11 +51,14 @@ const defaultMapSettings: MapSettings = {
   routeDisplay: "show",
   etopsDisplay: "show",
   firDisplay: "hide",
-  oceanicTrackDisplay: "hide",
+  natDisplay: "hide",
+  pacotsDisplay: "hide",
 };
 
 function migrate(raw: Partial<MapSettings> & Record<string, unknown>): MapSettings {
-  const merged = { ...defaultMapSettings, ...raw };
+  const { oceanicTrackDisplay, ...current } = raw;
+  const merged = { ...defaultMapSettings, ...current };
+  merged.pacotsDisplay = raw.pacotsDisplay ?? (oceanicTrackDisplay as FlightDataDisplay | undefined) ?? "hide";
   const legacyDisplay = raw.parkingPositionDisplay ?? (raw.gateDisplay as DisplayMode | "selected" | undefined);
   merged.parkingPositionDisplay =
     legacyDisplay === "selected" || legacyDisplay === undefined ? "assigned" : legacyDisplay;
