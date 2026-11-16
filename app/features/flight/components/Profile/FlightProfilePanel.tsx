@@ -66,7 +66,7 @@ function span(window: ProfileWindow): number {
 }
 
 const SEGMENT =
-  "flex h-8 w-9 items-center justify-center text-gray-700 transition-colors hover:bg-gray-100 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-indigo-500 disabled:cursor-not-allowed disabled:text-gray-300 disabled:hover:bg-transparent pointer-coarse:size-11 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white dark:focus-visible:ring-indigo-400 dark:disabled:text-gray-600";
+  "flex h-8 w-8 items-center justify-center text-gray-700 transition-colors hover:bg-gray-100 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-indigo-500 disabled:cursor-not-allowed disabled:text-gray-300 disabled:hover:bg-transparent pointer-coarse:size-11 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white dark:focus-visible:ring-indigo-400 dark:disabled:text-gray-600";
 
 type ZoomButtonProps = {
   label: string;
@@ -147,8 +147,8 @@ export function FlightProfilePanel({
           <FieldLabel>Vertical profile</FieldLabel>
           <Legend hasPlan={planned.length > 0} />
         </div>
-        <div className="ms-auto flex flex-wrap items-center justify-end gap-x-4 gap-y-2">
-          {readout}
+        <div className="ms-auto flex flex-wrap items-center justify-end gap-x-3 gap-y-2">
+          <div className="flex justify-end md:min-w-100">{readout}</div>
           {notice === null && <ZoomControls domain={domain} view={view} onViewChange={setView} />}
           {actions}
         </div>
