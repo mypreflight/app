@@ -2,8 +2,9 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import React, { useState } from "react";
 import { expect, userEvent, within } from "storybook/test";
 import { type Flight, type FlightPathElement, FlightStatus } from "~/features/flight";
-import { ProfileReadout } from "~/features/flight/components/Dashboard/History/Map/ProfileReadout";
+import { ProfileReadout } from "~/features/flight/components/Profile/ProfileReadout";
 import { VerticalProfile } from "~/features/flight/components/Profile/VerticalProfile";
+import type { ProfileWindow } from "~/features/flight/lib/verticalProfile";
 import { flightFixture, flownTrack, recordedTrack } from "../fixtures/flights";
 import { atWidth, CARD_WIDTHS, onCard } from "../support/frames";
 
@@ -14,11 +15,19 @@ type Props = {
 
 function Profile({ flight, track }: Props) {
   const [cursor, setCursor] = useState<number | null>(null);
+  const [view, setView] = useState<ProfileWindow | null>(null);
 
   return (
     <div className="flex flex-col gap-2">
       <ProfileReadout path={track} point={cursor === null ? null : track[cursor]} />
-      <VerticalProfile path={track} timesheet={flight.timesheet} cursorIndex={cursor} onCursorChange={setCursor} />
+      <VerticalProfile
+        path={track}
+        timesheet={flight.timesheet}
+        cursorIndex={cursor}
+        onCursorChange={setCursor}
+        view={view}
+        onViewChange={setView}
+      />
     </div>
   );
 }
@@ -40,7 +49,10 @@ one tops out at the fastest ground speed rounded up to 100 kt; hour ticks thin o
 
 The chart is a slider: pointing at it, or focusing it and pressing the arrow keys, Page Up/Down, Home or End, picks the
 nearest recorded point. On the history page that point moves the aircraft on the map. Escape or leaving the chart
-clears it, and the readout falls back to the highest altitude and fastest ground speed.`,
+clears it, and the readout falls back to the highest altitude and fastest ground speed.
+
+The time axis zooms with the wheel, a trackpad or touch pinch, and the + and − keys; a zoomed chart pans by dragging or
+a sideways scroll, and 0 shows the whole flight again. Altitude and speed keep their scale while zoomed.`,
       },
     },
   },
@@ -59,6 +71,28 @@ export const LongHaul: Story = {
     profile.focus();
     await userEvent.keyboard("{End}");
     await expect(profile).toHaveAttribute("aria-valuetext", expect.stringContaining("ft"));
+  },
+};
+
+export const ZoomedWithKeys: Story = {
+  args: { flight: longHaul, track: flownTrack(longHaul) },
+  parameters: {
+    docs: { description: { story: "Pressing + twice shows a quarter of the flight around the picked point." } },
+  },
+  play: async ({ canvasElement }) => {
+    const profile = within(canvasElement).getByRole("slider", { name: "Vertical profile" });
+    const edgeTimes = () =>
+      [...profile.querySelectorAll("text")]
+        .map((label) => label.textContent ?? "")
+        .filter((label) => label.endsWith("Z"))
+        .join(" ");
+    const whole = edgeTimes();
+
+    profile.focus();
+    await userEvent.keyboard("{Home}++");
+    await expect(edgeTimes()).not.toBe(whole);
+    await userEvent.keyboard("0");
+    await expect(edgeTimes()).toBe(whole);
   },
 };
 

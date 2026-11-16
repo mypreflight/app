@@ -11,6 +11,14 @@ export function dateToIcaoDate(date: Date): string {
   return `${day}${month}${yearPart}`;
 }
 
+export function dateToDayMonth(date: Date): string {
+  const month = MONTHS_SHORT_UPPER[date.getUTCMonth()];
+  const year = date.getUTCFullYear();
+  const yearPart = year === new Date().getUTCFullYear() ? "" : ` ${year}`;
+
+  return `${date.getUTCDate()} ${month}${yearPart}`;
+}
+
 type FormattedIcaoDateProps = {
   date: Date;
 };

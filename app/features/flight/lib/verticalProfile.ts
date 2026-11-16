@@ -19,6 +19,11 @@ export type PlannedPoint = {
   altitude: number;
 };
 
+export type ProfileWindow = {
+  start: number;
+  end: number;
+};
+
 export type ProfileExtremes = {
   altitude: number | null;
   groundSpeed: number | null;
@@ -27,7 +32,8 @@ export type ProfileExtremes = {
 const MINUTE = 60_000;
 const ALTITUDE_STEP = 5_000;
 const SPEED_STEP = 100;
-const TIME_STEPS_MINUTES = [5, 10, 15, 30, 60, 120, 180, 240, 360];
+const TIME_STEPS_MINUTES = [1, 2, 5, 10, 15, 30, 60, 120, 180, 240, 360];
+const SHORTEST_WINDOW = 5 * MINUTE;
 
 function valueOrNull(value: number | undefined): number | null {
   return value === undefined || Number.isNaN(value) ? null : value;
@@ -94,6 +100,70 @@ export function profileDomain(
   };
 }
 
+export function profileWindow(domain: ProfileWindow, view: ProfileWindow | null): ProfileWindow {
+  if (view === null) {
+    return { start: domain.start, end: domain.end };
+  }
+
+  const span = Math.min(view.end - view.start, domain.end - domain.start);
+  const start = Math.min(Math.max(view.start, domain.start), domain.end - span);
+
+  return { start, end: start + span };
+}
+
+export function placeProfileWindow(
+  domain: ProfileWindow,
+  span: number,
+  anchor: number,
+  anchorRatio: number,
+): ProfileWindow | null {
+  const full = domain.end - domain.start;
+  const fitted = Math.min(Math.max(span, Math.min(SHORTEST_WINDOW, full)), full);
+
+  if (fitted >= full) {
+    return null;
+  }
+
+  const start = anchor - anchorRatio * fitted;
+
+  return profileWindow(domain, { start, end: start + fitted });
+}
+
+export function zoomProfile(
+  domain: ProfileWindow,
+  view: ProfileWindow | null,
+  factor: number,
+  anchor?: number,
+): ProfileWindow | null {
+  const current = profileWindow(domain, view);
+  const span = current.end - current.start;
+  const center = anchor ?? current.start + span / 2;
+
+  return placeProfileWindow(domain, span * factor, center, (center - current.start) / span);
+}
+
+export function panProfile(domain: ProfileWindow, view: ProfileWindow | null, shift: number): ProfileWindow | null {
+  if (view === null) {
+    return null;
+  }
+
+  const current = profileWindow(domain, view);
+
+  return profileWindow(domain, { start: current.start + shift, end: current.end + shift });
+}
+
+export function revealInProfile(domain: ProfileWindow, view: ProfileWindow | null, time: number): ProfileWindow | null {
+  const current = profileWindow(domain, view);
+
+  if (view === null || (time >= current.start && time <= current.end)) {
+    return view;
+  }
+
+  const shift = time < current.start ? time - current.start : time - current.end;
+
+  return panProfile(domain, view, shift);
+}
+
 export function nearestSample(samples: ProfileSample[], time: number): ProfileSample | null {
   if (samples.length === 0) {
     return null;
@@ -128,7 +198,7 @@ export function altitudeTicks(ceiling: number): number[] {
   return ticks;
 }
 
-export function timeTicks(domain: ProfileDomain, width: number, minSpacing: number): number[] {
+export function timeTicks(domain: ProfileWindow, width: number, minSpacing: number): number[] {
   const minutes = (domain.end - domain.start) / MINUTE;
   const step =
     TIME_STEPS_MINUTES.find((candidate) => (candidate / minutes) * width >= minSpacing) ?? TIME_STEPS_MINUTES.at(-1);

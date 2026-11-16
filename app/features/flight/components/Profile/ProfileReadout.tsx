@@ -7,6 +7,7 @@ import { dateToIcaoTime } from "~/shared/ui/Date/FormattedIcaoTime";
 type Props = {
   path: FlightPathElement[];
   point: FlightPathElement | null;
+  idle?: "extremes" | "latest";
 };
 
 function Stat({ label, value }: { label: string; value: string }) {
@@ -18,7 +19,7 @@ function Stat({ label, value }: { label: string; value: string }) {
   );
 }
 
-export function ProfileReadout({ path, point }: Props) {
+export function ProfileReadout({ path, point, idle = "extremes" }: Props) {
   const extremes = useMemo(() => profileExtremes(profileSamples(path)), [path]);
 
   if (point !== null) {
@@ -30,6 +31,10 @@ export function ProfileReadout({ path, point }: Props) {
         <LiveTelemetry point={point} />
       </div>
     );
+  }
+
+  if (idle === "latest") {
+    return <LiveTelemetry point={path.at(-1)} />;
   }
 
   return (

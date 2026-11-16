@@ -3,18 +3,18 @@ import { useAuth } from "~/app-state/useAuth";
 import { CurrentFlightBox } from "~/features/flight/components/Dashboard/Main/Box/CurrentFlightBox";
 import { CurrentFlightUnavailableBox } from "~/features/flight/components/Dashboard/Main/Box/CurrentFlightUnavailableBox";
 import { DebugFlightListBox } from "~/features/flight/components/Dashboard/Main/Box/DebugFlightListBox";
-import { LastFlightBox } from "~/features/flight/components/Dashboard/Main/Box/LastFlightBox";
 import { CurrentFlightBoxLoader } from "~/features/flight/components/Dashboard/Main/Box/Loader/CurrentFlightBoxLoader";
-import { LastFlightBoxLoader } from "~/features/flight/components/Dashboard/Main/Box/Loader/LastFlightBoxLoader";
 import { NextScheduledFlightBoxLoader } from "~/features/flight/components/Dashboard/Main/Box/Loader/NextScheduledFlightBoxLoader";
+import { RecentFlightsBoxLoader } from "~/features/flight/components/Dashboard/Main/Box/Loader/RecentFlightsBoxLoader";
 import { NextScheduledFlightBox } from "~/features/flight/components/Dashboard/Main/Box/NextScheduledFlightBox";
 import { NoCurrentFlightBox } from "~/features/flight/components/Dashboard/Main/Box/NoCurrentFlightBox";
+import { RecentFlightsBox } from "~/features/flight/components/Dashboard/Main/Box/RecentFlightsBox";
 import { UserHeader } from "~/features/flight/components/Dashboard/Main/UserHeader";
 import { useCurrentFlight } from "~/features/flight/hooks/useCurrentFlight";
 import { useFlightNumber } from "~/features/flight/hooks/useFlightNumber";
 import { useGroundStop } from "~/features/flight/hooks/useGroundStop";
-import { useLastFlight } from "~/features/flight/hooks/useLastFlight";
 import { useNextScheduledFlight } from "~/features/flight/hooks/useNextScheduledFlight";
+import { useRecentFlights } from "~/features/flight/hooks/useRecentFlights";
 import { PostcardsBox } from "~/features/postcard/components/Dashboard/PostcardsBox";
 import { CurrentRotationBox } from "~/features/rotation/components/CurrentRotationBox";
 import { CurrentRotationBoxLoader } from "~/features/rotation/components/CurrentRotationBoxLoader";
@@ -30,7 +30,7 @@ export default function PilotDashboardRoute() {
   const { user } = useAuth();
   const { isDebug } = useAppEnvironment();
   const currentFlightId = user?.currentFlightId ?? null;
-  const { lastFlight, loading: loadingLast, failed: failedLast } = useLastFlight();
+  const { recentFlights, lastFlight, loading: loadingLast, failed: failedLast } = useRecentFlights();
   const { currentFlight, loading: loadingCurrent, failed: failedCurrent } = useCurrentFlight();
   const { nextFlight, loading: loadingNext, failed: failedNext } = useNextScheduledFlight(currentFlightId);
   const {
@@ -56,7 +56,7 @@ export default function PilotDashboardRoute() {
   return (
     <>
       <UserHeader />
-      <div className="grid grid-cols-1 gap-3 pt-6 lg:grid-cols-2 lg:pt-12 xl:grid-cols-3">
+      <div className="grid grid-cols-1 gap-3 pt-6 md:pt-0 lg:grid-cols-2 xl:grid-cols-3">
         <div className="flex flex-col gap-3 xl:col-span-2">
           {settlingCurrentFlight ? (
             <CurrentFlightBoxLoader expectsFlight={currentFlightId !== null} />
@@ -68,7 +68,11 @@ export default function PilotDashboardRoute() {
             <NoCurrentFlightBox groundStop={groundStop} nextFlight={nextFlight} nextFlightFailed={failedNext} />
           )}
           <div className="grid grid-cols-1 items-start gap-3 sm:grid-cols-2 md:grid-cols-1 xl:grid-cols-2">
-            {loadingLast ? <LastFlightBoxLoader /> : <LastFlightBox flight={lastFlight} failed={failedLast} />}
+            {loadingLast ? (
+              <RecentFlightsBoxLoader />
+            ) : (
+              <RecentFlightsBox flights={recentFlights} failed={failedLast} />
+            )}
             {loadingNext || settlingCurrentFlight ? (
               <NextScheduledFlightBoxLoader />
             ) : (
