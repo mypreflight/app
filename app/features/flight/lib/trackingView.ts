@@ -1,10 +1,12 @@
 import type { DisplayMode, MapIntent, MapView } from "~/app-state/useMapSettings";
 import {
-  FlightDataTab,
-  findFlightDataTab,
-  flightDataTabFromSlug,
-  flightDataTabSlug,
-} from "~/features/flight/lib/flightDataTabs";
+  type BriefingDocument,
+  type BriefingPhase,
+  DOCUMENT_PARAM,
+  findBriefingDocument,
+  findBriefingPhase,
+  retiredBriefingTab,
+} from "~/features/flight/lib/briefingPhase";
 import { isBeforeOffBlock } from "~/features/flight/lib/flightPhase";
 import { FlightStatus } from "~/features/flight/model";
 
@@ -15,7 +17,8 @@ export enum TrackingView {
 
 export type TrackingLocation = {
   view: TrackingView;
-  tab: FlightDataTab;
+  phase: BriefingPhase | null;
+  document: BriefingDocument | null;
 };
 
 type ActiveEnd = "departure" | "destination";
@@ -59,26 +62,41 @@ export function resolveTrackingLocation(
   status: FlightStatus,
   viewSlug: string | undefined,
   tabSlug: string | undefined,
+  documentParam: string | null = null,
 ): TrackingLocation {
   const view = Object.values(TrackingView).find((candidate) => candidate === viewSlug);
 
-  if (view !== undefined) {
-    return { view, tab: flightDataTabFromSlug(tabSlug) };
+  if (view === TrackingView.Tracking) {
+    return { view, phase: null, document: findBriefingDocument(documentParam) };
   }
 
-  const legacyTab = tabSlug === undefined ? findFlightDataTab(viewSlug) : null;
+  if (view === TrackingView.Briefing) {
+    const retired = retiredBriefingTab(tabSlug);
 
-  if (legacyTab !== null) {
-    return { view: TrackingView.Briefing, tab: legacyTab };
+    return retired === null
+      ? { view, phase: findBriefingPhase(tabSlug), document: findBriefingDocument(documentParam) }
+      : { view, ...retired };
   }
 
-  return { view: automaticTrackingView(status), tab: FlightDataTab.Overview };
+  const retired = tabSlug === undefined ? retiredBriefingTab(viewSlug) : null;
+
+  if (retired !== null) {
+    return { view: TrackingView.Briefing, ...retired };
+  }
+
+  return { view: automaticTrackingView(status), phase: null, document: null };
 }
 
-export function trackFlightPath(flightId: string, view: TrackingView, tab = FlightDataTab.Overview): string {
+export function trackFlightPath(
+  flightId: string,
+  view: TrackingView,
+  phase: BriefingPhase | null = null,
+  document: BriefingDocument | null = null,
+): string {
   const path = `/track/${flightId}/${view}`;
+  const withPhase = view === TrackingView.Briefing && phase !== null ? `${path}/${phase}` : path;
 
-  return view === TrackingView.Briefing && tab !== FlightDataTab.Overview ? `${path}/${flightDataTabSlug(tab)}` : path;
+  return document === null ? withPhase : `${withPhase}?${DOCUMENT_PARAM}=${document}`;
 }
 
 export function trackingMapIntent(status: FlightStatus): MapIntent {

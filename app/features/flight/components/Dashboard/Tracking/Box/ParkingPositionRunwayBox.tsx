@@ -80,7 +80,18 @@ const ARRIVAL_PARKING_POSITION_CHANGEABLE = new Set<FlightStatus>([
   FlightStatus.TaxiingIn,
 ]);
 
-export function ParkingPositionRunwayBox() {
+type BoxEnd = "departure" | "arrival";
+
+const END_TITLES: Record<BoxEnd, string> = {
+  departure: "Departure runway and stand",
+  arrival: "Arrival runway and stand",
+};
+
+type Props = {
+  end?: BoxEnd;
+};
+
+export function ParkingPositionRunwayBox({ end }: Props) {
   const { flight, diversion, reload } = useTrackedFlight();
   const { flightService, parkingPositionService, runwayService, terminalService } = useApi();
   const { success, error } = useToast();
@@ -95,13 +106,15 @@ export function ParkingPositionRunwayBox() {
   const arrivalParkingPositionId = flight?.arrivalParkingPositionId ?? null;
 
   const afterTakeoff = flight ? isAfterTakeoff(flight.status) : false;
-  const [departureOpen, setDepartureOpen] = useState(!afterTakeoff);
-  const [arrivalOpen, setArrivalOpen] = useState(afterTakeoff);
+  const showsDeparture = end !== "arrival";
+  const showsArrival = end !== "departure";
+  const [departureOpen, setDepartureOpen] = useState(end === "departure" || (end === undefined && !afterTakeoff));
+  const [arrivalOpen, setArrivalOpen] = useState(end === "arrival" || (end === undefined && afterTakeoff));
 
   useEffect(() => {
-    setDepartureOpen(!afterTakeoff);
-    setArrivalOpen(afterTakeoff);
-  }, [afterTakeoff]);
+    setDepartureOpen(end === "departure" || (end === undefined && !afterTakeoff));
+    setArrivalOpen(end === "arrival" || (end === undefined && afterTakeoff));
+  }, [afterTakeoff, end]);
 
   useEffect(() => {
     if (!departureAirportId || !destinationAirportId) return;
@@ -169,100 +182,108 @@ export function ParkingPositionRunwayBox() {
   };
 
   return (
-    <Container padding="condensed" header={<CardHeader title="Travel plan" />}>
-      <EndpointSection
-        icon={FaPlaneDeparture}
-        title="Departure"
-        airport={flight.departureAirport}
-        open={departureOpen}
-        onToggle={() => setDepartureOpen((v) => !v)}
-      >
-        <AirportPreviewPanel airport={flight.departureAirport} />
-        {assignments.departureParkingPositionTerminal ? (
-          <AssignedTerminalPanel terminal={assignments.departureParkingPositionTerminal} />
-        ) : (
-          <TerminalEmptyPanel />
-        )}
-        {assignments.departureParkingPosition ? (
-          <AssignedParkingPositionPanel
-            parkingPosition={assignments.departureParkingPosition}
-            terminal={assignments.departureParkingPositionTerminal}
-          />
-        ) : (
-          <ParkingPositionEmptyPanel />
-        )}
-        {assignments.departureRunway ? (
-          <AssignedRunwayPanel runway={assignments.departureRunway} />
-        ) : (
-          <RunwayEmptyPanel />
-        )}
-        <EndpointActions>
-          {canChangeDepartureParkingPosition && (
-            <ChangeButton
-              icon={HiOutlineLocationMarker}
-              onClick={() => setOpenModal("departureParkingPosition")}
-              hasValue={!!assignments.departureParkingPosition}
-              kind="parking stand"
-            />
+    <Container padding="condensed" header={<CardHeader title={end === undefined ? "Travel plan" : END_TITLES[end]} />}>
+      {showsDeparture && (
+        <EndpointSection
+          icon={FaPlaneDeparture}
+          title="Departure"
+          airport={flight.departureAirport}
+          open={departureOpen}
+          onToggle={() => setDepartureOpen((v) => !v)}
+        >
+          <AirportPreviewPanel airport={flight.departureAirport} />
+          {assignments.departureParkingPositionTerminal ? (
+            <AssignedTerminalPanel terminal={assignments.departureParkingPositionTerminal} />
+          ) : (
+            <TerminalEmptyPanel />
           )}
-          {canChangeDepartureRunway && (
-            <ChangeButton
-              icon={LuArrowDownToLine}
-              iconClassName="rotate-180"
-              onClick={() => setOpenModal("departureRunway")}
-              hasValue={!!assignments.departureRunway}
-              kind="runway"
+          {assignments.departureParkingPosition ? (
+            <AssignedParkingPositionPanel
+              parkingPosition={assignments.departureParkingPosition}
+              terminal={assignments.departureParkingPositionTerminal}
             />
+          ) : (
+            <ParkingPositionEmptyPanel />
           )}
-        </EndpointActions>
-      </EndpointSection>
-
-      <EndpointSection
-        icon={FaPlaneArrival}
-        title="Arrival"
-        airport={flight.destinationAirport}
-        open={arrivalOpen}
-        onToggle={() => setArrivalOpen((v) => !v)}
-        struck={Boolean(diversion)}
-      >
-        <AirportPreviewPanel airport={flight.destinationAirport} />
-        {assignments.arrivalRunway ? <AssignedRunwayPanel runway={assignments.arrivalRunway} /> : <RunwayEmptyPanel />}
-        {assignments.arrivalParkingPositionTerminal ? (
-          <AssignedTerminalPanel terminal={assignments.arrivalParkingPositionTerminal} />
-        ) : (
-          <TerminalEmptyPanel />
-        )}
-        {assignments.arrivalParkingPosition ? (
-          <AssignedParkingPositionPanel
-            parkingPosition={assignments.arrivalParkingPosition}
-            terminal={assignments.arrivalParkingPositionTerminal}
-          />
-        ) : (
-          <ParkingPositionEmptyPanel />
-        )}
-        {!diversion && (
+          {assignments.departureRunway ? (
+            <AssignedRunwayPanel runway={assignments.departureRunway} />
+          ) : (
+            <RunwayEmptyPanel />
+          )}
           <EndpointActions>
-            {canChangeArrivalRunway && (
-              <ChangeButton
-                icon={LuArrowDownToLine}
-                onClick={() => setOpenModal("arrivalRunway")}
-                hasValue={!!assignments.arrivalRunway}
-                kind="runway"
-              />
-            )}
-            {canChangeArrivalParkingPosition && (
+            {canChangeDepartureParkingPosition && (
               <ChangeButton
                 icon={HiOutlineLocationMarker}
-                onClick={() => setOpenModal("arrivalParkingPosition")}
-                hasValue={!!assignments.arrivalParkingPosition}
+                onClick={() => setOpenModal("departureParkingPosition")}
+                hasValue={!!assignments.departureParkingPosition}
                 kind="parking stand"
               />
             )}
+            {canChangeDepartureRunway && (
+              <ChangeButton
+                icon={LuArrowDownToLine}
+                iconClassName="rotate-180"
+                onClick={() => setOpenModal("departureRunway")}
+                hasValue={!!assignments.departureRunway}
+                kind="runway"
+              />
+            )}
           </EndpointActions>
-        )}
-      </EndpointSection>
+        </EndpointSection>
+      )}
 
-      {diversion && <DiversionEndpointSection diversion={diversion} />}
+      {showsArrival && (
+        <EndpointSection
+          icon={FaPlaneArrival}
+          title="Arrival"
+          airport={flight.destinationAirport}
+          open={arrivalOpen}
+          onToggle={() => setArrivalOpen((v) => !v)}
+          struck={Boolean(diversion)}
+        >
+          <AirportPreviewPanel airport={flight.destinationAirport} />
+          {assignments.arrivalRunway ? (
+            <AssignedRunwayPanel runway={assignments.arrivalRunway} />
+          ) : (
+            <RunwayEmptyPanel />
+          )}
+          {assignments.arrivalParkingPositionTerminal ? (
+            <AssignedTerminalPanel terminal={assignments.arrivalParkingPositionTerminal} />
+          ) : (
+            <TerminalEmptyPanel />
+          )}
+          {assignments.arrivalParkingPosition ? (
+            <AssignedParkingPositionPanel
+              parkingPosition={assignments.arrivalParkingPosition}
+              terminal={assignments.arrivalParkingPositionTerminal}
+            />
+          ) : (
+            <ParkingPositionEmptyPanel />
+          )}
+          {!diversion && (
+            <EndpointActions>
+              {canChangeArrivalRunway && (
+                <ChangeButton
+                  icon={LuArrowDownToLine}
+                  onClick={() => setOpenModal("arrivalRunway")}
+                  hasValue={!!assignments.arrivalRunway}
+                  kind="runway"
+                />
+              )}
+              {canChangeArrivalParkingPosition && (
+                <ChangeButton
+                  icon={HiOutlineLocationMarker}
+                  onClick={() => setOpenModal("arrivalParkingPosition")}
+                  hasValue={!!assignments.arrivalParkingPosition}
+                  kind="parking stand"
+                />
+              )}
+            </EndpointActions>
+          )}
+        </EndpointSection>
+      )}
+
+      {showsArrival && diversion && <DiversionEndpointSection diversion={diversion} />}
 
       {openModal === "departureParkingPosition" && canChangeDepartureParkingPosition && (
         <SelectParkingPositionModal

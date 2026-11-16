@@ -1,0 +1,164 @@
+{
+  "runway": {
+    "id": "32121288-2550-4b81-a558-9a7193ef6c97",
+    "airportId": "f35c094a-bec5-4803-be32-bd80a14b441a",
+    "designator": "07C",
+    "length": 4000,
+    "width": 60,
+    "displace": null,
+    "trueHeading": 70,
+    "magneticHeading": 72,
+    "elevation": 111,
+    "surfaceType": "asphalt",
+    "lightingType": "HIRL",
+    "coordinates": {
+      "latitude": 50.0326,
+      "longitude": 8.53463
+    }
+  },
+  "parkingPosition": {
+    "id": "ad5a6ebd-dad8-4400-8bb4-b7cee3b00fa9",
+    "airportId": "f35c094a-bec5-4803-be32-bd80a14b441a",
+    "terminalId": "d7fd7a84-1589-4a4f-9072-a9773f66e2b5",
+    "name": "B 42",
+    "bridge": "yes",
+    "stairs": "no",
+    "deicing": "possible",
+    "deicingDescription": null,
+    "gpu": "bridge",
+    "pca": "bridge",
+    "type": "straight-in",
+    "spotType": "passenger",
+    "assistance": "vdgs",
+    "location": "gate",
+    "noiseSensitivity": "no",
+    "noiseSensitivityText": null,
+    "noiseSensitivityStartTime": null,
+    "noiseSensitivityEndTime": null,
+    "fuelingOptions": "hydrant",
+    "coordinates": {
+      "latitude": 50.047131,
+      "longitude": 8.574266
+    }
+  },
+  "terminals": [
+    {
+      "id": "d7fd7a84-1589-4a4f-9072-a9773f66e2b5",
+      "airportId": "f35c094a-bec5-4803-be32-bd80a14b441a",
+      "shortName": "T1",
+      "fullName": "Terminal 1",
+      "averageTaxiTime": 12,
+      "operatorCodes": ["DLH", "LOT"],
+      "text": null,
+      "shape": [
+        {
+          "latitude": 50.04477,
+          "longitude": 8.565911
+        },
+        {
+          "latitude": 50.043536,
+          "longitude": 8.561593
+        },
+        {
+          "latitude": 50.044824,
+          "longitude": 8.566853
+        },
+        {
+          "latitude": 50.045513,
+          "longitude": 8.566807
+        },
+        {
+          "latitude": 50.048651,
+          "longitude": 8.569087
+        },
+        {
+          "latitude": 50.049571,
+          "longitude": 8.571217
+        },
+        {
+          "latitude": 50.050032,
+          "longitude": 8.570511
+        },
+        {
+          "latitude": 50.05024,
+          "longitude": 8.57116
+        },
+        {
+          "latitude": 50.050594,
+          "longitude": 8.570196
+        },
+        {
+          "latitude": 50.049865,
+          "longitude": 8.567269
+        },
+        {
+          "latitude": 50.049183,
+          "longitude": 8.567642
+        },
+        {
+          "latitude": 50.049014,
+          "longitude": 8.567118
+        },
+        {
+          "latitude": 50.049274,
+          "longitude": 8.568408
+        },
+        {
+          "latitude": 50.048859,
+          "longitude": 8.568883
+        }
+      ]
+    },
+    {
+      "id": "26106c8a-aaee-4b84-bb6c-b5af3389e22f",
+      "airportId": "f35c094a-bec5-4803-be32-bd80a14b441a",
+      "shortName": "T2",
+      "fullName": "Terminal 2",
+      "averageTaxiTime": 14,
+      "operatorCodes": ["BAW", "AFR"],
+      "text": null,
+      "shape": [
+        {
+          "latitude": 50.051548,
+          "longitude": 8.584653
+        },
+        {
+          "latitude": 50.05067,
+          "longitude": 8.585164
+        },
+        {
+          "latitude": 50.050541,
+          "longitude": 8.585736
+        },
+        {
+          "latitude": 50.051337,
+          "longitude": 8.589068
+        },
+        {
+          "latitude": 50.051416,
+          "longitude": 8.589282
+        },
+        {
+          "latitude": 50.051756,
+          "longitude": 8.589721
+        },
+        {
+          "latitude": 50.052342,
+          "longitude": 8.589382
+        },
+        {
+          "latitude": 50.052621,
+          "longitude": 8.58913
+        },
+        {
+          "latitude": 50.052563,
+          "longitude": 8.587294
+        },
+        {
+          "latitude": 50.052301,
+          "longitude": 8.586179
+        }
+      ]
+    }
+  ]
+}

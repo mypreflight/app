@@ -2,6 +2,7 @@ import React from "react";
 import { Outlet } from "react-router";
 import { cssTransition, ToastContainer } from "react-toastify";
 import { DataRefreshProvider } from "~/app-state/useDataRefresh";
+import { ShellSlotsProvider } from "~/app-state/useShellSlots";
 import { SidebarProvider } from "~/app-state/useSidebar";
 import { PinnedAirportsProvider } from "~/features/airport/lib/usePinnedAirports";
 import { PendingChangeRequestsProvider } from "~/features/change-request/hooks/usePendingChangeRequests";
@@ -10,6 +11,7 @@ import { CurrentFlightProvider } from "~/features/flight/hooks/useCurrentFlight"
 import { PostcardsProvider } from "~/features/postcard/hooks/usePostcards";
 import { AuthGuard } from "~/routes/auth/AuthGuard";
 import { BottomNav } from "~/shared/ui/BottomNav/BottomNav";
+import { AppShellBars } from "~/shared/ui/Shell/AppShellBars";
 import { Sidebar } from "~/shared/ui/Sidebar/Sidebar";
 import { TopBarBackButton } from "~/shared/ui/TopBar/TopBarBackButton";
 import { TopBarLogo } from "~/shared/ui/TopBar/TopBarLogo";
@@ -26,41 +28,45 @@ export default function AppLayout() {
               <PendingChangeRequestsProvider>
                 <PostcardsProvider>
                   <SidebarProvider>
-                    <div className="relative h-dvh flex flex-col overflow-hidden bg-gray-100 dark:bg-gray-950 md:bg-white md:dark:bg-gray-900">
-                      <div className="md:hidden pointer-events-none absolute inset-x-0 top-0 z-30 bg-gradient-to-b from-gray-100/95 via-gray-100/60 to-transparent px-3 pb-6 pt-[calc(0.75rem_+_env(safe-area-inset-top))] dark:from-gray-950/95 dark:via-gray-950/50">
-                        <div className="relative flex items-center justify-center">
-                          <div className="pointer-events-auto absolute inset-y-0 left-0 flex items-center">
-                            <TopBarBackButton />
-                          </div>
-                          <div className="pointer-events-auto inline-flex">
-                            <TopBarLogo size="lg" />
+                    <ShellSlotsProvider>
+                      <div className="relative h-dvh flex flex-col overflow-hidden bg-gray-100 dark:bg-gray-950 md:bg-white md:dark:bg-gray-900">
+                        <div className="md:hidden pointer-events-none absolute inset-x-0 top-0 z-30 bg-gradient-to-b from-gray-100/95 via-gray-100/60 to-transparent px-3 pb-6 pt-[calc(0.75rem_+_env(safe-area-inset-top))] dark:from-gray-950/95 dark:via-gray-950/50">
+                          <div className="relative flex items-center justify-center">
+                            <div className="pointer-events-auto absolute inset-y-0 left-0 flex items-center">
+                              <TopBarBackButton />
+                            </div>
+                            <div className="pointer-events-auto inline-flex">
+                              <TopBarLogo size="lg" />
+                            </div>
                           </div>
                         </div>
+                        <div className="flex-1 flex flex-col md:flex-row min-h-0">
+                          <Sidebar />
+                          <AppShellBars>
+                            <main className="relative flex-1 min-h-0 min-w-0 overflow-y-auto [scrollbar-gutter:stable] md:has-[[data-full-bleed]]:overflow-hidden md:has-[[data-full-bleed]]:[scrollbar-gutter:auto] scroll-pt-[calc(5rem_+_env(safe-area-inset-top))] scroll-pb-[calc(5.25rem_+_env(safe-area-inset-bottom))] pb-[calc(5.25rem_+_env(safe-area-inset-bottom))] md:scroll-pt-0 md:scroll-pb-24 md:pb-0 md:rounded-2xl md:border md:border-gray-200 md:bg-gray-100 md:dark:border-gray-800 md:dark:bg-gray-950">
+                              <div
+                                data-app-entry-content
+                                className="mx-auto w-full max-w-7xl p-3 pt-[calc(4rem_+_env(safe-area-inset-top))] sm:p-4 sm:pt-[calc(4rem_+_env(safe-area-inset-top))] md:p-6 md:pt-6"
+                              >
+                                <Outlet />
+                              </div>
+                            </main>
+                          </AppShellBars>
+                        </div>
                       </div>
-                      <div className="flex-1 flex flex-col md:flex-row min-h-0">
-                        <Sidebar />
-                        <main className="relative flex-1 min-h-0 min-w-0 overflow-y-auto [scrollbar-gutter:stable] md:has-[[data-full-bleed]]:overflow-hidden md:has-[[data-full-bleed]]:[scrollbar-gutter:auto] scroll-pt-[calc(5rem_+_env(safe-area-inset-top))] scroll-pb-[calc(5.25rem_+_env(safe-area-inset-bottom))] pb-[calc(5.25rem_+_env(safe-area-inset-bottom))] md:scroll-pt-0 md:scroll-pb-24 md:pb-0 md:mt-2 md:me-2 md:mb-[max(0.5rem,env(safe-area-inset-bottom))] md:rounded-2xl md:border md:border-gray-200 md:bg-gray-100 md:dark:border-gray-800 md:dark:bg-gray-950">
-                          <div
-                            data-app-entry-content
-                            className="mx-auto w-full max-w-7xl p-3 pt-[calc(4rem_+_env(safe-area-inset-top))] sm:p-4 sm:pt-[calc(4rem_+_env(safe-area-inset-top))] md:p-6 md:pt-6"
-                          >
-                            <Outlet />
-                          </div>
-                        </main>
-                      </div>
-                    </div>
-                    <BottomNav />
-                    <ToastContainer
-                      position="bottom-right"
-                      transition={toastTransition}
-                      autoClose={5000}
-                      newestOnTop
-                      closeOnClick
-                      theme="light"
-                      className="!bottom-[calc(6rem_+_env(safe-area-inset-bottom))] max-[480px]:!px-3 md:!right-6 md:!bottom-6"
-                      toastClassName="!bg-transparent !shadow-none !p-0"
-                      closeButton={false}
-                    />
+                      <BottomNav />
+                      <ToastContainer
+                        position="bottom-right"
+                        transition={toastTransition}
+                        autoClose={5000}
+                        newestOnTop
+                        closeOnClick
+                        theme="light"
+                        className="!bottom-[calc(6rem_+_env(safe-area-inset-bottom))] max-[480px]:!px-3 md:!right-6 md:!bottom-6"
+                        toastClassName="!bg-transparent !shadow-none !p-0"
+                        closeButton={false}
+                      />
+                    </ShellSlotsProvider>
                   </SidebarProvider>
                 </PostcardsProvider>
               </PendingChangeRequestsProvider>

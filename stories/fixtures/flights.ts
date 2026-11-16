@@ -17,8 +17,9 @@ import { greatCirclePath } from "~/shared/lib/greatCircle";
 import bostonPhiladelphia from "./boston-philadelphia.json";
 import bostonPhiladelphiaTrack from "./boston-philadelphia-track.json";
 import frankfurtNewYork from "./frankfurt-new-york.json";
+import frankfurtNewYorkNat from "./frankfurt-new-york-nat.json";
 
-export type RouteFixture = "short" | "longHaul" | "polar";
+export type RouteFixture = "short" | "longHaul" | "polar" | "nat";
 
 const [frankfurt, newYork, philadelphia] = frankfurtNewYork.airports;
 
@@ -48,6 +49,7 @@ const ROUTES: Record<RouteFixture, unknown> = {
   short: bostonPhiladelphia,
   longHaul: frankfurtNewYork,
   polar: newYorkHongKong,
+  nat: frankfurtNewYorkNat,
 };
 
 const BLOCK_EVENTS = ["offBlockTime", "takeoffTime", "arrivalTime", "onBlockTime"] as const;

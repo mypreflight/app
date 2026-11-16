@@ -1,4 +1,5 @@
 import React from "react";
+import { twMerge } from "tailwind-merge";
 import { DiversionBanner } from "~/features/flight/components/Dashboard/Tracking/Header/DiversionBanner";
 import { FlightQuickStatus } from "~/features/flight/components/Dashboard/Tracking/Header/FlightQuickStatus";
 import { TrackingRoute } from "~/features/flight/components/Dashboard/Tracking/Header/TrackingRoute";
@@ -10,9 +11,10 @@ import { Container } from "~/shared/ui/Layout/Container";
 
 type Props = {
   trackingView: TrackingViewState;
+  className?: string;
 };
 
-export function FlightTrackingHeader({ trackingView }: Props) {
+export function FlightTrackingHeader({ trackingView, className }: Props) {
   const { flight, diversion } = useTrackedFlight();
 
   if (!flight) {
@@ -22,7 +24,7 @@ export function FlightTrackingHeader({ trackingView }: Props) {
   const { airframe } = flight.aircraft;
 
   return (
-    <Container padding="spacious" className="@container">
+    <Container padding="spacious" className={twMerge("@container", className)}>
       <h1 className="sr-only">Flight {flight.flightNumber}</h1>
       <div className="grid grid-cols-1 items-center gap-x-6 gap-y-4 [grid-template-areas:'identity'_'route'_'view'_'status'] @2xl:grid-cols-[auto_minmax(0,1fr)] @2xl:[grid-template-areas:'identity_route'_'view_status'] @4xl:grid-cols-[minmax(0,max-content)_minmax(min-content,18rem)_minmax(0,1fr)_auto_auto] @4xl:[grid-template-areas:'identity_route_._view_status']">
         <div className="min-w-0 [grid-area:identity]">

@@ -7,23 +7,12 @@ import { ActiveEmergencyPanel } from "~/features/emergency/components/ActiveEmer
 import { DeclareEmergencyModal } from "~/features/emergency/components/DeclareEmergencyModal";
 import { EmergencyEmptyState } from "~/features/emergency/components/EmergencyEmptyState";
 import { ResolvedEmergenciesHistory } from "~/features/emergency/components/ResolvedEmergenciesHistory";
-import { FlightStatus } from "~/features/flight";
 import { FlightAlternateAirportsCard } from "~/features/flight/components/Airports/FlightAlternateAirportsCard";
 import { useTrackedFlight } from "~/features/flight/hooks/useTrackedFlight";
+import { isInDiversionWindow, isInEmergencyWindow } from "~/features/flight/lib/abnormalActions";
 import { LoadFailedState } from "~/shared/ui/Display/LoadFailedState";
 import { CardHeader } from "~/shared/ui/Layout/CardHeader";
 import { Container } from "~/shared/ui/Layout/Container";
-
-const STATUSES_VALID_FOR_EMERGENCY: ReadonlySet<FlightStatus> = new Set([
-  FlightStatus.TaxiingOut,
-  FlightStatus.InCruise,
-  FlightStatus.TaxiingIn,
-]);
-
-const STATUSES_VALID_FOR_DIVERSION: ReadonlySet<FlightStatus> = new Set([
-  FlightStatus.TaxiingOut,
-  FlightStatus.InCruise,
-]);
 
 export function FlightEmergenciesDiversionsTab() {
   const { flight, emergencies, emergenciesLoadFailed, activeEmergency, diversion } = useTrackedFlight();
@@ -32,7 +21,7 @@ export function FlightEmergenciesDiversionsTab() {
 
   if (!flight) return null;
 
-  const canDeclareEmergency = STATUSES_VALID_FOR_EMERGENCY.has(flight.status);
+  const canDeclareEmergency = isInEmergencyWindow(flight.status);
   const resolved = emergencies.filter((e) => !e.isActive);
 
   const declareButton = (
@@ -50,7 +39,7 @@ export function FlightEmergenciesDiversionsTab() {
     </Tooltip>
   );
 
-  const canReportDiversion = STATUSES_VALID_FOR_DIVERSION.has(flight.status) && !diversion;
+  const canReportDiversion = isInDiversionWindow(flight.status) && !diversion;
 
   const reportDiversionButton = (
     <Button color="red" onClick={() => setReportingDiversion(true)} disabled={!canReportDiversion}>

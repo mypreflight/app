@@ -1,0 +1,68 @@
+[
+  {
+    "id": "adfa5363-1a54-4ae1-8800-3c0a8b0d72ee",
+    "kind": "preliminary",
+    "revision": 1,
+    "issuedById": null,
+    "issuedAt": "2026-01-01T00:00:00.000Z",
+    "flightCrew": {
+      "pilots": 2,
+      "reliefPilots": 1,
+      "cabinCrew": 12
+    },
+    "passengers": 330,
+    "passengersByCabin": null,
+    "passengerMass": 80,
+    "cargo": 6.5,
+    "payload": 32.9,
+    "zeroFuelWeight": 201.491,
+    "blockFuel": 71.636,
+    "fuel": {
+      "block": 71.636,
+      "taxi": 0.8,
+      "trip": 60.7,
+      "alternate": 4.2,
+      "reserve": 2.9,
+      "contingencyType": "5%",
+      "contingencyAmount": 3,
+      "mel": 0,
+      "atc": 0,
+      "wxx": 0,
+      "extra": 0,
+      "tankering": 0
+    }
+  },
+  {
+    "id": "05df1ef0-ebd6-40cd-9c8b-98537b062eeb",
+    "kind": "preliminary",
+    "revision": 2,
+    "issuedById": null,
+    "issuedAt": "2026-01-01T00:00:00.000Z",
+    "flightCrew": {
+      "pilots": 2,
+      "reliefPilots": 1,
+      "cabinCrew": 12
+    },
+    "passengers": 348,
+    "passengersByCabin": null,
+    "passengerMass": 80,
+    "cargo": 8.004,
+    "payload": 35.844,
+    "zeroFuelWeight": 204.435,
+    "blockFuel": 71.636,
+    "fuel": {
+      "block": 71.636,
+      "taxi": 0.8,
+      "trip": 60.7,
+      "alternate": 4.2,
+      "reserve": 2.9,
+      "contingencyType": "5%",
+      "contingencyAmount": 3,
+      "mel": 0,
+      "atc": 0,
+      "wxx": 0,
+      "extra": 0,
+      "tankering": 0
+    }
+  }
+]

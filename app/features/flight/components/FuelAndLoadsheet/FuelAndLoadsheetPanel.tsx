@@ -19,6 +19,8 @@ type Props = {
   timesheet: Timesheet;
   canEditPreliminary?: boolean;
   onEditPreliminary?: () => void;
+  arrangement?: "row" | "cards";
+  withCrew?: boolean;
 };
 
 export function FuelAndLoadsheetPanel({
@@ -29,6 +31,8 @@ export function FuelAndLoadsheetPanel({
   timesheet,
   canEditPreliminary,
   onEditPreliminary,
+  arrangement = "row",
+  withCrew = true,
 }: Props) {
   const hasPreliminary = preliminary !== null;
   const hasFinal = final !== null;
@@ -43,9 +47,11 @@ export function FuelAndLoadsheetPanel({
   const showEditPreliminary =
     loadVariant === "preliminary" && Boolean(canEditPreliminary) && Boolean(onEditPreliminary);
 
-  return (
-    <div className="grid grid-cols-1 gap-3 lg:grid-cols-4">
-      <Container className="lg:col-span-1" header={<CardHeader title="Fuel" />}>
+  const isRow = arrangement === "row";
+
+  const cards = (
+    <>
+      <Container className={isRow ? "lg:col-span-1" : undefined} header={<CardHeader title="Fuel" />}>
         {hasAny && (
           <CardToolbar>
             <VariantSwitch
@@ -60,7 +66,10 @@ export function FuelAndLoadsheetPanel({
         <FuelReports />
       </Container>
 
-      <Container className="@container lg:col-span-2" header={<CardHeader title="Loadsheet" />}>
+      <Container
+        className={isRow ? "@container lg:col-span-2" : "@container"}
+        header={<CardHeader title="Loadsheet" />}
+      >
         {hasAny && (
           <CardToolbar>
             <VariantSwitch
@@ -83,9 +92,11 @@ export function FuelAndLoadsheetPanel({
         )}
       </Container>
 
-      <CrewColumn flightId={flightId} />
-    </div>
+      {withCrew && <CrewColumn flightId={flightId} />}
+    </>
   );
+
+  return isRow ? <div className="grid grid-cols-1 gap-3 lg:grid-cols-4">{cards}</div> : cards;
 }
 
 function EmptyState() {

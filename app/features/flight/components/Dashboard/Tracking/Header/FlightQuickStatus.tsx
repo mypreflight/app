@@ -35,9 +35,21 @@ const ADSB_READINGS: Record<AdsbSignal, Reading> = {
   },
 };
 
-function StatusReading({ label, description, reading }: { label: string; description: string; reading: Reading }) {
+type StatusReadingProps = {
+  label: string;
+  description: string;
+  reading: Reading;
+  stacked: boolean;
+};
+
+function StatusReading({ label, description, reading, stacked }: StatusReadingProps) {
   return (
-    <div className="flex items-center gap-1.5 @2xl:col-span-3 @2xl:grid @2xl:grid-cols-subgrid">
+    <div
+      className={twMerge(
+        "flex items-center gap-1.5 @2xl:col-span-3 @2xl:grid @2xl:grid-cols-subgrid",
+        stacked && "col-span-3 grid grid-cols-subgrid",
+      )}
+    >
       <dt title={description}>
         <FieldLabel>{label}</FieldLabel>
         <span className="sr-only">{description}</span>
@@ -58,10 +70,11 @@ function StatusReading({ label, description, reading }: { label: string; descrip
 }
 
 type Props = {
+  stacked?: boolean;
   className?: string;
 };
 
-export function FlightQuickStatus({ className }: Props) {
+export function FlightQuickStatus({ stacked = false, className }: Props) {
   const { flight, loadsheets, connectionStatus, reconnect } = useTrackedFlight();
   const { flightPath } = useAdsbData();
 
@@ -72,14 +85,25 @@ export function FlightQuickStatus({ className }: Props) {
   const signal = adsbSignal(flight.status, loadsheets.final !== null, flightPath.length > 0);
 
   return (
-    <div className={twMerge("flex items-center gap-3", className)}>
-      <dl className="flex flex-wrap items-center gap-x-5 gap-y-1.5 @2xl:grid @2xl:grid-cols-[auto_auto_auto] @2xl:gap-x-1.5">
+    <div className={twMerge("flex flex-wrap items-center gap-3", className)}>
+      <dl
+        className={twMerge(
+          "flex flex-wrap items-center gap-x-5 gap-y-1.5 @2xl:grid @2xl:grid-cols-[auto_auto_auto] @2xl:gap-x-1.5",
+          stacked && "grid grid-cols-[auto_auto_auto] gap-x-1.5",
+        )}
+      >
         <StatusReading
           label="AOC"
           description="Live link to airline operations"
           reading={AOC_READINGS[aocStatus(connectionStatus)]}
+          stacked={stacked}
         />
-        <StatusReading label="ADS-B" description="Live aircraft position feed" reading={ADSB_READINGS[signal]} />
+        <StatusReading
+          label="ADS-B"
+          description="Live aircraft position feed"
+          reading={ADSB_READINGS[signal]}
+          stacked={stacked}
+        />
       </dl>
       {connectionStatus === "lost" && (
         <Button size="xs" color="light" onClick={reconnect}>

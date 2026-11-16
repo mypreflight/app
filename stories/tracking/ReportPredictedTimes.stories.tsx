@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import React, { useState } from "react";
 import { expect, fireEvent, fn, userEvent, waitFor, within } from "storybook/test";
 import { type FilledSchedule, type Flight, FlightStatus } from "~/features/flight";
-import { FlightProgressTab } from "~/features/flight/components/Dashboard/Tabs/Tab/FlightProgressTab";
+import { FlightTimesheets } from "~/features/flight/components/Overview/FlightTimesheets";
 import { TrackedFlightContext } from "~/features/flight/hooks/useTrackedFlight";
 import { formatDate } from "~/shared/lib/time";
 import { flightFixture, trackedFlight } from "../fixtures/flights";
@@ -25,7 +25,7 @@ function FlightThatLands({ save }: Pick<ReportArgs, "save">) {
       <button type="button" onClick={() => setFlight(taxiingIn)}>
         Arrival reported
       </button>
-      <FlightProgressTab />
+      <FlightTimesheets />
     </TrackedFlightContext.Provider>
   );
 }
@@ -61,7 +61,7 @@ const meta = {
   title: "Tracking/Report predicted times",
   render: ({ flight, save }) => (
     <TrackedFlightContext.Provider value={{ ...trackedFlight(flight), reportPredictedTimes: save }}>
-      <FlightProgressTab />
+      <FlightTimesheets />
     </TrackedFlightContext.Provider>
   ),
   args: {
