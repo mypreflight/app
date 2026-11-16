@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
+import { ShellSlot, ShellSlotPortal } from "~/app-state/useShellSlots";
 import { FlightSource } from "~/features/flight";
 import { FlightHistoryHeader } from "~/features/flight/components/Dashboard/History/Header/FlightHistoryHeader";
+import { FlightHistoryTopBar } from "~/features/flight/components/Dashboard/History/Header/FlightHistoryTopBar";
 import { HistoryMapBox } from "~/features/flight/components/Dashboard/History/Map/HistoryMapBox";
 import { FlightRecordCard } from "~/features/flight/components/Dashboard/History/Record/FlightRecordCard";
 import { HistoryDocumentTabs } from "~/features/flight/components/Dashboard/History/Tabs/HistoryDocumentTabs";
@@ -13,6 +15,7 @@ import { HistoryOfpTab } from "~/features/flight/components/Dashboard/History/Ta
 import { HistoryPassengersTab } from "~/features/flight/components/Dashboard/History/Tabs/Tab/HistoryPassengersTab";
 import { HistoryRouteTab } from "~/features/flight/components/Dashboard/History/Tabs/Tab/HistoryRouteTab";
 import { HistoryRunwayAnalysisTab } from "~/features/flight/components/Dashboard/History/Tabs/Tab/HistoryRunwayAnalysisTab";
+import { DiversionBanner } from "~/features/flight/components/Dashboard/Tracking/Header/DiversionBanner";
 import { useFlightHistoryEntry } from "~/features/flight/hooks/useFlightHistoryStage";
 import { useHistoryFlight } from "~/features/flight/hooks/useHistoryFlight";
 import {
@@ -109,6 +112,9 @@ export function FlightHistoryDashboard({ flightId, viewSlug, tabSlug }: Props) {
 
   return (
     <RouteBriefingProvider flight={flight}>
+      <ShellSlotPortal slot={ShellSlot.TopBar}>
+        <FlightHistoryTopBar flight={flight} diverted={diversion !== null} views={views} activeView={view} />
+      </ShellSlotPortal>
       <div data-full-bleed={isHistoryView || undefined} className={isHistoryView ? MAP_OVERLAY : undefined}>
         <div className={isHistoryView ? MAP_OVERLAY_COLUMN : undefined}>
           <div
@@ -117,7 +123,18 @@ export function FlightHistoryDashboard({ flightId, viewSlug, tabSlug }: Props) {
             data-entering={isEntering || undefined}
             className="mb-4 flex flex-col gap-3"
           >
-            <FlightHistoryHeader flight={flight} diversion={diversion} views={views} activeView={view} />
+            <FlightHistoryHeader
+              flight={flight}
+              diversion={diversion}
+              views={views}
+              activeView={view}
+              className="md:hidden"
+            />
+            {diversion && (
+              <div className="max-md:hidden">
+                <DiversionBanner diversion={diversion} label="Diverted to" />
+              </div>
+            )}
             <FlightRecordCard
               flight={flight}
               loadsheets={loadsheets}

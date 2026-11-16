@@ -1,5 +1,6 @@
 import React from "react";
 import { LuHistory } from "react-icons/lu";
+import { twMerge } from "tailwind-merge";
 import type { Diversion } from "~/features/diversion";
 import type { Flight } from "~/features/flight";
 import { ArrivalPunctualityBadge } from "~/features/flight/components/Dashboard/History/Header/ArrivalPunctualityBadge";
@@ -17,14 +18,15 @@ type Props = {
   diversion: Diversion | null;
   views: ViewSwitchOption[];
   activeView: string;
+  className?: string;
 };
 
-export function FlightHistoryHeader({ flight, diversion, views, activeView }: Props) {
+export function FlightHistoryHeader({ flight, diversion, views, activeView, className }: Props) {
   const { airframe } = flight.aircraft;
   const flownOn = flight.timesheet.actual?.offBlockTime ?? flight.timesheet.scheduled.offBlockTime;
 
   return (
-    <Container padding="spacious" className="@container">
+    <Container padding="spacious" className={twMerge("@container", className)}>
       <h1 className="sr-only">Flight {flight.flightNumber}</h1>
       <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b border-gray-200 pb-3 dark:border-gray-800">
         <Breadcrumbs

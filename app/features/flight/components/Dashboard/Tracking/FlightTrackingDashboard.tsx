@@ -23,8 +23,7 @@ import { usePageTitle } from "~/shared/hooks/usePageTitle";
 const MAP_OVERLAY =
   "md:pointer-events-none md:absolute md:inset-0 md:z-10 md:overflow-y-auto md:[scrollbar-gutter:stable]";
 const MAP_OVERLAY_COLUMN = "md:mx-auto md:max-w-7xl md:p-6 md:*:pointer-events-auto";
-const MAP_LAYER =
-  "h-[clamp(24rem,70dvh,48rem)] overflow-hidden rounded-2xl border border-gray-200 md:absolute md:inset-0 md:h-auto md:rounded-none md:border-0 dark:border-gray-800";
+const MAP_LAYER = "md:absolute md:inset-0";
 const PARKED_MAP_LAYER = "invisible absolute inset-0";
 
 type Props = {

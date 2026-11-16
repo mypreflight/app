@@ -325,8 +325,8 @@ Precise and tactile: familiar affordances, quiet at rest, with a slight press �
   spacious.
 - **Footer link:** a full-width row with an icon tile, a title and a one-line description, used through
   `CardFooterLink`. Its focus ring is inset, so the card's rounded clip cannot cut it.
-- **Load failure:** a card whose data failed to load says so through `TilePlaceholder` — "Your last flight could not be
-  loaded. Reload the page to try again." — never an empty state.
+- **Load failure:** a card whose data failed to load says so through `TilePlaceholder` — "Your recent flights could not
+  be loaded. Reload the page to try again." — never an empty state.
 - **Between flights:** a dashboard card with real data to show keeps its working shape instead of falling back to a
   placeholder. The current flight card becomes `GroundStopBox`: the map on the airport and stand, local time, stand,
   aircraft and a ticking time on the ground. The next flight card shows "Awaiting dispatch" with the known departure
