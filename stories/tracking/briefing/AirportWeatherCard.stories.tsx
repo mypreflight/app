@@ -1,4 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect, within } from "storybook/test";
+import type { AirportWeatherReport } from "~/features/airport";
 import { AirportWeatherCard } from "~/features/airport/components/AirportWeatherCard";
 import { frankfurtWeather } from "../../fixtures/briefing";
 import { atWidth } from "../../support/frames";
@@ -43,4 +45,23 @@ export const LoadFailed: Story = {
 
 export const WideColumn: Story = {
   decorators: [atWidth(900)],
+};
+
+const vatsimAtis = {
+  id: "5b0e7c1d-2a94-4f63-9d8e-1c7a3b6f0e22",
+  source: "vatsim",
+  informationType: "atis",
+  content: "THIS IS FRANKFURT INFORMATION LIMA. RUNWAY 25C FOR DEPARTURE.",
+  lastFetched: "2026-07-08T11:56:00.000Z",
+} as unknown as AirportWeatherReport;
+
+export const OtherAtisSources: Story = {
+  args: { weather: { status: "ready", reports: [vatsimAtis, ...frankfurtWeather] } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(await canvas.findByText(/Frankfurt information Kilo/)).toBeInTheDocument();
+    await expect(canvas.queryByText(/FRANKFURT INFORMATION LIMA/)).not.toBeInTheDocument();
+    await expect(canvas.queryByText(/undefined/)).not.toBeInTheDocument();
+  },
 };

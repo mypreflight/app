@@ -4,6 +4,7 @@ import { LuCloudOff, LuTriangleAlert } from "react-icons/lu";
 import { useAuth } from "~/app-state/useAuth";
 import {
   type AirportWeatherReport,
+  allWeatherSources,
   resolveWeatherSource,
   WeatherInformationType,
   type WeatherSource,
@@ -46,7 +47,10 @@ function Reports({ reports }: { reports: AirportWeatherReport[] }) {
   const coded = CODED_TYPES.flatMap((type) =>
     reports.filter((report) => report.source === source && report.informationType === type),
   );
-  const atis = reports.find((report) => report.informationType === WeatherInformationType.Atis) ?? null;
+  const atis =
+    reports.find(
+      (report) => report.informationType === WeatherInformationType.Atis && allWeatherSources().includes(report.source),
+    ) ?? null;
 
   return (
     <div className="flex min-w-0 flex-col gap-3">
