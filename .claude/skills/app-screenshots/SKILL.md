@@ -1,6 +1,6 @@
 ---
 name: app-screenshots
-description: Drive the locally installed Google Chrome over the DevTools protocol to check MyPreflight UI changes in the real app and to capture screenshots, animation frames and before/after comparisons, then turn them into 1920×1080 update graphics for the Discord community and changelog entries for the website. Use this whenever a change needs to be seen in the browser ("check it in Chrome", "does it look right", "test on mobile", "the map jumps", "screenshot this"), whenever the Claude in Chrome tools are not connected, and whenever the user asks for graphics, slides, images or a before/after comparison to show the community, even if they do not say "screenshot".
+description: Drive the locally installed Google Chrome over the DevTools protocol to check MyPreflight UI changes in the real app and to capture screenshots, animation frames and before/after comparisons, then turn them into 1920×1080 update graphics and the post for the Discord releases channel, and changelog entries for the website. Use this whenever a change needs to be seen in the browser ("check it in Chrome", "does it look right", "test on mobile", "the map jumps", "screenshot this"), whenever the Claude in Chrome tools are not connected, and whenever the user asks for graphics, slides, images or a before/after comparison to show the community, even if they do not say "screenshot".
 ---
 
 # App screenshots and update graphics
@@ -109,7 +109,9 @@ The old version has different labels (`Monitor`, not `Tracking`) and controls (b
 
 ## 6. Discord update graphics
 
-Earlier sets live on the Desktop (`mypreflight-dashboard-update`, `mypreflight-flight-tracking-update`, `mypreflight-tracking-views-update`). Look at one before starting so the new set matches. Save each new set in a **new** folder, `~/Desktop/mypreflight-<topic>-update/`, with numbered files (`01-…png`).
+A set is a Discord post: the slides and the text that goes with them. It lives in the landing repo (`~/Projects/ft/landing`), in a new folder `discord/YYYY-MM-DD-<slug>/` holding `post.md` and the numbered slides (`01-…png`), and it goes in the landing PR that carries the changelog entry it announces. The landing `AGENTS.md`, section "Discord announcements", is the source of truth for the format. **Merging that PR posts it** to the releases channel through a webhook, so the PR is the last look before the community sees it.
+
+Sets made before the post moved there live on the Desktop (`mypreflight-briefing-update`, `mypreflight-dashboard-update`, `mypreflight-flight-tracking-update`, `mypreflight-tracking-views-update`); newer ones are in the landing repo's `discord/`. Look at the newest before starting so the new set matches.
 
 1. Capture at `CDP_SCALE=2` and 1440×900, both versions, with the same clock and theme. Alternate themes across slides as earlier sets do, and capture each theme you will use.
 2. Make a work folder with `assets/slides.html`, a `slides.js` (start from `assets/slides.example.js`), `app/assets/logo.svg` copied as `logo.svg`, and the captures in `shots/`.
@@ -122,8 +124,9 @@ Earlier sets live on the Desktop (`mypreflight-dashboard-update`, `mypreflight-f
      viewport reset
    ```
 
-5. Look at every render before copying it to the Desktop: no text running into a margin, pills not overlapping their text, crops showing whole controls, the clock reading the flight's day.
-6. Add the changelog entry. The website's changelog takes the raw captures, not the rendered slides: crop each before and after pair to the same component region, keep both themes, and encode them to AVIF. The slide's headline, lede and Before and After lines become the entry's title, summary and captions, without the `<em>` accent or a final full stop on the title. The `changelog-entry` skill covers the rest, from pinning the version to opening the PR to `mypreflight/landing`.
+5. Look at every render before copying it into the landing folder: no text running into a margin, pills not overlapping their text, crops showing whole controls, the clock reading the flight's day.
+6. Write `post.md` next to the slides. Frontmatter: `changelog` (`app` or `transponder`) and the `version` of the changelog entry it announces. Body, in Discord markdown: a bold first line `**MyPreflight <version>: <what a pilot can now do>**`, one or two sentences on the change, then one bullet per slide or part of the feature with its name in bold, written the way the slide lines are. Leave out the changelog link; the script appends it. Run `npm run discord:check` in the landing repo: it prints the exact message, and fails on more than 2,000 characters, more than ten images or an em dash.
+7. Add the changelog entry. The website's changelog takes the raw captures, not the rendered slides: crop each before and after pair to the same component region, keep both themes, and encode them to AVIF. The slide's headline, lede and Before and After lines become the entry's title, summary and captions, without the `<em>` accent or a final full stop on the title. The `changelog-entry` skill covers the rest, from pinning the version to opening the PR to `mypreflight/landing`.
 
 ## 7. Clean up
 

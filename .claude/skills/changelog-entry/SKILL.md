@@ -96,7 +96,7 @@ Voice rules that apply everywhere:
 
 ## 4. Screenshots
 
-Use the `app-screenshots` skill in this repo. Its Discord graphics and this entry share the same captures; the slide's headline, lede and Before and After lines map to the title, summary and captions.
+Use the `app-screenshots` skill in this repo. Its Discord graphics and this entry share the same captures; the slide's headline, lede and Before and After lines map to the title, summary and captions. When the change gets a Discord post, its folder (`discord/YYYY-MM-DD-<slug>/`, slides and `post.md`) goes in this same landing PR; that skill's section 6 covers it.
 
 - **Before** from `main` (or the release before the change), **after** from the branch, against the same seeded flight, clock, theme, viewport (1440x900) and crop, at `CDP_SCALE=2`.
 - Crop to the component that changed. The changelog column is about 850 px wide and images render at half their pixel size, so a whole 1440 px view shrinks; keep whole views for layout changes.
@@ -160,12 +160,13 @@ Bump `version` in the landing `package.json` (and `package-lock.json`); the PR c
 
 ```bash
 npm run lint && npm run astro check && npm run build
+npm run discord:check
 npm run preview
 ```
 
 Open `/changelog/` and `/changelog/<folder>/` and look at the entry in light and dark, on desktop and at phone width. Switch Before and After, open `/changelog/?version=<version>` and confirm it lands on the entry, and follow "See on GitHub".
 
-Then open the PR to `mypreflight/landing`, titled `Add the changelog entry for <title>`. Link the feature PRs in the body. Open it as a draft while any of them is unmerged, and say so. No Claude attribution in commits or the PR body.
+Then open the PR to `mypreflight/landing`, titled `Add the changelog entry for <title>`. Link the feature PRs in the body. Open it as a draft while any of them is unmerged, and say so. If it carries a Discord post, say so too: merging it posts to the releases channel once the site deploys, and the `discord` check's job summary shows the exact message. No Claude attribution in commits or the PR body.
 
 ## Before you finish
 
@@ -177,3 +178,4 @@ Then open the PR to `mypreflight/landing`, titled `Add the changelog entry for <
 - [ ] Every airline comparison is one you're sure of.
 - [ ] Screenshots are real, cropped to the change, in both themes, before and after from the same crop.
 - [ ] Lint, `astro check` and the build pass, and you looked at the rendered entry.
+- [ ] A Discord post, if the change gets one, is in this PR and passes `npm run discord:check`.
