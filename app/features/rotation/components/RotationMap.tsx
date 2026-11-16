@@ -40,7 +40,7 @@ type Props = {
 
 function legNumberIcon(order: number): L.DivIcon {
   return new L.DivIcon({
-    html: `<span style="transform:translate(-50%,-50%);display:flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:9999px;background:#6366f1;color:#fff;border:2px solid #fff;font-size:11px;font-weight:700">${order}</span>`,
+    html: `<span style="transform:translate(-50%,-50%);display:flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:9999px;background:#6366f1;color:#fff;border:2px solid #fff;font-size:12px;font-weight:700">${order}</span>`,
     className: "map-marker",
     iconSize: [0, 0],
     iconAnchor: [0, 0],

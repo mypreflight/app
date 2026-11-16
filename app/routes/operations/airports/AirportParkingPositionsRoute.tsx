@@ -6,6 +6,7 @@ import type { ParkingPosition } from "~/features/parking-position";
 import { ParkingPositionList } from "~/features/parking-position/components/ParkingPositionList";
 import { ParkingPositionListEmptyState } from "~/features/parking-position/components/ParkingPositionListEmptyState";
 import { RemoveParkingPositionModal } from "~/features/parking-position/components/RemoveParkingPositionModal";
+import { standName } from "~/features/parking-position/lib/standName";
 import { useApi } from "~/shared/api/useApi";
 import { NoFilterMatchesState } from "~/shared/ui/Filter/NoFilterMatchesState";
 
@@ -22,7 +23,7 @@ export default function AirportParkingPositionsRoute() {
     setIsRemoving(true);
     try {
       await parkingPositionService.remove(airport.id, parkingPosition.id);
-      success(`Parking stand ${parkingPosition.name} removed.`);
+      success(`Parking stand ${standName(parkingPosition.name)} removed.`);
       setPendingRemove(null);
       revalidator.revalidate();
     } catch {

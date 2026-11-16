@@ -28,7 +28,7 @@ function Figure({ figure }: { figure: RouteFigure }) {
     <span className="font-mono text-sm font-bold tabular-nums text-gray-700 dark:text-gray-200">
       {figure.value}
       {figure.unit !== null && (
-        <span className="ms-0.5 text-2xs font-normal text-gray-500 dark:text-gray-400">{figure.unit}</span>
+        <span className="ms-0.5 text-xs font-normal text-gray-500 dark:text-gray-400">{figure.unit}</span>
       )}
     </span>
   );
@@ -90,7 +90,7 @@ function ProcedureTag({ text, procedure }: { text: string; procedure: RouteProce
   return (
     <span className="inline-flex items-baseline gap-1.5 rounded-md border border-indigo-200 bg-indigo-50 px-2 py-1 dark:border-indigo-500/40 dark:bg-indigo-500/10">
       <span className="font-mono text-sm font-bold text-indigo-700 dark:text-indigo-300">{text}</span>
-      <span className="text-2xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
+      <span className="text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
         {PROCEDURE_LABEL[procedure]}
       </span>
     </span>
@@ -135,7 +135,7 @@ function OceanicTrackSegment({ designator, segment, selectedOrdinal, onSelect }:
         {designator !== null && (
           <span className="font-mono text-sm font-bold text-gray-900 dark:text-white">{designator}</span>
         )}
-        <span className="text-2xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+        <span className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
           {designator === null ? "Oceanic" : "Track"}
         </span>
       </span>

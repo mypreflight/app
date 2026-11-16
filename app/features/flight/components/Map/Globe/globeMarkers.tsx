@@ -18,6 +18,7 @@ import {
   terminalRing,
 } from "~/features/flight/lib/globeAirportOverlay";
 import { calculateLastBearing } from "~/features/flight/lib/smooth";
+import { standName } from "~/features/parking-position/lib/standName";
 import type { Position } from "~/shared/models/geo";
 import type { GlobeMarker } from "~/shared/ui/Globe/GlobeMap";
 
@@ -90,7 +91,15 @@ function ringCentre(ring: LatLngTuple[]): LatLngTuple {
   return [latitude, longitude];
 }
 
-export function airportLayoutGlobeMarkers(scenes: GlobeAirportScene[]): GlobeMarker[] {
+type AirportLayoutMarkerOptions = {
+  onRunwayPick?: (runwayId: string) => void;
+  onParkingPositionPick?: (parkingPositionId: string) => void;
+};
+
+export function airportLayoutGlobeMarkers(
+  scenes: GlobeAirportScene[],
+  { onRunwayPick, onParkingPositionPick }: AirportLayoutMarkerOptions = {},
+): GlobeMarker[] {
   const markers: GlobeMarker[] = [];
   const runways = runwayGeometry(scenes);
 
@@ -125,31 +134,53 @@ export function airportLayoutGlobeMarkers(scenes: GlobeAirportScene[]): GlobeMar
     for (const parkingPosition of scene.parkingPositions) {
       if (!parkingPosition.coordinates) continue;
       const assigned = scene.assignedParkingPositionId !== null;
-      const filled = !assigned || parkingPosition.id === scene.assignedParkingPositionId;
+      const selected = parkingPosition.id === scene.assignedParkingPositionId;
+      const filled = !assigned || selected;
+      const pickable = onParkingPositionPick !== undefined;
+      const className = [
+        "map-parking",
+        pickable && "map-parking--pickable",
+        pickable && selected && "map-parking--selected",
+      ]
+        .filter(Boolean)
+        .join(" ");
       markers.push({
         id: `parking-${parkingPosition.id}`,
         position: [parkingPosition.coordinates.latitude, parkingPosition.coordinates.longitude],
         html: ReactDOMServer.renderToString(
-          <span className="map-parking">
+          <span className={className}>
             <span className={`map-parking__dot map-parking__dot--${filled ? "filled" : "hollow"}`} />
-            <span className="map-parking__label">{parkingPosition.name}</span>
+            <span className="map-parking__label">{standName(parkingPosition.name)}</span>
           </span>,
         ),
         minZoom: globeZoom(AIRPORT_LABELS_ZOOM_THRESHOLD),
-        layer: 1,
+        layer: pickable && selected ? 3 : 1,
+        onClick: pickable ? () => onParkingPositionPick(parkingPosition.id) : undefined,
       });
     }
   }
 
   for (const { threshold, active, onActiveRunway, bearing } of runways.designators) {
+    const pickable = onRunwayPick !== undefined;
+    const className = [
+      "map-runway-plate",
+      active && "map-runway-plate--active",
+      pickable && "map-runway-plate--pickable",
+    ]
+      .filter(Boolean)
+      .join(" ");
+
     markers.push({
       id: `runway-${threshold.id}`,
       position: threshold.designatorPosition,
-      html: anchoredHtml(`map-runway-plate${active ? " map-runway-plate--active" : ""}`, threshold.designator),
+      html: anchoredHtml(className, threshold.designator),
       heading: bearing,
       upright: true,
-      minZoom: globeZoom(onActiveRunway ? RUNWAY_ZOOM_THRESHOLD : RUNWAY_DESIGNATOR_ZOOM_THRESHOLD),
-      layer: 2,
+      minZoom: pickable
+        ? undefined
+        : globeZoom(onActiveRunway ? RUNWAY_ZOOM_THRESHOLD : RUNWAY_DESIGNATOR_ZOOM_THRESHOLD),
+      layer: pickable && active ? 3 : 2,
+      onClick: pickable ? () => onRunwayPick(threshold.id) : undefined,
     });
   }
 

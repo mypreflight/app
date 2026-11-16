@@ -16,7 +16,7 @@ export function Figure({ value, unit = "t", className, format = formatTons }: Fi
   return (
     <span className={twMerge("font-mono tabular-nums text-sm text-gray-700 dark:text-gray-300", className)}>
       {format(value)}
-      <span className="ms-0.5 text-2xs font-normal opacity-60">{unit}</span>
+      <span className="ms-0.5 text-xs font-normal opacity-60">{unit}</span>
     </span>
   );
 }
@@ -52,7 +52,7 @@ export function BuildUpLine({ label, value, note, unit = "t", duration, subtotal
         {addition && <span>+</span>}
         {label}
         {note && (
-          <span className="rounded bg-gray-100 px-1.5 py-0.5 text-2xs font-semibold normal-case tracking-normal text-gray-500 dark:bg-gray-800 dark:text-gray-400">
+          <span className="rounded bg-gray-100 px-1.5 py-0.5 text-xs font-semibold normal-case tracking-normal text-gray-500 dark:bg-gray-800 dark:text-gray-400">
             {note}
           </span>
         )}
@@ -90,7 +90,7 @@ export function BuildUpSplitLine({ label, entries }: { label: string; entries: S
       <span className="flex flex-wrap items-baseline justify-end gap-x-4">
         {entries.map(({ caption, value }) => (
           <span key={caption} className="flex items-baseline gap-1.5">
-            <span className="text-2xs text-gray-500 dark:text-gray-400">{caption}</span>
+            <span className="text-xs text-gray-500 dark:text-gray-400">{caption}</span>
             <Figure value={value} className="font-bold text-gray-800 dark:text-gray-100" />
           </span>
         ))}

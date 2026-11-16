@@ -84,7 +84,7 @@ function TimeBlock({ label, time, primary }: { label: string; time: Date; primar
       }`}
     >
       <span
-        className={`block text-2xs font-bold uppercase tracking-wider ${
+        className={`block text-xs font-bold uppercase tracking-wider ${
           primary ? "text-indigo-600 dark:text-indigo-400" : "text-gray-500 dark:text-gray-400"
         }`}
       >
@@ -104,7 +104,7 @@ function TimeBlock({ label, time, primary }: { label: string; time: Date; primar
 function TaxiSeparator({ minutes }: { minutes: number }) {
   return (
     <div className="flex flex-col items-center justify-center gap-1.5">
-      <span className="text-2xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+      <span className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
         Taxi · <span className="font-mono text-gray-600 dark:text-gray-300">{minutes}m</span>
       </span>
       <div className="relative h-px w-full bg-linear-to-r from-gray-300 to-indigo-400 dark:from-gray-700 dark:to-indigo-500">

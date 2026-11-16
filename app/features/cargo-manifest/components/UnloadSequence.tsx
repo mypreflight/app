@@ -46,7 +46,7 @@ export function UnloadSequence({ sequence, holdDataNote }: Props) {
 
       {sequence.remainingAboard.length > 0 && (
         <div className="flex flex-col gap-1.5 rounded-lg bg-gray-50 px-3 py-2.5 dark:bg-gray-800">
-          <span className="text-2xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+          <span className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
             Stays aboard
           </span>
           <ul className="flex flex-col gap-1">

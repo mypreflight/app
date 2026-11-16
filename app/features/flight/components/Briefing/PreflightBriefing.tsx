@@ -1,9 +1,9 @@
 import React from "react";
 import { AirportWeatherCard } from "~/features/airport/components/AirportWeatherCard";
 import { useAirportWeather } from "~/features/airport/hooks/useAirportWeather";
+import { BriefingAirportCard } from "~/features/flight/components/Briefing/Airport/BriefingAirportCard";
 import { BriefingColumn, BriefingColumns } from "~/features/flight/components/Briefing/BriefingColumns";
 import { PassengersSummaryCard } from "~/features/flight/components/Briefing/PassengersSummaryCard";
-import { ParkingPositionRunwayBox } from "~/features/flight/components/Dashboard/Tracking/Box/ParkingPositionRunwayBox";
 import { CrewColumn } from "~/features/flight/components/FuelAndLoadsheet/CrewColumn";
 import { FuelAndLoadsheetPanel } from "~/features/flight/components/FuelAndLoadsheet/FuelAndLoadsheetPanel";
 import { useFlightCabin } from "~/features/flight/hooks/useFlightCabin";
@@ -17,7 +17,6 @@ type Props = {
 
 export function PreflightBriefing({ documentHref }: Props) {
   const { flight, loadsheets } = useTrackedFlight();
-  const departureWeather = useAirportWeather(flight?.departureAirport.id ?? null);
   const destinationWeather = useAirportWeather(flight?.destinationAirport.id ?? null);
   const cabin = useFlightCabin(flight);
 
@@ -25,18 +24,20 @@ export function PreflightBriefing({ documentHref }: Props) {
     return null;
   }
 
-  const { departureAirport, destinationAirport } = flight;
+  const { destinationAirport } = flight;
 
   return (
     <BriefingColumns>
-      <BriefingColumn>
-        <AirportWeatherCard
-          city={departureAirport.city.name}
-          icaoCode={departureAirport.icaoCode}
-          libraryHref={`/airports-library/${departureAirport.id}`}
-          weather={departureWeather}
-        />
-        <ParkingPositionRunwayBox end="departure" />
+      <BriefingColumn wide>
+        <BriefingAirportCard end="departure" />
+        {cabin.status === "ready" && (
+          <PassengersSummaryCard
+            passengers={cabin.manifest.passengers}
+            pilHref={(request) => documentHref(BriefingDocument.Pil, request)}
+            cabinHref={documentHref(BriefingDocument.Cabin)}
+          />
+        )}
+        <CrewColumn flightId={flight.id} />
       </BriefingColumn>
       <BriefingColumn>
         <FuelAndLoadsheetPanel
@@ -48,16 +49,6 @@ export function PreflightBriefing({ documentHref }: Props) {
           arrangement="cards"
           withCrew={false}
         />
-      </BriefingColumn>
-      <BriefingColumn>
-        {cabin.status === "ready" && (
-          <PassengersSummaryCard
-            passengers={cabin.manifest.passengers}
-            pilHref={(request) => documentHref(BriefingDocument.Pil, request)}
-            cabinHref={documentHref(BriefingDocument.Cabin)}
-          />
-        )}
-        <CrewColumn flightId={flight.id} />
         <AirportWeatherCard
           city={destinationAirport.city.name}
           icaoCode={destinationAirport.icaoCode}

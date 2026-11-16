@@ -97,7 +97,7 @@ export function GsxPassengerFlowDrawing({ flow, active }: Props) {
         transform="rotate(-90 9 76)"
         textAnchor="middle"
         dominantBaseline="central"
-        className="fill-gray-600 text-2xs font-bold tracking-wider dark:fill-gray-400"
+        className="fill-gray-600 text-xs font-bold tracking-wider dark:fill-gray-400"
       >
         GATE
       </text>

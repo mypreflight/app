@@ -55,7 +55,7 @@ function FixSection({ title, source, defaultOpen = true, hidden, children }: Sec
           type="button"
           aria-expanded={isOpen}
           onClick={toggle}
-          className="flex w-full cursor-pointer items-center justify-between gap-3 bg-gray-50 px-4 py-1 text-2xs font-bold uppercase tracking-wider text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-indigo-500 pointer-coarse:min-h-11 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+          className="flex w-full cursor-pointer items-center justify-between gap-3 bg-gray-50 px-4 py-1 text-xs font-bold uppercase tracking-wider text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-indigo-500 pointer-coarse:min-h-11 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
         >
           <span>
             {title}

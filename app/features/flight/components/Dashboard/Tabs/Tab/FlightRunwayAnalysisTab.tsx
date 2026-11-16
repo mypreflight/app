@@ -18,7 +18,7 @@ export function FlightRunwayAnalysisTab() {
 
   return (
     <Container>
-      <div className="overflow-auto leading-tight text-[13px] max-h-186 text-gray-700 dark:text-gray-300 font-mono">
+      <div className="overflow-auto leading-tight text-xs max-h-186 text-gray-700 dark:text-gray-300 font-mono">
         <b>[ Runway analysis ]</b>
         <br />
         <b>--------------------------------------------------------------------</b>

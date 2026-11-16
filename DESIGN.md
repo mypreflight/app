@@ -58,7 +58,7 @@ typography:
     lineHeight: 1.33
   label:
     fontFamily: "Noto Sans, sans-serif"
-    fontSize: "0.6875rem"
+    fontSize: "0.75rem"
     fontWeight: 700
     lineHeight: 1.5
     letterSpacing: "0.08em"
@@ -229,12 +229,18 @@ in columns. Headings are bold rather than semibold; hierarchy comes from size an
 - **Title** (700, 1rem, 1.5): card and group titles, such as a rotation name.
 - **Body** (400, 0.875rem, 1.43): default interface text; cap prose at 65–75ch, though dense tables may run wider.
 - **Caption** (400, 0.75rem, 1.33): city lines, next-action captions and helper text, in Muted.
-- **Label** (700, 0.6875rem, uppercase, 0.08em): field labels, column keys and card header titles.
+- **Label** (700, 0.75rem, uppercase, 0.08em): field labels, column keys and card header titles.
 - **Data** (Roboto Mono 700, 1rem, tabular): stat values, block times and every comparable figure. Registrations and
   secondary codes drop to 400 at caption size.
 - **Data Display** (Roboto Mono 700, 1.875rem, line-height 1): flight numbers and airport codes on flight cards.
 
 ### Named Rules
+**The Tailwind Scale Rule.** Every font size is a step of Tailwind's own scale: `text-xs` (12px) up to `text-9xl`, or
+its `--text-*` variable in CSS. No custom sizes, no arbitrary values such as `text-[13px]`, and nothing below 12px. When
+a label needs to read smaller, tighten or lighten it, or enlarge the figure beside it, rather than leave the scale. A
+size that only a library accepts as a number, such as a chart axis or a map label, takes the scale's pixel value, and
+a map label that grows with zoom starts and ends on a step.
+
 **The Tabular Figures Rule.** Any number a user compares or sums is set in Roboto Mono with tabular figures,
 right-aligned in columns, with the unit in a smaller, lighter weight. Never set comparable figures in the proportional
 body font.

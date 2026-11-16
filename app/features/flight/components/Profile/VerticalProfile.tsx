@@ -381,7 +381,7 @@ export function VerticalProfile({
                 y={altitudeY(altitude)}
                 dy="0.32em"
                 textAnchor="end"
-                className="fill-gray-500 text-2xs dark:fill-gray-400"
+                className="fill-gray-500 text-xs dark:fill-gray-400"
               >
                 {formatFlightLevel(altitude)}
               </text>
@@ -391,7 +391,7 @@ export function VerticalProfile({
             x={plotRight + 6}
             y={speedY(domain.topSpeed)}
             dy="0.32em"
-            className="fill-gray-500 text-2xs dark:fill-gray-400"
+            className="fill-gray-500 text-xs dark:fill-gray-400"
           >
             {domain.topSpeed} kt
           </text>
@@ -433,7 +433,7 @@ export function VerticalProfile({
               />
             )}
           </g>
-          <text x={plotLeft} y={height - 3} className="fill-gray-700 text-2xs dark:fill-gray-300">
+          <text x={plotLeft} y={height - 3} className="fill-gray-700 text-xs dark:fill-gray-300">
             {dateToIcaoTime(new Date(visible.start))}Z
           </text>
           {ticks.map((time) => (
@@ -445,17 +445,12 @@ export function VerticalProfile({
                 y2={plotBottom + 4}
                 className="stroke-gray-300 dark:stroke-gray-700"
               />
-              <text
-                x={x(time)}
-                y={height - 3}
-                textAnchor="middle"
-                className="fill-gray-500 text-2xs dark:fill-gray-400"
-              >
+              <text x={x(time)} y={height - 3} textAnchor="middle" className="fill-gray-500 text-xs dark:fill-gray-400">
                 {dateToIcaoTime(new Date(time))}Z
               </text>
             </g>
           ))}
-          <text x={plotRight} y={height - 3} textAnchor="end" className="fill-gray-700 text-2xs dark:fill-gray-300">
+          <text x={plotRight} y={height - 3} textAnchor="end" className="fill-gray-700 text-xs dark:fill-gray-300">
             {dateToIcaoTime(new Date(visible.end))}Z
           </text>
           {cursor !== null && (

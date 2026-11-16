@@ -9,6 +9,7 @@ import type { Flight } from "~/features/flight";
 import { useCountdown } from "~/features/flight/components/Dashboard/Tracking/Progress/useCountdown";
 import { GroundStopMap } from "~/features/flight/components/Map/Box/GroundStopMap";
 import type { GroundStop } from "~/features/flight/hooks/useGroundStop";
+import { standName } from "~/features/parking-position/lib/standName";
 import { isSameUtcDay } from "~/shared/lib/date";
 import { padZero } from "~/shared/lib/time";
 import { FormattedIcaoDate } from "~/shared/ui/Date/FormattedIcaoDate";
@@ -76,7 +77,7 @@ function GroundClock({ since, event }: { since: Date; event: GroundStop["sinceEv
       <span className="mt-1 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
         On ground since {event.toLowerCase()}
       </span>
-      <span className="whitespace-nowrap text-2xs text-gray-500 dark:text-gray-400">
+      <span className="whitespace-nowrap text-xs text-gray-500 dark:text-gray-400">
         <FormattedIcaoTime date={since} />
         {!isToday && (
           <>
@@ -169,7 +170,7 @@ export function GroundStopBox({ groundStop, layout, nextFlight, nextFlightFailed
           <div className="order-last grid w-full grid-cols-3 gap-3 [grid-area:facts] @2xl:w-auto @2xl:justify-self-center @2xl:gap-x-8">
             <LocalTime timezone={airport.timezone} />
             {layout.stand && (
-              <StatBlock label="Stand" value={layout.stand.name} meta={layout.standTerminal?.fullName} />
+              <StatBlock label="Stand" value={standName(layout.stand.name)} meta={layout.standTerminal?.fullName} />
             )}
             {arrivedOn && (
               <StatBlock

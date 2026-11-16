@@ -24,7 +24,7 @@ export function AccountMenu({ name, email, discordInviteUrl }: Props) {
         <button
           type="button"
           aria-label={`Account menu, ${name}`}
-          className="flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-full bg-gradient-to-br from-indigo-600 to-fuchsia-600 text-2xs font-bold tracking-wide text-white transition-[scale,box-shadow] duration-150 ease-out hover:ring-3 hover:ring-indigo-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 active:scale-[0.96] aria-expanded:ring-3 aria-expanded:ring-indigo-200 pointer-coarse:size-11 motion-reduce:transition-none dark:hover:ring-indigo-500/30 dark:focus-visible:ring-offset-gray-900 dark:aria-expanded:ring-indigo-500/40"
+          className="flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-full bg-gradient-to-br from-indigo-600 to-fuchsia-600 text-xs font-bold tracking-wide text-white transition-[scale,box-shadow] duration-150 ease-out hover:ring-3 hover:ring-indigo-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 active:scale-[0.96] aria-expanded:ring-3 aria-expanded:ring-indigo-200 pointer-coarse:size-11 motion-reduce:transition-none dark:hover:ring-indigo-500/30 dark:focus-visible:ring-offset-gray-900 dark:aria-expanded:ring-indigo-500/40"
         >
           {getInitials(name).slice(0, MAX_INITIALS)}
         </button>

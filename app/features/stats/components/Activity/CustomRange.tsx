@@ -15,7 +15,7 @@ export function CustomRange({ from, to, min, max, onChange }: Props) {
       <div className="flex items-center gap-2">
         <Label
           htmlFor="stats-range-from"
-          className="text-2xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400"
+          className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400"
         >
           From
         </Label>
@@ -32,7 +32,7 @@ export function CustomRange({ from, to, min, max, onChange }: Props) {
       <div className="flex items-center gap-2">
         <Label
           htmlFor="stats-range-to"
-          className="text-2xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400"
+          className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400"
         >
           To
         </Label>

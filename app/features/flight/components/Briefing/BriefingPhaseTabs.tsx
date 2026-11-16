@@ -42,7 +42,7 @@ export function BriefingPhaseTabs({ tabs, selected }: Props) {
             <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
               <span
                 className={twMerge(
-                  "text-[0.9375rem] font-bold",
+                  "text-base font-bold",
                   isSelected ? "text-indigo-700 dark:text-indigo-300" : "text-gray-900 dark:text-white",
                 )}
               >

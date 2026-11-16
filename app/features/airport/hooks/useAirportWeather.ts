@@ -2,7 +2,10 @@ import { useEffect, useState } from "react";
 import type { AirportWeatherReport } from "~/features/airport";
 import { useApi } from "~/shared/api/useApi";
 
-export type AirportWeather = { status: "loading" } | { status: "ready"; reports: AirportWeatherReport[] };
+export type AirportWeather =
+  | { status: "loading" }
+  | { status: "failed" }
+  | { status: "ready"; reports: AirportWeatherReport[] };
 
 export function useAirportWeather(airportId: string | null): AirportWeather {
   const { airportService } = useApi();
@@ -16,14 +19,18 @@ export function useAirportWeather(airportId: string | null): AirportWeather {
     let cancelled = false;
     setWeather({ status: "loading" });
 
-    airportService
-      .fetchWeather(airportId)
-      .catch((): AirportWeatherReport[] => [])
-      .then((reports) => {
+    airportService.fetchWeather(airportId).then(
+      (reports) => {
         if (!cancelled) {
           setWeather({ status: "ready", reports });
         }
-      });
+      },
+      () => {
+        if (!cancelled) {
+          setWeather({ status: "failed" });
+        }
+      },
+    );
 
     return () => {
       cancelled = true;

@@ -92,7 +92,7 @@ export function ManagedFloatingInputBlock({
     [description ? descriptionId : undefined, isError ? errorId : undefined].filter(Boolean).join(" ") || undefined;
 
   const footnoteBlock = footnote ? (
-    <div className="rounded-b-lg border border-t-0 border-gray-300 bg-gray-100 px-2 py-1 text-2xs leading-tight text-gray-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400">
+    <div className="rounded-b-lg border border-t-0 border-gray-300 bg-gray-100 px-2 py-1 text-xs leading-tight text-gray-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400">
       {footnote}
     </div>
   ) : null;

@@ -42,7 +42,7 @@ export function CloseFlightForm({ plannedTrip }: { plannedTrip: number | null })
 
       {plannedTrip !== null && (
         <div className="rounded-xl border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800">
-          <h3 className="mb-3 text-2xs font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400">
+          <h3 className="mb-3 text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400">
             Planned vs actual
           </h3>
           <dl className="space-y-2 text-sm">

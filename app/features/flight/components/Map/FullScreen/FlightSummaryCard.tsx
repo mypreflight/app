@@ -26,7 +26,7 @@ function NextStage({ flight, progress }: { flight: Flight; progress: FlightProgr
       <span className="flex items-center justify-end gap-1.5 text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
         {showDeparture ? "Est. departure" : "Est. arrival"}
         {delayMinutes > 0 && (
-          <span className="inline-flex items-center rounded-full bg-amber-100 px-1.5 py-0.5 font-mono text-2xs font-bold normal-case text-amber-700 dark:bg-amber-950 dark:text-amber-400">
+          <span className="inline-flex items-center rounded-full bg-amber-100 px-1.5 py-0.5 font-mono text-xs font-bold normal-case text-amber-700 dark:bg-amber-950 dark:text-amber-400">
             +{delayMinutes}
           </span>
         )}
@@ -41,7 +41,7 @@ function NextStage({ flight, progress }: { flight: Flight; progress: FlightProgr
 function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-baseline gap-1.5">
-      <span className="text-2xs font-bold uppercase tracking-[0.08em] text-gray-500 dark:text-gray-400">{label}</span>
+      <span className="text-xs font-bold uppercase tracking-[0.08em] text-gray-500 dark:text-gray-400">{label}</span>
       <span className="font-mono text-sm font-semibold tabular-nums text-gray-800 dark:text-gray-100">{value}</span>
     </div>
   );

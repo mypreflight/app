@@ -54,7 +54,7 @@ export function RouteChart({ flight, briefing, state }: Props) {
 
       <MapTopBar isMaximized={isMaximized} onToggleMaximize={toggle}>
         <div className="flex items-center gap-3">
-          <span className="flex items-center gap-2 text-2xs font-bold uppercase tracking-[0.08em] text-gray-500 dark:text-gray-400">
+          <span className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.08em] text-gray-500 dark:text-gray-400">
             <FaDrawPolygon className="size-3" />
             Planned route
           </span>

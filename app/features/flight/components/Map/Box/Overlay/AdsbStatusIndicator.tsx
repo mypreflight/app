@@ -14,7 +14,7 @@ type Props = {
   isOnline: boolean;
 };
 
-const labelClass = "flex items-center gap-2 text-2xs font-bold uppercase tracking-[0.08em]";
+const labelClass = "flex items-center gap-2 text-xs font-bold uppercase tracking-[0.08em]";
 
 export function AdsbStatusIndicator({ status, isOnline }: Props) {
   if (isOnline) {

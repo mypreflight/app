@@ -8,7 +8,7 @@ type Props = {
 };
 
 const SIZES = {
-  sm: "h-4 min-w-4 px-1 text-2xs leading-none",
+  sm: "h-4 min-w-4 px-1 text-xs leading-none",
   md: "h-5 min-w-5 px-1.5 text-xs",
 };
 

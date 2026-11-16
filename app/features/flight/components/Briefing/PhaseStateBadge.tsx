@@ -3,7 +3,7 @@ import { LuCheck } from "react-icons/lu";
 import { twMerge } from "tailwind-merge";
 import type { PhaseState } from "~/features/flight/lib/briefingPhase";
 
-const BADGE = "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-2xs font-bold uppercase tracking-wider";
+const BADGE = "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-bold uppercase tracking-wider";
 
 export function PhaseStateBadge({ state }: { state: PhaseState }) {
   if (state === "done") {

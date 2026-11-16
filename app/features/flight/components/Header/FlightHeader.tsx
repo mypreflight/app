@@ -51,7 +51,7 @@ export function FlightHeader({
             <h1 className="font-mono text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
               {flight.flightNumberWithoutSpaces}
             </h1>
-            <span className="rounded-md border border-indigo-100 bg-indigo-50 px-2 py-0.5 text-2xs font-bold uppercase tracking-widest text-indigo-700 dark:border-indigo-900 dark:bg-indigo-950 dark:text-indigo-300">
+            <span className="rounded-md border border-indigo-100 bg-indigo-50 px-2 py-0.5 text-xs font-bold uppercase tracking-widest text-indigo-700 dark:border-indigo-900 dark:bg-indigo-950 dark:text-indigo-300">
               {toHuman.flight.status.standard(flight.status, flight.serviceType)}
             </span>
           </div>
@@ -161,7 +161,7 @@ export function FlightHeader({
 function Stat({ label, value, mono = false }: { label: string; value: React.ReactNode; mono?: boolean }) {
   return (
     <div>
-      <dt className="text-2xs font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400">{label}</dt>
+      <dt className="text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400">{label}</dt>
       <dd className={`mt-1 text-sm font-medium text-gray-800 dark:text-gray-100 ${mono ? "font-mono" : ""}`}>
         {value}
       </dd>

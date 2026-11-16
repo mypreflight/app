@@ -34,7 +34,7 @@ const NO_OVERLAY: GlobeOverlay = { sources: {}, layers: [] };
 
 const lineWidth: ExpressionSpecification = ["interpolate", ["linear"], ["zoom"], 2, 0.8, 6, 1.3, 10, 1.8];
 
-const nameSize: ExpressionSpecification = ["interpolate", ["linear"], ["zoom"], NAME_MIN_ZOOM, 10, 8, 11.5];
+const nameSize = 12;
 
 const codeSize: ExpressionSpecification = ["interpolate", ["linear"], ["zoom"], CODE_MIN_ZOOM, 18, NAME_MIN_ZOOM, 24];
 

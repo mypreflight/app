@@ -62,6 +62,7 @@ type Props = {
   entryCamera?: GlobeEntryCamera | null;
   onCameraChange?: (camera: GlobeCameraState) => void;
   onReady?: () => void;
+  maxZoom?: number;
 };
 
 type PlacedMarker = {
@@ -336,6 +337,7 @@ export function GlobeMap({
   entryCamera = null,
   onCameraChange,
   onReady,
+  maxZoom = MAX_ZOOM,
 }: Props) {
   const { computedMode } = useThemeMode();
   const basemaps = use(loadBasemapStyles()) ?? OFFLINE_BASEMAP_STYLES;
@@ -421,7 +423,7 @@ export function GlobeMap({
       style: initialStyle,
       attributionControl: false,
       interactive,
-      maxZoom: MAX_ZOOM,
+      maxZoom,
     });
 
     instance.scrollZoom.setWheelZoomRate(WHEEL_ZOOM_RATE);
@@ -570,7 +572,7 @@ export function GlobeMap({
       setMap(null);
       instance.remove();
     };
-  }, [initialStyle, restoredView, openingEntry, clickableLayer, interactive]);
+  }, [initialStyle, restoredView, openingEntry, clickableLayer, interactive, maxZoom]);
 
   useEffect(() => {
     map?.setStyle(style);

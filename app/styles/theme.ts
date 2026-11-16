@@ -123,7 +123,7 @@ export default function theme(): DeepPartial<FlowbiteTheme> {
             "bg-indigo-100 text-indigo-700 hover:bg-indigo-100 dark:bg-indigo-900/40 dark:text-indigo-300 dark:hover:bg-indigo-900/40",
         },
         size: {
-          xs: "text-2xs",
+          xs: "text-xs",
           sm: "text-xs",
         },
       },

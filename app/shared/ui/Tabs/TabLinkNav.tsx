@@ -59,7 +59,7 @@ export function TabLinkNav({ label, items, activeKey }: Props) {
 function TabCount({ count, isActive }: { count: number; isActive: boolean }) {
   return (
     <span
-      className={`min-w-5 rounded-full px-1.5 py-0.5 text-center font-mono text-2xs font-bold tabular-nums ${
+      className={`min-w-5 rounded-full px-1.5 py-0.5 text-center font-mono text-xs font-bold tabular-nums ${
         isActive
           ? "bg-indigo-600 text-white dark:text-white"
           : "bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-200"

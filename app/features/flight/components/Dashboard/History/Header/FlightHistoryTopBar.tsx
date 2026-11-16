@@ -25,7 +25,7 @@ export function FlightHistoryTopBar({ flight, diverted, views, activeView }: Pro
           <Link
             to="/flight-history"
             viewTransition
-            className="flex items-center gap-1 whitespace-nowrap text-[0.8125rem] text-gray-600 transition-colors hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400"
+            className="flex items-center gap-1 whitespace-nowrap text-sm text-gray-600 transition-colors hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400"
           >
             Flight history
             <HiChevronRight aria-hidden={true} className="size-4 shrink-0 text-gray-500 dark:text-gray-400" />
@@ -39,7 +39,7 @@ export function FlightHistoryTopBar({ flight, diverted, views, activeView }: Pro
         />
       </div>
       <div className="flex shrink-0 items-center gap-2.5">
-        <span className="flex items-center gap-1.5 whitespace-nowrap text-[0.8125rem] text-gray-600 dark:text-gray-300">
+        <span className="flex items-center gap-1.5 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
           <LuHistory aria-hidden={true} className="size-4 shrink-0 text-gray-500 dark:text-gray-400" />
           Flown
           <span className="font-bold text-gray-900 dark:text-white">

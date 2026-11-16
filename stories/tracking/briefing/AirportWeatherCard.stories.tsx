@@ -17,7 +17,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "An airport's weather in a briefing column: the same reports as the airport library, with the source switch, laid out by the card's own width. The ICAO code links to the airport in the library. Seeded Frankfurt METAR and TAF.",
+          "An airport's weather in a briefing column, built from the same reports as the airport card: METAR and TAF from the source the switch picks, each TAF change group on its own line, then the SayIntentions ATIS. The ICAO code links to the airport in the library. Seeded Frankfurt reports.",
       },
     },
   },
@@ -35,6 +35,10 @@ export const Loading: Story = {
 
 export const NoReport: Story = {
   args: { city: "New York", icaoCode: "KJFK", weather: { status: "ready", reports: [] } },
+};
+
+export const LoadFailed: Story = {
+  args: { weather: { status: "failed" } },
 };
 
 export const WideColumn: Story = {

@@ -2,8 +2,10 @@ import { Badge } from "flowbite-react";
 import React from "react";
 import { LuCopy, LuPencil, LuTrash2 } from "react-icons/lu";
 import { gateLocationOptions, NoiseSensitivity, type ParkingPosition } from "~/features/parking-position";
+import { StandFactList } from "~/features/parking-position/components/StandFactList";
 import { groupParkingPositionsByTerminal } from "~/features/parking-position/lib/parkingPositionGroups";
 import { standFactGroups } from "~/features/parking-position/lib/standFacts";
+import { standName } from "~/features/parking-position/lib/standName";
 import type { Terminal } from "~/features/terminal";
 import { CollapsibleTerminalSection } from "~/features/terminal/components/CollapsibleTerminalSection";
 import { RowActionButton, RowActionLink } from "~/shared/ui/Button/RowAction";
@@ -56,7 +58,7 @@ export function ParkingPositionList({
                     {locationLabel(parkingPosition.location)}
                   </span>
                   <span className="truncate font-mono text-base font-bold text-gray-900 dark:text-white">
-                    {parkingPosition.name}
+                    {standName(parkingPosition.name)}
                   </span>
                 </h4>
                 {!readOnly && (
@@ -64,17 +66,17 @@ export function ParkingPositionList({
                     <RowActionLink
                       to={`/airports/${airportId}/parking-positions/new?duplicateFrom=${parkingPosition.id}`}
                       icon={LuCopy}
-                      label={`Duplicate parking stand ${parkingPosition.name}`}
+                      label={`Duplicate parking stand ${standName(parkingPosition.name)}`}
                     />
                     <RowActionLink
                       to={`/airports/${airportId}/parking-positions/${parkingPosition.id}/edit`}
                       icon={LuPencil}
-                      label={`Edit parking stand ${parkingPosition.name}`}
+                      label={`Edit parking stand ${standName(parkingPosition.name)}`}
                     />
                     <RowActionButton
                       onClick={() => onDelete?.(parkingPosition)}
                       icon={LuTrash2}
-                      label={`Remove parking stand ${parkingPosition.name}`}
+                      label={`Remove parking stand ${standName(parkingPosition.name)}`}
                       tone="danger"
                     />
                   </div>
@@ -84,16 +86,7 @@ export function ParkingPositionList({
               <dl className="divide-y divide-gray-100 dark:divide-gray-800/60">
                 {standFactGroups(parkingPosition).map((factGroup) => (
                   <FactRow key={factGroup.label} label={factGroup.label}>
-                    <span className="flex flex-wrap items-baseline gap-x-1.5">
-                      {factGroup.facts.map((fact, factIndex) => (
-                        <React.Fragment key={fact.text}>
-                          {factIndex > 0 ? <span className="text-gray-300 dark:text-gray-700">·</span> : null}
-                          <span className={fact.available ? undefined : "text-gray-500 dark:text-gray-400"}>
-                            {fact.text}
-                          </span>
-                        </React.Fragment>
-                      ))}
-                    </span>
+                    <StandFactList facts={factGroup.facts} />
                   </FactRow>
                 ))}
               </dl>

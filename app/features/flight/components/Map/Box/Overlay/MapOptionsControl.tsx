@@ -96,7 +96,7 @@ const displayOptions: { value: DisplayMode; label: string }[] = [
   { value: "none", label: "Off" },
 ];
 
-const sectionLabel = "text-2xs font-bold uppercase tracking-[0.08em] text-gray-500 dark:text-gray-400";
+const sectionLabel = "text-xs font-bold uppercase tracking-[0.08em] text-gray-500 dark:text-gray-400";
 
 function tabbableControls(container: HTMLElement | null): HTMLElement[] {
   return Array.from(
@@ -400,7 +400,7 @@ export function MapOptionsControl({
         onChange={setAirspace}
       />
       {mapSettings.firDisplay !== "hide" && (
-        <p className="text-2xs text-gray-500 dark:text-gray-400">
+        <p className="text-xs text-gray-500 dark:text-gray-400">
           FIRs from{" "}
           <a href={VATSPY_DATA_PROJECT.href} target="_blank" rel="noreferrer" className="underline">
             {VATSPY_DATA_PROJECT.label}

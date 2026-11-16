@@ -20,7 +20,7 @@ type Props = {
 
 function LegNumber({ order }: { order: number }) {
   return (
-    <span className="flex size-[22px] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 border-white bg-indigo-500 text-[11px] font-bold text-white">
+    <span className="flex size-[22px] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 border-white bg-indigo-500 text-xs font-bold text-white">
       {order}
     </span>
   );

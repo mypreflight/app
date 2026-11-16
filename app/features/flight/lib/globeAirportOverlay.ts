@@ -26,10 +26,13 @@ import { type GlobeOverlay, lineSource, polygonSource } from "~/shared/lib/globe
 import { FLIGHT_COLOR, TERMINAL_COLOR } from "~/shared/lib/mapColors";
 import { roundedLatLngPolygon } from "~/shared/lib/roundedPolygon";
 
+export type RunwayUse = "arrival" | "departure";
+
 export type GlobeAirportScene = {
   airport: Airport;
   runways: Runway[];
   assignedRunwayId: string | null;
+  assignedRunwayUse?: RunwayUse;
   terminals: Terminal[];
   gates: Gate[];
   parkingPositions: ParkingPosition[];
@@ -67,6 +70,35 @@ export function terminalRing(terminal: Terminal): LatLngTuple[] | null {
   return roundedLatLngPolygon(terminal.shape, TERMINAL_CORNER_FRACTION);
 }
 
+function pathThresholds(
+  thresholds: RunwayThreshold[],
+  [head, tail]: [[number, number], [number, number]],
+  { assignedRunwayId, assignedRunwayUse }: GlobeAirportScene,
+): RunwayThreshold[] {
+  if (assignedRunwayUse === "arrival") {
+    return thresholds.filter((threshold) => threshold.id === assignedRunwayId);
+  }
+
+  if (assignedRunwayUse === "departure") {
+    const farEnds = thresholds.filter((threshold) => threshold.id !== assignedRunwayId);
+    if (farEnds.length > 0) return farEnds;
+
+    const outbound = initialBearing(head[0], head[1], tail[0], tail[1]);
+    return [
+      {
+        id: `${assignedRunwayId}-departure`,
+        designator: "",
+        position: tail,
+        designatorPosition: tail,
+        inbound: (outbound + 180) % 360,
+        outbound,
+      },
+    ];
+  }
+
+  return thresholds;
+}
+
 export function runwayGeometry(scenes: GlobeAirportScene[]): RunwayGeometry {
   const geometry: RunwayGeometry = {
     surfaces: [],
@@ -99,7 +131,7 @@ export function runwayGeometry(scenes: GlobeAirportScene[]): RunwayGeometry {
       }
 
       if (active) {
-        for (const threshold of plate.thresholds) {
+        for (const threshold of pathThresholds(plate.thresholds, ribbon.centerline, scene)) {
           geometry.approaches.push({ ...computeApproachPath(threshold, APPROACH_DISTANCE_NM), bearing });
         }
       }

@@ -19,14 +19,14 @@ export function InputErrorList({ id, errorFocus, errors, size = "md" }: Props) {
   return (
     <HelperText
       id={id}
-      className={isSmall ? "mt-1 text-2xs leading-snug" : undefined}
+      className={isSmall ? "mt-1 text-xs leading-snug" : undefined}
       color={errorFocus ? "red" : undefined}
     >
       {errors.map((error, _index) => (
         <span key={error} className="block">
           <Badge
             aria-hidden
-            className={twMerge("mb-1 me-2 inline-block uppercase", isSmall && "px-1.5 py-0 text-2xs")}
+            className={twMerge("mb-1 me-2 inline-block uppercase", isSmall && "px-1.5 py-0 text-xs")}
             color={errorFocus ? "failure" : "gray"}
           >
             !

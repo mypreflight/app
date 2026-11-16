@@ -40,7 +40,7 @@ function SwitchButton({
       onClick={onClick}
       disabled={disabled}
       aria-pressed={active}
-      className={`cursor-pointer rounded-md px-2.5 py-1 text-2xs font-bold uppercase tracking-widest transition ${
+      className={`cursor-pointer rounded-md px-2.5 py-1 text-xs font-bold uppercase tracking-widest transition ${
         active
           ? "bg-white text-indigo-600 dark:bg-gray-900 dark:text-indigo-300"
           : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"

@@ -13,7 +13,7 @@ export function HazardDiamond({ hazardClass }: Props) {
     <span className="inline-flex size-12 shrink-0 rotate-45 overflow-hidden border border-black" aria-hidden={true}>
       <span className="flex w-full flex-col" style={{ backgroundColor: mark.ground }}>
         <span className="flex flex-1 items-end justify-center" style={{ color: mark.ink }}>
-          <span className="-rotate-45 text-[13px] leading-none">{mark.symbol}</span>
+          <span className="-rotate-45 text-xs leading-none">{mark.symbol}</span>
         </span>
         <span
           className="flex flex-1 items-start justify-center"
@@ -22,7 +22,7 @@ export function HazardDiamond({ hazardClass }: Props) {
             color: mark.lowerGround === "#000000" ? "#FFFFFF" : mark.ink,
           }}
         >
-          <span className="-rotate-45 text-2xs font-bold leading-none">{hazardClass}</span>
+          <span className="-rotate-45 text-xs font-bold leading-none">{hazardClass}</span>
         </span>
       </span>
     </span>

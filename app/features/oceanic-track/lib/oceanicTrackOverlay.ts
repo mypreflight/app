@@ -127,7 +127,7 @@ function trackName(theme: BasemapTheme): LayerSpecification {
       "symbol-spacing": LABEL_SPACING,
       "text-field": ["get", "identifier"],
       "text-font": ["noto_sans_bold"],
-      "text-size": 15,
+      "text-size": 14,
       "text-rotation-alignment": "viewport",
       "text-pitch-alignment": "viewport",
       "text-padding": 4,

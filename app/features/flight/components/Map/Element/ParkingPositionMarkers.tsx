@@ -1,6 +1,7 @@
 import L from "leaflet";
 import { Marker } from "react-leaflet";
 import type { ParkingPosition } from "~/features/parking-position";
+import { standName } from "~/features/parking-position/lib/standName";
 import { escapeHtml } from "~/shared/lib/escapeHtml";
 
 type Props = {
@@ -29,7 +30,7 @@ export function ParkingPositionMarkers({ parkingPositions, assignedParkingPositi
           <Marker
             key={parkingPosition.id}
             position={[parkingPosition.coordinates.latitude, parkingPosition.coordinates.longitude]}
-            icon={parkingIcon(parkingPosition.name, filled)}
+            icon={parkingIcon(standName(parkingPosition.name), filled)}
           />
         );
       })}

@@ -98,7 +98,7 @@ export function NavLog({ insights, selectedOrdinal, onSelect, canReportFuel, tak
               key={column.key}
               scope="col"
               className={twMerge(
-                "border-b border-gray-200 px-3 py-2 text-2xs font-bold uppercase tracking-wider text-gray-500 dark:border-gray-700 dark:text-gray-400",
+                "border-b border-gray-200 px-3 py-2 text-xs font-bold uppercase tracking-wider text-gray-500 dark:border-gray-700 dark:text-gray-400",
                 column.numeric && "text-right",
                 column.hideOnNarrow && NARROW_HIDDEN,
               )}
@@ -115,7 +115,7 @@ export function NavLog({ insights, selectedOrdinal, onSelect, canReportFuel, tak
             <th
               scope="rowgroup"
               colSpan={columns.length}
-              className="border-b border-gray-100 bg-white px-3 pb-1 pt-3 text-left text-2xs font-bold uppercase tracking-wider text-gray-500 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-400"
+              className="border-b border-gray-100 bg-white px-3 pb-1 pt-3 text-left text-xs font-bold uppercase tracking-wider text-gray-500 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-400"
             >
               {run[0].fix.stage}
             </th>
