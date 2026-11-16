@@ -26,13 +26,13 @@ export function AirportWeatherPanel({ reports }: Props) {
   const visible = orderByInformationType(reports.filter((report) => report.source === source));
 
   return (
-    <div className="space-y-3">
+    <div className="@container space-y-3">
       <WeatherSourceSwitch selected={source} onSelect={setSource} />
 
       {visible.length === 0 ? (
         <NoReports>No {translateWeatherSource(source)} report available for this airport.</NoReports>
       ) : (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 @xl:grid-cols-2 @4xl:grid-cols-3">
           {visible.map((report) => (
             <WeatherReport key={report.id} report={report} />
           ))}

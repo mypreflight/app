@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { useLocation, useNavigate, useViewTransitionState } from "react-router";
-import { FlightDataTab } from "~/features/flight/lib/flightDataTabs";
+import { useLocation, useNavigate, useParams, useViewTransitionState } from "react-router";
+import { type BriefingPhase, DOCUMENT_PARAM } from "~/features/flight/lib/briefingPhase";
 import {
   automaticTrackingView,
   resolveTrackingLocation,
@@ -22,7 +22,7 @@ export type TrackingViewState = TrackingLocation & {
 function canonicalPath(flight: Flight, location: TrackingLocation): string {
   return flight.status === FlightStatus.Closed
     ? `/flight-history/${flight.id}`
-    : trackFlightPath(flight.id, location.view, location.tab);
+    : trackFlightPath(flight.id, location.view, location.phase, location.document);
 }
 
 export function useTrackingView(
@@ -32,24 +32,27 @@ export function useTrackingView(
   tabSlug: string | undefined,
 ): TrackingViewState | null {
   const navigate = useNavigate();
-  const { pathname } = useLocation();
-  const [briefingTab, setBriefingTab] = useState(FlightDataTab.Overview);
+  const { pathname, search } = useLocation();
+  const [briefingPhase, setBriefingPhase] = useState<BriefingPhase | null>(null);
   const lastAutomaticView = useRef<AutomaticView | null>(null);
 
   const loaded = flight?.id === flightId ? flight : null;
-  const location = loaded && resolveTrackingLocation(loaded.status, viewSlug, tabSlug);
+  const documentParam = new URLSearchParams(search).get(DOCUMENT_PARAM);
+  const location = loaded && resolveTrackingLocation(loaded.status, viewSlug, tabSlug, documentParam);
   const target = loaded && location && canonicalPath(loaded, location);
   const automaticView = loaded && automaticTrackingView(loaded.status);
 
-  if (location?.view === TrackingView.Briefing && location.tab !== briefingTab) {
-    setBriefingTab(location.tab);
+  if (location?.view === TrackingView.Briefing && location.phase !== briefingPhase) {
+    setBriefingPhase(location.phase);
   }
 
+  const current = documentParam === null ? pathname : `${pathname}?${DOCUMENT_PARAM}=${documentParam}`;
+
   useEffect(() => {
-    if (target !== null && target !== pathname) {
+    if (target !== null && target !== current) {
       navigate(target, { replace: true });
     }
-  }, [target, pathname, navigate]);
+  }, [target, current, navigate]);
 
   useEffect(() => {
     if (automaticView === null) {
@@ -70,8 +73,12 @@ export function useTrackingView(
 
   return {
     ...location,
-    pathTo: (view) => trackFlightPath(flightId, view, briefingTab),
+    pathTo: (view) => trackFlightPath(flightId, view, briefingPhase),
   };
+}
+
+export function useCurrentTrackingView(): TrackingView {
+  return useParams().view === TrackingView.Tracking ? TrackingView.Tracking : TrackingView.Briefing;
 }
 
 export function useIsSwitchingTrackingView(flightId: string): boolean {

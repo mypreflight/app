@@ -28,7 +28,7 @@ export function FiledRouteCard({ flight, briefingHref }: Props) {
         viewTransition
         className="group inline-flex items-center gap-1.5 whitespace-nowrap text-xs font-bold text-indigo-600 hover:underline dark:text-indigo-400"
       >
-        Route briefing
+        Nav log
         <FaArrowRight
           className="size-3 transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none"
           aria-hidden={true}

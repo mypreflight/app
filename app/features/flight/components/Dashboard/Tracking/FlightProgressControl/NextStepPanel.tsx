@@ -12,6 +12,8 @@ import type {
   FlightProgressTone,
 } from "~/features/flight/components/Dashboard/Tracking/FlightProgressControl/progressButton";
 import { useTrackedFlight } from "~/features/flight/hooks/useTrackedFlight";
+import { useCurrentTrackingView } from "~/features/flight/hooks/useTrackingView";
+import { BriefingDocument } from "~/features/flight/lib/briefingPhase";
 import {
   type AutomationCondition,
   type AutomationState,
@@ -19,9 +21,8 @@ import {
   manualReportLabel,
 } from "~/features/flight/lib/flightAutomation";
 import { type ClosureBlock, closureBlock } from "~/features/flight/lib/flightClosure";
-import { FlightDataTab } from "~/features/flight/lib/flightDataTabs";
 import { gsxHandling } from "~/features/flight/lib/gsxHandling";
-import { TrackingView, trackFlightPath } from "~/features/flight/lib/trackingView";
+import { trackFlightPath } from "~/features/flight/lib/trackingView";
 import { gsxSettingsPath } from "~/features/user/lib/gsxSettings";
 import { toHuman } from "~/i18n/translate";
 
@@ -104,16 +105,16 @@ type NextStep = {
   detail: string | null;
 };
 
-const CLOSURE_WARNINGS: Record<ClosureBlock, { message: string; link: string; tab: FlightDataTab }> = {
+const CLOSURE_WARNINGS: Record<ClosureBlock, { message: string; link: string; document: BriefingDocument }> = {
   delay: {
     message: "Settle the delay report before closing this flight.",
     link: "Open delay report",
-    tab: FlightDataTab.Delays,
+    document: BriefingDocument.Delay,
   },
   emergency: {
     message: "Resolve the active emergency before closing this flight.",
     link: "Open emergencies",
-    tab: FlightDataTab.EmergenciesDiversions,
+    document: BriefingDocument.Emergencies,
   },
 };
 
@@ -138,6 +139,7 @@ function PanelLink({ to, className, children }: { to: string; className?: string
 
 function ClosureWarning({ flightId, block }: { flightId: string; block: ClosureBlock }) {
   const warning = CLOSURE_WARNINGS[block];
+  const view = useCurrentTrackingView();
 
   return (
     <div className="mt-2 flex flex-col gap-1.5 text-sm">
@@ -145,7 +147,7 @@ function ClosureWarning({ flightId, block }: { flightId: string; block: ClosureB
         <LuTriangleAlert className="mt-0.5 size-4 shrink-0" aria-hidden={true} />
         <span>{warning.message}</span>
       </p>
-      <PanelLink to={trackFlightPath(flightId, TrackingView.Briefing, warning.tab)} className="ms-6">
+      <PanelLink to={trackFlightPath(flightId, view, null, warning.document)} className="ms-6">
         {warning.link}
       </PanelLink>
     </div>

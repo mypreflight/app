@@ -8,14 +8,22 @@ export type ViewSwitchOption = {
   to: string;
 };
 
+export type ViewSwitchSize = "md" | "sm";
+
 type Props = {
   label: string;
   options: ViewSwitchOption[];
   activeKey: string;
+  size?: ViewSwitchSize;
   className?: string;
 };
 
-export function ViewSwitch({ label, options, activeKey, className }: Props) {
+const OPTION_SIZES: Record<ViewSwitchSize, string> = {
+  md: "h-9 px-4 text-sm",
+  sm: "h-7 px-2.5 text-xs",
+};
+
+export function ViewSwitch({ label, options, activeKey, size = "md", className }: Props) {
   const activeIndex = options.findIndex(({ key }) => key === activeKey);
 
   return (
@@ -41,7 +49,8 @@ export function ViewSwitch({ label, options, activeKey, className }: Props) {
             viewTransition
             aria-current={active ? "page" : undefined}
             className={twMerge(
-              "relative flex h-9 items-center justify-center px-4 text-sm font-semibold transition-colors duration-250 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-indigo-500 pointer-coarse:h-11 dark:focus-visible:ring-indigo-400",
+              OPTION_SIZES[size],
+              "relative flex items-center justify-center font-semibold transition-colors duration-250 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-indigo-500 pointer-coarse:h-11 dark:focus-visible:ring-indigo-400",
               index > 0 && "border-s border-gray-200 dark:border-gray-700",
               active
                 ? "text-indigo-700 dark:text-indigo-300"

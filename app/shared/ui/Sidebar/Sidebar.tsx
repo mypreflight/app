@@ -1,18 +1,21 @@
 import { useAuth } from "~/app-state/useAuth";
+import { ShellSlot, useShellSlotTarget } from "~/app-state/useShellSlots";
 import { useSidebar } from "~/app-state/useSidebar";
 import { UserRole } from "~/features/user";
+import { useAppEnvironment } from "~/shared/hooks/useAppEnvironment";
 import { SidebarClock } from "~/shared/ui/Sidebar/Elements/SidebarClock";
+import { SidebarStatus } from "~/shared/ui/Sidebar/Elements/SidebarStatus";
 import { SidebarTab } from "~/shared/ui/Sidebar/Elements/SidebarTab";
 import { AdminSidebarItems } from "~/shared/ui/Sidebar/Items/AdminSidebarItems";
 import { CabinCrewSidebarItems } from "~/shared/ui/Sidebar/Items/CabinCrewSidebarItems";
 import { OperatorSidebarItems } from "~/shared/ui/Sidebar/Items/OperationsSidebarItems";
-import { SettingsSidebarItems } from "~/shared/ui/Sidebar/Items/SettingsSidebarItems";
 import { TopBarLogo } from "~/shared/ui/TopBar/TopBarLogo";
-import { TopBarUserTile } from "~/shared/ui/TopBar/TopBarUserTile";
 
 export function Sidebar() {
   const { user } = useAuth();
   const { isCollapsed } = useSidebar();
+  const { appVersion } = useAppEnvironment();
+  const readingsRef = useShellSlotTarget(ShellSlot.SidebarStatus);
 
   if (user === null) {
     return <div>Loading…</div>;
@@ -38,11 +41,8 @@ export function Sidebar() {
             {user.role === UserRole.Operations && <OperatorSidebarItems />}
             {user.role === UserRole.CabinCrew && <CabinCrewSidebarItems />}
             {user.role === UserRole.Admin && <AdminSidebarItems />}
-            <SettingsSidebarItems />
           </div>
-          <div className="mt-3 border-t border-gray-200 pt-3 dark:border-gray-800">
-            <TopBarUserTile />
-          </div>
+          <SidebarStatus version={appVersion} readingsRef={readingsRef} />
         </aside>
       </div>
       <SidebarTab />

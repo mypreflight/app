@@ -26,7 +26,7 @@ import { TerminalService } from "~/features/terminal/service";
 import { TravelService } from "~/features/travel/service";
 import { UserService } from "~/features/user/service";
 
-type ApiServices = {
+export type ApiServices = {
   aircraftService: AircraftService;
   airframeService: AirframeService;
   cabinLayoutService: CabinLayoutService;
@@ -60,7 +60,7 @@ type ApiProviderProps = {
   children: React.ReactNode;
 };
 
-const UseApi = createContext<ApiServices | null>(null);
+export const UseApi = createContext<ApiServices | null>(null);
 
 export function ApiProvider({ children }: ApiProviderProps) {
   const services = useMemo<ApiServices>(

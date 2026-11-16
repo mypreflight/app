@@ -1,0 +1,16 @@
+[
+  {
+    "id": "e799cf41-0344-4b29-b111-ee9f635535e2",
+    "source": "aviation_weather_gov",
+    "informationType": "metar",
+    "content": "METAR EDDF 081200Z 24008KT 9999 FEW035 22/12 Q1018 NOSIG",
+    "lastFetched": "2026-07-08T12:00:00.000Z"
+  },
+  {
+    "id": "f721308b-9a04-4b20-8af9-89b25fd1986e",
+    "source": "aviation_weather_gov",
+    "informationType": "taf",
+    "content": "TAF EDDF 081100Z 0812/0918 24010KT 9999 FEW035 BECMG 0815/0817 27012KT",
+    "lastFetched": "2026-07-08T12:00:00.000Z"
+  }
+]

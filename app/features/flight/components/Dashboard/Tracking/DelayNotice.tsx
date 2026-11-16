@@ -4,8 +4,9 @@ import { Link } from "react-router";
 import { FlightStatus } from "~/features/flight";
 import { NoticePanel } from "~/features/flight/components/Dashboard/Tracking/Progress/NoticePanel";
 import { useTrackedFlight } from "~/features/flight/hooks/useTrackedFlight";
-import { FlightDataTab } from "~/features/flight/lib/flightDataTabs";
-import { TrackingView, trackFlightPath } from "~/features/flight/lib/trackingView";
+import { useCurrentTrackingView } from "~/features/flight/hooks/useTrackingView";
+import { BriefingDocument } from "~/features/flight/lib/briefingPhase";
+import { trackFlightPath } from "~/features/flight/lib/trackingView";
 
 const WARNING_STATUSES = [
   FlightStatus.TaxiingIn,
@@ -20,6 +21,7 @@ type Props = {
 
 export function DelayNotice({ isDelayReportShown }: Props) {
   const { flight, delayRequest } = useTrackedFlight();
+  const view = useCurrentTrackingView();
 
   if (!flight || delayRequest === null || delayRequest.isSettled) {
     return null;
@@ -47,7 +49,7 @@ export function DelayNotice({ isDelayReportShown }: Props) {
         action={
           isDelayReportShown ? undefined : (
             <Link
-              to={trackFlightPath(flight.id, TrackingView.Briefing, FlightDataTab.Delays)}
+              to={trackFlightPath(flight.id, view, null, BriefingDocument.Delay)}
               viewTransition
               className="group inline-flex items-center gap-1.5 whitespace-nowrap text-xs font-bold text-gray-600 hover:text-gray-900 hover:underline dark:text-gray-300 dark:hover:text-white"
             >
