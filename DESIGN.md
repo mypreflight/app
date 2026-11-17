@@ -236,7 +236,8 @@ in columns. Headings are bold rather than semibold; hierarchy comes from size an
 
 ### Named Rules
 **The Tailwind Scale Rule.** Every font size is a step of Tailwind's own scale: `text-xs` (12px) up to `text-9xl`, or
-its `--text-*` variable in CSS. No custom sizes, no arbitrary values such as `text-[13px]`, and nothing below 12px. When
+its `--text-*` variable in CSS. No custom sizes, no arbitrary values such as `text-[13px]`, and nothing below 12px,
+save `text-2xs` (11px), which only the two-row runway chips use. When
 a label needs to read smaller, tighten or lighten it, or enlarge the figure beside it, rather than leave the scale. A
 size that only a library accepts as a number, such as a chart axis or a map label, takes the scale's pixel value, and
 a map label that grows with zoom starts and ends on a step.

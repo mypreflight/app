@@ -8,6 +8,7 @@ export type VerifySimbriefUserResponse = SimbriefAccount;
 
 export type UpdateOwnProfileRequest = {
   defaultWeatherSource?: WeatherSource;
+  defaultAtisSource?: WeatherSource;
   simbriefUserId?: string | null;
 };
 

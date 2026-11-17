@@ -50,6 +50,9 @@ export type Airport = {
 export enum WeatherSource {
   AviationWeatherGov = "aviation_weather_gov",
   SayIntentions = "say_intentions",
+  Vatsim = "vatsim",
+  FaaDatis = "faa_datis",
+  AtisGuru = "atis_guru",
 }
 
 export function allWeatherSources(): WeatherSource[] {
@@ -62,14 +65,51 @@ export function resolveWeatherSource(source: WeatherSource | null | undefined): 
   return source && allWeatherSources().includes(source) ? source : DEFAULT_WEATHER_SOURCE;
 }
 
+export enum AtisSource {
+  SayIntentions = "say_intentions",
+  Real = "real",
+}
+
+export function allAtisSources(): AtisSource[] {
+  return [AtisSource.SayIntentions, AtisSource.Real];
+}
+
+export const DEFAULT_ATIS_SOURCE = AtisSource.SayIntentions;
+
+const ATIS_SOURCE_OF_PROVIDER: Partial<Record<WeatherSource, AtisSource>> = {
+  [WeatherSource.SayIntentions]: AtisSource.SayIntentions,
+  [WeatherSource.FaaDatis]: AtisSource.Real,
+  [WeatherSource.AtisGuru]: AtisSource.Real,
+};
+
+export function resolveAtisSource(provider: WeatherSource | null | undefined): AtisSource {
+  return (provider && ATIS_SOURCE_OF_PROVIDER[provider]) ?? DEFAULT_ATIS_SOURCE;
+}
+
+export function atisSourceProvider(source: AtisSource): WeatherSource {
+  return source === AtisSource.Real ? WeatherSource.FaaDatis : WeatherSource.SayIntentions;
+}
+
 export enum WeatherInformationType {
   Atis = "atis",
+  AtisArrival = "atis_arrival",
+  AtisDeparture = "atis_departure",
   Metar = "metar",
   Taf = "taf",
 }
 
 export function allWeatherInformationTypes(): WeatherInformationType[] {
-  return [WeatherInformationType.Metar, WeatherInformationType.Taf, WeatherInformationType.Atis];
+  return [
+    WeatherInformationType.Metar,
+    WeatherInformationType.Taf,
+    WeatherInformationType.Atis,
+    WeatherInformationType.AtisDeparture,
+    WeatherInformationType.AtisArrival,
+  ];
+}
+
+export function allAtisInformationTypes(): WeatherInformationType[] {
+  return [WeatherInformationType.Atis, WeatherInformationType.AtisDeparture, WeatherInformationType.AtisArrival];
 }
 
 export type AirportWeatherReport = {
@@ -78,6 +118,9 @@ export type AirportWeatherReport = {
   informationType: WeatherInformationType;
   content: string;
   lastFetched: string;
+  publishedAt: string | null;
+  arrivalRunways: string[];
+  departureRunways: string[];
 };
 
 export enum OsmResource {

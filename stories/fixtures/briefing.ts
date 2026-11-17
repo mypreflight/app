@@ -10,18 +10,21 @@ import { TrackingView, trackFlightPath } from "~/features/flight/lib/trackingVie
 import type { ApiFlightLoadsheetResponse } from "~/features/flight/request";
 import type { RouteBriefingState } from "~/features/route/hooks/useRouteBriefing";
 import type { EtopsBriefing } from "~/features/route/model";
+import type { Runway } from "~/features/runway";
 import type { ServiceStubs } from "../support/api";
 import { flightFixture, trackedFlight } from "./flights";
 import assignments from "./frankfurt-departure-assignments.json";
 import briefing from "./frankfurt-new-york-nat-briefing.json";
 import loadsheets from "./frankfurt-new-york-nat-loadsheets.json";
 import manifest from "./frankfurt-new-york-nat-manifest.json";
+import runways from "./frankfurt-runways.json";
 import weather from "./frankfurt-weather.json";
 import { routeBriefingState } from "./routes";
 
 export const natBriefing = briefing as unknown as EtopsBriefing;
 export const natManifest = manifest as unknown as ManifestPassenger[];
 export const frankfurtWeather = weather as unknown as AirportWeatherReport[];
+export const frankfurtRunways = runways as unknown as Runway[];
 export const natLoadsheets = latestLoadsheets(
   (loadsheets as unknown as ApiFlightLoadsheetResponse[]).map(parseFlightLoadsheet),
 );
@@ -106,6 +109,8 @@ export const natApi: ServiceStubs = {
   },
   runwayService: {
     fetchById: async () => assignments.runway as never,
+    fetchAll: async (airportId: string) =>
+      (airportId === natFlight().departureAirport.id ? frankfurtRunways : []) as never,
   },
   parkingPositionService: {
     fetchById: async () => assignments.parkingPosition as never,

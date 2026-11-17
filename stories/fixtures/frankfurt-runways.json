@@ -1,0 +1,121 @@
+[
+  {
+    "id": "32121288-2550-4b81-a558-9a7193ef6c97",
+    "airportId": "f35c094a-bec5-4803-be32-bd80a14b441a",
+    "designator": "07C",
+    "length": 4000,
+    "width": 60,
+    "displace": null,
+    "trueHeading": 70,
+    "magneticHeading": 72,
+    "elevation": 111,
+    "surfaceType": "asphalt",
+    "lightingType": "HIRL",
+    "coordinates": {
+      "latitude": 50.0326,
+      "longitude": 8.53463
+    }
+  },
+  {
+    "id": "5ae7e0f1-392a-4140-bb2a-4efee09fe9f1",
+    "airportId": "f35c094a-bec5-4803-be32-bd80a14b441a",
+    "designator": "07L",
+    "length": 2800,
+    "width": 45,
+    "displace": null,
+    "trueHeading": 70,
+    "magneticHeading": 72,
+    "elevation": 111,
+    "surfaceType": "asphalt",
+    "lightingType": "HIRL",
+    "coordinates": {
+      "latitude": 50.0371,
+      "longitude": 8.49708
+    }
+  },
+  {
+    "id": "e20b5116-0da1-4dd6-b283-96493b19962f",
+    "airportId": "f35c094a-bec5-4803-be32-bd80a14b441a",
+    "designator": "07R",
+    "length": 4000,
+    "width": 45,
+    "displace": null,
+    "trueHeading": 70,
+    "magneticHeading": 72,
+    "elevation": 111,
+    "surfaceType": "asphalt",
+    "lightingType": "HIRL",
+    "coordinates": {
+      "latitude": 50.0275,
+      "longitude": 8.53417
+    }
+  },
+  {
+    "id": "2fea3a8b-3fa8-41d4-ac9b-97004ebf2509",
+    "airportId": "f35c094a-bec5-4803-be32-bd80a14b441a",
+    "designator": "18",
+    "length": 4000,
+    "width": 45,
+    "displace": null,
+    "trueHeading": 180,
+    "magneticHeading": 183,
+    "elevation": 111,
+    "surfaceType": "asphalt",
+    "lightingType": "HIRL",
+    "coordinates": {
+      "latitude": 50.03415,
+      "longitude": 8.52594
+    }
+  },
+  {
+    "id": "290a31a8-ba88-436c-b9ab-d8a5c57ea81f",
+    "airportId": "f35c094a-bec5-4803-be32-bd80a14b441a",
+    "designator": "25C",
+    "length": 4000,
+    "width": 60,
+    "displace": 306,
+    "trueHeading": 250,
+    "magneticHeading": 252,
+    "elevation": 111,
+    "surfaceType": "asphalt",
+    "lightingType": "HIRL",
+    "coordinates": {
+      "latitude": 50.0451,
+      "longitude": 8.58698
+    }
+  },
+  {
+    "id": "01847392-32d8-4b6b-98e7-ee7b700677c5",
+    "airportId": "f35c094a-bec5-4803-be32-bd80a14b441a",
+    "designator": "25L",
+    "length": 4000,
+    "width": 45,
+    "displace": null,
+    "trueHeading": 250,
+    "magneticHeading": 252,
+    "elevation": 111,
+    "surfaceType": "asphalt",
+    "lightingType": "HIRL",
+    "coordinates": {
+      "latitude": 50.0401,
+      "longitude": 8.58653
+    }
+  },
+  {
+    "id": "b0fb79c5-840a-4005-a4f5-b5b8131ca1c9",
+    "airportId": "f35c094a-bec5-4803-be32-bd80a14b441a",
+    "designator": "25R",
+    "length": 2800,
+    "width": 45,
+    "displace": null,
+    "trueHeading": 250,
+    "magneticHeading": 252,
+    "elevation": 111,
+    "surfaceType": "asphalt",
+    "lightingType": "HIRL",
+    "coordinates": {
+      "latitude": 50.0458,
+      "longitude": 8.53372
+    }
+  }
+]

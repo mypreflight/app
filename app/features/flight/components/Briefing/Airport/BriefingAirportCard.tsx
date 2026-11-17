@@ -1,7 +1,12 @@
-import React, { useState } from "react";
+import React, { type ReactNode, useState } from "react";
+import { useAuth } from "~/app-state/useAuth";
 import { useToast } from "~/app-state/useToast";
+import { type AirportWeatherReport, resolveWeatherSource } from "~/features/airport";
 import { AirportWeatherReports } from "~/features/airport/components/Weather/AirportWeatherReports";
 import { useAirportWeather } from "~/features/airport/hooks/useAirportWeather";
+import { useAtisChoice } from "~/features/airport/hooks/useAtisChoice";
+import { type AtisEnd, atisLetter, runwaysInUse, runwayUse } from "~/features/airport/lib/atis";
+import { metarWind, type Wind, windComponents } from "~/features/airport/lib/wind";
 import { type Flight, FlightStatus } from "~/features/flight";
 import {
   AssignButton,
@@ -13,12 +18,15 @@ import { SelectParkingPositionModal } from "~/features/flight/components/Modal/S
 import { SelectRunwayModal } from "~/features/flight/components/Modal/SelectRunwayModal";
 import { type EndpointAssignments, useEndpointAssignments } from "~/features/flight/hooks/useEndpointAssignments";
 import { useTrackedFlight } from "~/features/flight/hooks/useTrackedFlight";
+import type { Runway } from "~/features/runway";
+import { AtisElsewhereChip, AtisUseChip, WindChip } from "~/features/runway/components/RunwayChips";
+import { useRunwayDesignators } from "~/features/runway/hooks/useRunwayDesignators";
 import { useApi } from "~/shared/api/useApi";
 import { AirportIdentity } from "~/shared/ui/Display/AirportIdentity";
 import { CardHeader } from "~/shared/ui/Layout/CardHeader";
 import { Container } from "~/shared/ui/Layout/Container";
 
-export type AirportEnd = "departure" | "arrival";
+export type AirportEnd = AtisEnd;
 
 type Editing = "runway" | "parkingPosition" | null;
 
@@ -81,6 +89,40 @@ function assignedIds(flight: Flight | null, end: AirportEnd) {
       };
 }
 
+type RunwayChipsInput = {
+  runway: Runway | null;
+  end: AirportEnd;
+  report: AirportWeatherReport | null;
+  designators: Map<string, string> | null;
+  wind: Wind | null;
+};
+
+function runwayChips({ runway, end, report, designators, wind }: RunwayChipsInput): ReactNode {
+  if (runway === null) {
+    return null;
+  }
+
+  const letter = report === null ? null : atisLetter(report.content);
+  const use = runwayUse(report, runway.id);
+  const elsewhere =
+    report === null || designators === null
+      ? []
+      : runwaysInUse(report, end).flatMap((runwayId) => designators.get(runwayId) ?? []);
+
+  return (
+    <>
+      {use.arrival || use.departure ? (
+        <AtisUseChip letter={letter} use={use} />
+      ) : (
+        <AtisElsewhereChip letter={letter} end={end} designators={elsewhere} />
+      )}
+      {wind !== null && (
+        <WindChip wind={wind} components={windComponents(wind, runway.trueHeading ?? runway.magneticHeading)} />
+      )}
+    </>
+  );
+}
+
 function loadable<Key extends "runway" | "parkingPosition" | "terminal">(assignments: EndpointAssignments, key: Key) {
   return assignments.status === "ready"
     ? ({ loading: false, value: assignments[key] } as const)
@@ -93,11 +135,14 @@ type Props = {
 
 export function BriefingAirportCard({ end }: Props) {
   const { flight, diversion, reload } = useTrackedFlight();
+  const { user } = useAuth();
   const { flightService } = useApi();
   const { success, error } = useToast();
   const [editing, setEditing] = useState<Editing>(null);
   const ids = assignedIds(flight, end);
   const weather = useAirportWeather(ids.airportId);
+  const atis = useAtisChoice(weather, end);
+  const designators = useRunwayDesignators(ids.airportId);
   const assignments = useEndpointAssignments(ids);
 
   if (flight === null) {
@@ -111,6 +156,8 @@ export function BriefingAirportCard({ end }: Props) {
   const kind = end === "departure" ? "Departure" : "Arrival";
   const diverting = activeDiversion !== null;
   const runwayLock = lockReason(canChangeRunway, diverting, RUNWAY_LOCKED_AFTER[end]);
+  const wind =
+    weather.status === "ready" ? metarWind(weather.reports, resolveWeatherSource(user?.defaultWeatherSource)) : null;
   const parkingPositionLock = lockReason(canChangeParkingPosition, diverting, PARKING_POSITION_LOCKED_AFTER[end]);
 
   const assign = async (call: () => Promise<void>, subject: string) => {
@@ -145,6 +192,13 @@ export function BriefingAirportCard({ end }: Props) {
     <RunwaySection
       key="runway"
       title={`${kind} runway`}
+      chips={runwayChips({
+        runway: assignments.status === "ready" ? assignments.runway : null,
+        end,
+        report: atis.reports[0] ?? null,
+        designators,
+        wind,
+      })}
       assigned={loadable(assignments, "runway")}
       lock={runwayLock}
       action={
@@ -173,7 +227,7 @@ export function BriefingAirportCard({ end }: Props) {
       <div className="@container border-t border-gray-200 pt-3 dark:border-gray-800">
         <div className="grid grid-cols-1 @2xl:grid-cols-2">
           <div className="min-w-0 pb-4 @2xl:pe-5 @2xl:pb-0">
-            <AirportWeatherReports weather={weather} />
+            <AirportWeatherReports weather={weather} atis={atis} />
           </div>
           <div className="min-w-0 border-t border-gray-200 pt-3 @2xl:border-s @2xl:border-t-0 @2xl:ps-5 @2xl:pt-0 dark:border-gray-800">
             {assignments.status === "failed" ? (
@@ -209,6 +263,8 @@ export function BriefingAirportCard({ end }: Props) {
         <SelectRunwayModal
           airport={airport}
           kind={end}
+          weather={weather}
+          atisSource={atis.source}
           currentSelectionId={ids.runwayId}
           select={(runwayId) =>
             assign(
