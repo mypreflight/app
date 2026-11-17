@@ -3,12 +3,14 @@ import React, { useEffect } from "react";
 import { isRouteErrorResponse, Link, Links, Meta, Navigate, Outlet, Scripts, ScrollRestoration } from "react-router";
 import { AuthProvider } from "~/app-state/useAuth";
 import { ToastProvider } from "~/app-state/useToast";
+import Splash from "~/routes/common/Splash";
 import { isUnauthorized } from "~/shared/api/api.service";
 import { ApiProvider } from "~/shared/api/useApi";
 import { installModalEntrance } from "~/shared/lib/modalEntrance";
 import { appleSplashScreenLinks } from "~/shared/pwa/appleSplashScreens";
 import { ThemeColorSync } from "~/shared/pwa/ThemeColorSync";
 import { UpdatePrompt } from "~/shared/pwa/UpdatePrompt";
+import { useReloadIntoNewerBuild } from "~/shared/pwa/useReloadIntoNewerBuild";
 import theme from "~/styles/theme";
 import "~/shared/validator/yup-locale";
 import type { Route } from "./+types/root";
@@ -87,6 +89,12 @@ export default function App() {
 }
 
 export function NotFoundError() {
+  const checkingForNewerBuild = useReloadIntoNewerBuild();
+
+  if (checkingForNewerBuild) {
+    return <Splash />;
+  }
+
   return (
     <main className="container mx-auto p-8 pt-24 md:pt-48 xl:pt-64">
       <h1 className="text-9xl font-bold text-center text-indigo-500 mb-4">404</h1>
