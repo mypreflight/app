@@ -1,4 +1,5 @@
 import type { AirportMapLayer } from "~/features/airport/components/Overview/AirportLocationMap";
+import type { Crumb } from "~/shared/ui/Section/Breadcrumbs";
 
 export type AirportSectionKey = "runways" | "terminals" | "parkingPositions" | "gates" | "notams";
 
@@ -65,6 +66,18 @@ export const AIRPORT_LIBRARY_BASE = "/airports-library";
 
 export function sectionPath(basePath: string, airportId: string, section: AirportSection): string {
   return `${basePath}/${airportId}/${section.path}`;
+}
+
+export function airportCrumbs(
+  base: { path: string; label: string },
+  airport: { id: string; icaoCode: string },
+  section: AirportSection,
+): Crumb[] {
+  return [
+    { label: base.label, to: base.path },
+    { label: airport.icaoCode, mono: true, to: sectionPath(base.path, airport.id, airportSections[0]) },
+    { label: section.title },
+  ];
 }
 
 export function sectionCreatePath(airportId: string, section: AirportSection): string {

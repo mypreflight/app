@@ -11,7 +11,8 @@ import { DataField } from "~/shared/ui/Display/DataField";
 import { CardHeader } from "~/shared/ui/Layout/CardHeader";
 import { Container } from "~/shared/ui/Layout/Container";
 import { ContainerEmptyState } from "~/shared/ui/Layout/ContainerEmptyState";
-import { Breadcrumbs } from "~/shared/ui/Section/Breadcrumbs";
+import type { Crumb } from "~/shared/ui/Section/Breadcrumbs";
+import { PageHeader } from "~/shared/ui/Shell/PageHeader";
 
 type LayoutState = { status: "loading" } | { status: "missing" } | { status: "ready"; layout: CabinLayout };
 
@@ -81,16 +82,15 @@ export default function CabinLayoutDetailsRoute() {
 
   useEffect(loadCabin, [loadCabin]);
 
+  const crumbs: Crumb[] = [
+    { label: "Cabin layouts", to: "/cabin-layouts" },
+    { label: id, mono: true },
+  ];
+
   if (layoutState.status === "missing") {
     return (
       <div className="pb-8">
-        <Breadcrumbs
-          className="my-6"
-          items={[
-            { label: "Cabin layouts", to: "/cabin-layouts" },
-            { label: id, mono: true },
-          ]}
-        />
+        <PageHeader crumbs={crumbs} />
         <ContainerEmptyState>
           No layout with the identifier <span className="mx-1 font-mono">{id}</span> is catalogued.
         </ContainerEmptyState>
@@ -103,15 +103,7 @@ export default function CabinLayoutDetailsRoute() {
 
   return (
     <div className="pb-8">
-      <div className="mb-5 mt-2 flex items-center justify-between gap-4">
-        <Breadcrumbs
-          items={[
-            { label: "Cabin layouts", to: "/cabin-layouts" },
-            { label: id, mono: true },
-          ]}
-        />
-        <RefreshCabinButton layoutId={id} onChanged={loadCabin} />
-      </div>
+      <PageHeader crumbs={crumbs} actions={<RefreshCabinButton layoutId={id} onChanged={loadCabin} />} />
 
       <div className="flex flex-col gap-4">
         <Container header={<CardHeader title="ID and metadata" />}>

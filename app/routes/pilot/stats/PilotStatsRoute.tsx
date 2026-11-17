@@ -6,7 +6,7 @@ import { useStats } from "~/features/stats/hooks/useStats";
 import { usePageTitle } from "~/shared/hooks/usePageTitle";
 import { Container } from "~/shared/ui/Layout/Container";
 import { TilePlaceholder } from "~/shared/ui/Layout/TilePlaceholder";
-import { SectionHeader } from "~/shared/ui/Section/SectionHeader";
+import { PageHeader } from "~/shared/ui/Shell/PageHeader";
 
 export default function PilotStatsRoute() {
   usePageTitle("Statistics");
@@ -15,7 +15,7 @@ export default function PilotStatsRoute() {
 
   return (
     <>
-      <SectionHeader title="Statistics" />
+      <PageHeader title="Statistics" />
       {stats.loading ? (
         <Container padding="normal">
           <TilePlaceholder icon={FaChartColumn} hint="Reading your logbook." />

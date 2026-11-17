@@ -9,6 +9,8 @@ import {
   volumeOf,
 } from "~/features/cargo-hold/model";
 import { toHuman } from "~/i18n/translate";
+import { LinkedTableRow } from "~/shared/ui/Table/LinkedTableRow";
+import { denseTableTheme } from "~/styles/theme";
 
 type Props = {
   layouts: AircraftHoldLayout[];
@@ -18,7 +20,7 @@ export function HoldCatalogueTable({ layouts }: Props) {
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700">
       <div className="overflow-x-auto">
-        <Table>
+        <Table theme={denseTableTheme}>
           <TableHead>
             <TableRow>
               <TableHeadCell>Type</TableHeadCell>
@@ -29,14 +31,14 @@ export function HoldCatalogueTable({ layouts }: Props) {
               <TableHeadCell className="text-end">Volume</TableHeadCell>
             </TableRow>
           </TableHead>
-          <TableBody className="divide-y">
+          <TableBody className="divide-y divide-gray-200 dark:divide-gray-800">
             {layouts.map((layout) => {
               const variant = defaultVariantOf(layout);
               const compartments = variant === null ? [] : compartmentsOf(variant);
               const volume = variant === null ? 0 : volumeOf(variant);
 
               return (
-                <TableRow key={layout.type}>
+                <LinkedTableRow key={layout.type} to={`/cargo-holds/${layout.type}`}>
                   <TableCell className="font-mono font-medium text-gray-900 dark:text-white">
                     <Link
                       to={`/cargo-holds/${layout.type}`}
@@ -57,7 +59,7 @@ export function HoldCatalogueTable({ layouts }: Props) {
                     {variant === null ? 0 : positionCountOf(variant)}
                   </TableCell>
                   <TableCell className="text-end font-mono tabular-nums">{Math.round(volume * 10) / 10} m³</TableCell>
-                </TableRow>
+                </LinkedTableRow>
               );
             })}
           </TableBody>

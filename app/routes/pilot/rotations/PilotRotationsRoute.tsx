@@ -6,7 +6,7 @@ import { PilotRotationsLoader } from "~/features/rotation/components/PilotRotati
 import { useAssignedRotations } from "~/features/rotation/hooks/useAssignedRotations";
 import { usePageTitle } from "~/shared/hooks/usePageTitle";
 import { TilePlaceholder } from "~/shared/ui/Layout/TilePlaceholder";
-import { SectionHeader } from "~/shared/ui/Section/SectionHeader";
+import { PageHeader } from "~/shared/ui/Shell/PageHeader";
 
 export default function PilotRotationsRoute() {
   const { active, completed, loading } = useAssignedRotations();
@@ -14,7 +14,7 @@ export default function PilotRotationsRoute() {
 
   return (
     <>
-      <SectionHeader title="Rotations" />
+      <PageHeader title="Rotations" />
       {loading ? (
         <PilotRotationsLoader />
       ) : active.length === 0 && completed.length === 0 ? (

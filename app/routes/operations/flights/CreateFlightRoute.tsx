@@ -12,7 +12,7 @@ import { useApi } from "~/shared/api/useApi";
 import { usePageTitle } from "~/shared/hooks/usePageTitle";
 import { getFormData } from "~/shared/lib/getFormData";
 import { FormSubmit } from "~/shared/ui/Form/FormSubmit";
-import { SectionHeaderWithBackButton } from "~/shared/ui/Section/SectionHeaderWithBackButton";
+import { PageHeader } from "~/shared/ui/Shell/PageHeader";
 import type { Route } from "../../../../.react-router/types/app/routes/operations/flights/+types/CreateFlightRoute";
 
 export async function clientAction({ request }: Route.ClientActionArgs) {
@@ -122,7 +122,7 @@ export default function CreateAirportRoute() {
 
   return (
     <div className="mx-auto max-w-2xl pb-4">
-      <SectionHeaderWithBackButton sectionTitle="Create new flight" backText="Back to flights" backUrl="/flights" />
+      <PageHeader crumbs={[{ label: "Flight plans", to: "/flights" }, { label: "Create new flight" }]} />
       <div className="space-y-4">
         <FlightIdentityFormSection data={formData.identity} onSubmit={onIdentitySubmit} />
         <FlightRouteFormSection data={formData.route} onSubmit={onRouteSubmit} />

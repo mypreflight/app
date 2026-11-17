@@ -1,11 +1,7 @@
 import { TabItem, Tabs } from "flowbite-react";
 import React from "react";
 import { useLocation, useNavigate } from "react-router";
-
-const tabs = [
-  { title: "Fleet", path: "fleet" },
-  { title: "Rotations", path: "rotations" },
-];
+import { operatorTabPath, operatorTabs } from "~/features/operator/navigation";
 
 type Props = {
   id: string;
@@ -15,9 +11,9 @@ export function OperatorTabs({ id }: Props) {
   const navigate = useNavigate();
   const { pathname } = useLocation();
 
-  const activeIndex = tabs.findIndex((t) => pathname.includes(t.path));
+  const activeIndex = operatorTabs.findIndex((t) => pathname.includes(t.path));
   const onClick = (index: number) => {
-    navigate(`/operators/${id}/${tabs[index].path}`, {
+    navigate(operatorTabPath(id, operatorTabs[index].path), {
       viewTransition: true,
       preventScrollReset: true,
     });
@@ -25,7 +21,7 @@ export function OperatorTabs({ id }: Props) {
 
   return (
     <Tabs variant="underline" className="mt-1.5" onActiveTabChange={onClick}>
-      {tabs.map((tab, i) => (
+      {operatorTabs.map((tab, i) => (
         <TabItem key={tab.path} title={tab.title} active={activeIndex === i} />
       ))}
     </Tabs>

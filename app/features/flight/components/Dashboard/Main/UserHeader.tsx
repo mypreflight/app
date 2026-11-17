@@ -19,8 +19,8 @@ export function UserHeader() {
   return (
     <>
       <ShellSlotPortal slot={ShellSlot.TopBar}>
-        <h1 className="truncate text-lg font-bold leading-none text-gray-900 dark:text-white">
-          <span className="font-medium text-gray-600 dark:text-gray-400">{greeting},</span> {name}
+        <h1 className="truncate text-sm font-semibold text-gray-900 dark:text-white">
+          <span className="font-normal text-gray-600 dark:text-gray-400">{greeting},</span> {name}
         </h1>
       </ShellSlotPortal>
       <TransparentContainer chromeless className="pt-4 md:hidden">

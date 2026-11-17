@@ -12,10 +12,12 @@ import { RemoveFlightModal } from "~/features/flight/components/Modal/RemoveFlig
 import { UpdateServiceTypeModal } from "~/features/flight/components/Modal/UpdateServiceTypeModal";
 import { UpdateTrackingModal } from "~/features/flight/components/Modal/UpdateTrackingModal";
 import { TrackedFlightProvider, useTrackedFlight } from "~/features/flight/hooks/useTrackedFlight";
+import { flightListCrumb } from "~/features/flight/lib/flightListCrumb";
 import { describeLoadsheetRefusal } from "~/features/flight/lib/loadsheetRefusal";
 import { FlightService } from "~/features/flight/service";
 import { useApi } from "~/shared/api/useApi";
 import { usePageTitle } from "~/shared/hooks/usePageTitle";
+import { PageHeader } from "~/shared/ui/Shell/PageHeader";
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
   const service = new FlightService();
@@ -95,6 +97,7 @@ function FlightLayoutContent() {
 
   return (
     <>
+      <PageHeader crumbs={[flightListCrumb(flight.status), { label: flight.flightNumber, mono: true }]} />
       {activeEmergency && (
         <div className="mb-3">
           <EmergencyInProgressAlert flightId={flight.id} />

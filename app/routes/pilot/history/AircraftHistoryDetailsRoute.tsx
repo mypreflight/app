@@ -10,7 +10,7 @@ import type { Airport } from "~/features/airport";
 import { AircraftHoldPanel } from "~/features/cargo-hold/components/HoldDiagram/AircraftHoldPanel";
 import { useApi } from "~/shared/api/useApi";
 import { usePageTitle } from "~/shared/hooks/usePageTitle";
-import { SectionHeaderWithBackButton } from "~/shared/ui/Section/SectionHeaderWithBackButton";
+import { PageHeader } from "~/shared/ui/Shell/PageHeader";
 
 export default function AircraftHistoryDetailsRoute() {
   const { id } = useParams();
@@ -62,7 +62,12 @@ export default function AircraftHistoryDetailsRoute() {
 
   return (
     <div className="pb-8">
-      <SectionHeaderWithBackButton backText="Back to aircraft history" backUrl="/aircraft-history" />
+      <PageHeader
+        crumbs={[
+          { label: "Aircraft history", to: "/aircraft-history" },
+          aircraft ? { label: aircraft.registration, mono: true } : { label: "Aircraft" },
+        ]}
+      />
 
       {loading && (
         <div className="flex justify-center py-16">

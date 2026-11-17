@@ -34,10 +34,10 @@ export function FlightTopBarIdentity({ flight, diverted, showsBlockTime = true, 
       <span className="size-5 shrink-0">
         <OperatorFin operator={flight.operator} />
       </span>
-      <h1 className="whitespace-nowrap font-mono text-lg font-bold leading-none text-gray-900 dark:text-white">
+      <h1 className="whitespace-nowrap font-mono text-sm font-bold leading-none text-gray-900 dark:text-white">
         {flight.flightNumber}
       </h1>
-      <span className="whitespace-nowrap font-mono text-base font-bold leading-none text-gray-900 dark:text-white">
+      <span className="whitespace-nowrap font-mono text-sm font-bold leading-none text-gray-900 dark:text-white">
         {departureAirport.iataCode}
         <span aria-hidden={true}> – </span>
         <span className="sr-only"> to </span>
