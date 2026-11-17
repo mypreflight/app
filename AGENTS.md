@@ -329,6 +329,15 @@ the network, which serves the current build; the app registers the new worker ag
 precache `globPatterns`. It cannot rescue a browser whose cached shell predates the script; closing every MyPreflight tab
 does.
 
+A stale shell also lacks every route added since it was cached, so a link to a new page, such as the Transponder's
+`/activate`, lands on the 404 page; a reload doesn't help, because the old worker keeps serving the old shell. The 404
+page (`NotFoundError` in `root.tsx`) therefore shows the splash while `useReloadIntoNewerBuild`
+(`app/shared/pwa/useReloadIntoNewerBuild.ts`) looks for a newer worker, waiting or fetched with
+`registration.update()`. If it finds one, it sends it `SKIP_WAITING` and reloads once it takes control, so the link
+opens on the current build. When the browser already has the current build, or isn't under a service worker, it shows
+the 404 after the check, about half a second, or after five seconds at most. Like `sw-recovery.js`, it can't help a
+browser whose cached shell predates it.
+
 ### PWA Launch Assets
 
 `npm run generate:pwa-assets` regenerates `public/icons/` and the 88 iOS startup images in `public/splash/`. Do not edit
