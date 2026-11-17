@@ -1,6 +1,6 @@
 import type { Decorator, Meta, StoryObj } from "@storybook/react-vite";
 import React from "react";
-import { expect, within } from "storybook/test";
+import { expect, userEvent, within } from "storybook/test";
 import { type AirportWeatherReport, WeatherInformationType, WeatherSource } from "~/features/airport";
 import { type Diversion, DiversionReason, DiversionSeverity } from "~/features/diversion";
 import { type Flight, FlightStatus } from "~/features/flight";
@@ -21,8 +21,9 @@ import {
 } from "~/features/parking-position";
 import { LightingType, type Runway, SurfaceType } from "~/features/runway";
 import type { Terminal } from "~/features/terminal";
-import { frankfurtWeather, natFlight, natTrackedFlight } from "../../fixtures/briefing";
+import { frankfurtRunways, frankfurtWeather, natFlight, natTrackedFlight } from "../../fixtures/briefing";
 import assignments from "../../fixtures/frankfurt-departure-assignments.json";
+import newYorkLayout from "../../fixtures/new-york-layout.json";
 import { type ServiceStubs, withApi } from "../../support/api";
 import { atWidth } from "../../support/frames";
 
@@ -86,6 +87,9 @@ const newYorkWeather: AirportWeatherReport[] = [
     informationType: WeatherInformationType.Metar,
     content: "KJFK 081751Z 31012KT 10SM FEW050 SCT250 27/14 A3002",
     lastFetched: "2026-07-08T18:00:00.000Z",
+    publishedAt: null,
+    arrivalRunways: [],
+    departureRunways: [],
   },
   {
     id: "7c0e4b92-3a6d-4f18-b5c7-1e9a2d8f6b30",
@@ -93,6 +97,20 @@ const newYorkWeather: AirportWeatherReport[] = [
     informationType: WeatherInformationType.Taf,
     content: "KJFK 081720Z 0818/0924 31012KT P6SM FEW050 FM090200 34008KT P6SM SCT250 FM091400 18010KT P6SM FEW040",
     lastFetched: "2026-07-08T18:00:00.000Z",
+    publishedAt: null,
+    arrivalRunways: [],
+    departureRunways: [],
+  },
+  {
+    id: "4d7a1e95-2c3b-4f80-9e6d-8b1f0a5c7e32",
+    source: WeatherSource.FaaDatis,
+    informationType: WeatherInformationType.Atis,
+    content:
+      "JFK ATIS INFO H 1751Z. 31012KT 10SM FEW050 SCT250 27/14 A3002 (THREE ZERO ZERO TWO). ILS RWY 31R APCH IN USE. DEPG RWY 31L. ...ADVS YOU HAVE INFO H.",
+    lastFetched: "2026-07-08T18:00:00.000Z",
+    publishedAt: "2026-07-08T17:51:00.000Z",
+    arrivalRunways: ["8d3b6f21-5c4e-4a7d-9e10-2b7c4f6a1d93"],
+    departureRunways: ["12881dbb-929e-466c-86a7-3639d8472269"],
   },
 ];
 
@@ -105,6 +123,8 @@ const servedApi: ServiceStubs = {
   },
   runwayService: {
     fetchById: async (airportId: string) => (airportId === FRANKFURT_ID ? assignments.runway : newYorkRunway) as never,
+    fetchAll: async (airportId: string) =>
+      (airportId === FRANKFURT_ID ? frankfurtRunways : newYorkLayout.runways) as never,
   },
   parkingPositionService: {
     fetchById: async (airportId: string) =>
@@ -185,7 +205,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "One end of the flight in the briefing, two briefing columns wide: the airport, then its weather (METAR and TAF from the chosen source, with each TAF change group on its own line, and SayIntentions ATIS) beside its terminal, parking stand and runway. Departure lists them from the stand out to the runway, arrival from the runway in to the stand. Set and Change open the existing pickers while the flight's status still allows it. The columns stack when the card is narrower than 42rem. LH82, Frankfurt to New York.",
+          "One end of the flight in the briefing, two briefing columns wide: the airport, then its weather (METAR and TAF from the chosen source, with each TAF change group on its own line, and the ATIS for that end, SayIntentions AI or the newest real one, switchable when both exist) beside its terminal, parking stand and runway. Beside the assigned runway, an ATIS chip with the information letter says whether that ATIS uses it (green ARR, DEP or both) or names the runways it uses instead (amber), and a wind chip gives the METAR wind along and across it: down for headwind, up for tailwind in amber, the side arrow for the crosswind. Departure lists them from the stand out to the runway, arrival from the runway in to the stand. Set and Change open the existing pickers while the flight's status still allows it. The columns stack when the card is narrower than 42rem. LH82, Frankfurt to New York.",
       },
     },
   },
@@ -200,7 +220,8 @@ export const Departure: Story = {
   parameters: {
     docs: {
       description: {
-        story: "Before check-in, with the stand and runway assigned: both can still be changed.",
+        story:
+          "Before check-in, with the stand and runway assigned: both can still be changed. ATIS K departs from 18 and 25C, and the wind blows down 07C from behind, so both chips are amber.",
       },
     },
   },
@@ -211,6 +232,29 @@ export const Departure: Story = {
     await expect(canvas.getByText("PROB30 TEMPO 0818/0822 4000 TSRA BKN030CB")).toBeInTheDocument();
     await expect(canvas.getByRole("button", { name: "Change parking stand" })).toBeInTheDocument();
     await expect(canvas.getByRole("button", { name: "Change runway" })).toBeInTheDocument();
+    await expect(await canvas.findByText("ATIS K: departure from 18, 25C, not this runway")).toBeInTheDocument();
+    await expect(canvas.getByText("Wind: tailwind 8 knots, crosswind 1 from the right")).toBeInTheDocument();
+  },
+};
+
+export const DepartureRealAtis: Story = {
+  decorators: [onFlight({ status: FlightStatus.Ready })],
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "An aircraft requested Frankfurt's real departure ATIS over datalink. Switching to Real shows it, with its letter on the runway's chip.",
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const switcher = await canvas.findByRole("group", { name: "ATIS source" });
+
+    await userEvent.click(within(switcher).getByRole("button", { name: "Real" }));
+
+    await expect(await canvas.findByText("Departure ATIS")).toBeInTheDocument();
+    await expect(canvas.getByText("ATIS R: departure from 18, 25C, not this runway")).toBeInTheDocument();
   },
 };
 
@@ -296,9 +340,16 @@ export const Arrival: Story = {
   parameters: {
     docs: {
       description: {
-        story: "In cruise, with a noise-sensitive stand: the runway and stand can still change.",
+        story:
+          "In cruise, with a noise-sensitive stand: the runway and stand can still change. The FAA D-ATIS is the only ATIS here: information H lands on the assigned runway, into a 12 kt headwind.",
       },
     },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(await canvas.findByText("ATIS H: in use for arrival")).toBeInTheDocument();
+    await expect(canvas.getByText("Wind: headwind 12 knots, crosswind 1 from the left")).toBeInTheDocument();
   },
 };
 

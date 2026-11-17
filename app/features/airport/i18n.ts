@@ -1,4 +1,5 @@
 import {
+  AtisSource,
   Continent,
   DataQuality,
   OsmChangeStatus,
@@ -44,6 +45,21 @@ export function translateWeatherSource(source: WeatherSource): string {
       return "AviationWeather";
     case WeatherSource.SayIntentions:
       return "SayIntentions AI";
+    case WeatherSource.Vatsim:
+      return "VATSIM";
+    case WeatherSource.FaaDatis:
+      return "FAA D-ATIS";
+    case WeatherSource.AtisGuru:
+      return "atis.guru";
+  }
+}
+
+export function translateAtisSource(source: AtisSource): string {
+  switch (source) {
+    case AtisSource.SayIntentions:
+      return "SayIntentions AI";
+    case AtisSource.Real:
+      return "Real";
   }
 }
 
@@ -51,6 +67,10 @@ export function translateWeatherInformationType(informationType: WeatherInformat
   switch (informationType) {
     case WeatherInformationType.Atis:
       return "ATIS";
+    case WeatherInformationType.AtisArrival:
+      return "Arrival ATIS";
+    case WeatherInformationType.AtisDeparture:
+      return "Departure ATIS";
     case WeatherInformationType.Metar:
       return "METAR";
     case WeatherInformationType.Taf:

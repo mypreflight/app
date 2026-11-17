@@ -8,7 +8,7 @@ import { EmailSection } from "~/features/user/components/EmailSection";
 import { GsxSection } from "~/features/user/components/GsxSection";
 import { PasswordSection } from "~/features/user/components/PasswordSection";
 import { SimbriefSection } from "~/features/user/components/SimbriefSection";
-import { WeatherSourceSection } from "~/features/user/components/WeatherSourceSection";
+import { SourcePreferenceSection } from "~/features/user/components/SourcePreferenceSection";
 import { usePageTitle } from "~/shared/hooks/usePageTitle";
 import { Container } from "~/shared/ui/Layout/Container";
 import { SectionHeader } from "~/shared/ui/Section/SectionHeader";
@@ -33,7 +33,8 @@ export default function AccountRoute() {
         <DiscordAccountSection />
         <SignedInDevicesSection />
         <SimbriefSection />
-        <WeatherSourceSection />
+        <SourcePreferenceSection preference="defaultWeatherSource" />
+        <SourcePreferenceSection preference="defaultAtisSource" />
         {user.role === UserRole.CabinCrew && <GsxSection />}
       </Container>
     </div>

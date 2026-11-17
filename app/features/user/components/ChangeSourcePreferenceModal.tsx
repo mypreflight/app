@@ -2,39 +2,32 @@ import { Modal, ModalBody, ModalHeader, Radio } from "flowbite-react";
 import { useState } from "react";
 import { FaCircleExclamation } from "react-icons/fa6";
 import { useAuth } from "~/app-state/useAuth";
-import { allWeatherSources, WeatherSource } from "~/features/airport";
-import { WeatherSourceLabel } from "~/features/airport/components/Library/WeatherSourceLabel";
+import { SOURCE_PREFERENCES, type SourcePreference } from "~/features/user/lib/sourcePreferences";
 import { useApi } from "~/shared/api/useApi";
 import { ModalActions } from "~/shared/ui/Modal/ModalActions";
 import { ModalTitle } from "~/shared/ui/Modal/ModalTitle";
 
 type Props = {
-  current: WeatherSource;
+  preference: SourcePreference;
+  current: string;
   close: () => void;
   onChanged: () => void;
 };
 
-const failureMessage = "Weather source could not be changed. Try again in a moment.";
-
-const sourceDescriptions: Record<WeatherSource, string> = {
-  [WeatherSource.AviationWeatherGov]:
-    "Real-world observations from AviationWeather service. Publishes METAR and TAF data.",
-  [WeatherSource.SayIntentions]: "Weather used by Say Intentions AI service. Publishes ATIS alongside METAR and TAF.",
-};
-
-export function ChangeWeatherSourceModal({ current, close, onChanged }: Props) {
+export function ChangeSourcePreferenceModal({ preference, current, close, onChanged }: Props) {
   const { refreshUser } = useAuth();
   const { userService } = useApi();
   const [selected, setSelected] = useState(current);
   const [isSaving, setIsSaving] = useState(false);
   const [hasFailed, setHasFailed] = useState(false);
+  const copy = SOURCE_PREFERENCES[preference];
 
   async function save() {
     setIsSaving(true);
     setHasFailed(false);
 
     try {
-      await userService.updateOwnProfile({ defaultWeatherSource: selected });
+      await userService.updateOwnProfile({ [preference]: selected });
       await refreshUser();
     } catch {
       setHasFailed(true);
@@ -48,17 +41,14 @@ export function ChangeWeatherSourceModal({ current, close, onChanged }: Props) {
   return (
     <Modal size="md" className="text-gray-800 dark:text-white" show onClose={close}>
       <ModalHeader>
-        <ModalTitle context="Weather source" action="Change" />
+        <ModalTitle context={copy.context} action="Change" />
       </ModalHeader>
       <ModalBody className="text-gray-900 dark:text-gray-100">
-        <p className="mb-4 text-pretty text-sm text-gray-600 dark:text-gray-400">
-          Airport weather opens on the provider you choose here. You can still switch source on any airport without
-          changing this preference.
-        </p>
+        <p className="mb-4 text-pretty text-sm text-gray-600 dark:text-gray-400">{copy.intro}</p>
 
-        <fieldset aria-label="Airport weather source" className="space-y-3">
-          {allWeatherSources().map((source) => {
-            const radioId = `weather-source-${source}`;
+        <fieldset aria-label={copy.label} className="space-y-3">
+          {copy.options.map(({ value: source, label, icon: Icon, description }) => {
+            const radioId = `${preference}-${source}`;
 
             return (
               <label
@@ -68,7 +58,7 @@ export function ChangeWeatherSourceModal({ current, close, onChanged }: Props) {
               >
                 <Radio
                   id={radioId}
-                  name="defaultWeatherSource"
+                  name={preference}
                   value={source}
                   checked={selected === source}
                   disabled={isSaving}
@@ -82,10 +72,13 @@ export function ChangeWeatherSourceModal({ current, close, onChanged }: Props) {
                     id={`${radioId}-label`}
                     className="cursor-pointer text-sm font-medium text-gray-900 dark:text-gray-100"
                   >
-                    <WeatherSourceLabel source={source} />
+                    <span className="inline-flex items-center gap-1">
+                      <Icon aria-hidden className="size-3.5 shrink-0" />
+                      {label}
+                    </span>
                   </span>
                   <span id={`${radioId}-description`} className="mt-1 block text-xs text-gray-500 dark:text-gray-400">
-                    {sourceDescriptions[source]}
+                    {description}
                   </span>
                 </span>
               </label>
@@ -99,7 +92,7 @@ export function ChangeWeatherSourceModal({ current, close, onChanged }: Props) {
             className="mt-4 flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2.5 text-pretty text-sm text-red-700 dark:border-red-900 dark:bg-red-900/40 dark:text-red-300"
           >
             <FaCircleExclamation aria-hidden className="mt-0.5 shrink-0" />
-            <span>{failureMessage}</span>
+            <span>{copy.failure}</span>
           </p>
         )}
       </ModalBody>

@@ -2,15 +2,11 @@ import React, { type ReactNode, useState } from "react";
 import type { IconType } from "react-icons";
 import { LuCloudOff, LuTriangleAlert } from "react-icons/lu";
 import { useAuth } from "~/app-state/useAuth";
-import {
-  type AirportWeatherReport,
-  allWeatherSources,
-  resolveWeatherSource,
-  WeatherInformationType,
-  type WeatherSource,
-} from "~/features/airport";
+import { type AirportWeatherReport, resolveWeatherSource, WeatherInformationType } from "~/features/airport";
+import { AtisSourceSwitch } from "~/features/airport/components/Library/AtisSourceSwitch";
 import { WeatherSourceSwitch } from "~/features/airport/components/Library/WeatherSourceSwitch";
 import type { AirportWeather } from "~/features/airport/hooks/useAirportWeather";
+import { type AtisChoice, useAtisChoice } from "~/features/airport/hooks/useAtisChoice";
 import { translateWeatherInformationType, translateWeatherSource } from "~/features/airport/i18n";
 import { tafLines } from "~/features/airport/lib/tafLines";
 import { dateToZuluStamp } from "~/shared/ui/Date/zuluStamp";
@@ -21,9 +17,12 @@ const SECTION_SPACING = "py-3 first:pt-0 last:pb-0";
 
 type Props = {
   weather: AirportWeather;
+  atis?: AtisChoice;
 };
 
-export function AirportWeatherReports({ weather }: Props) {
+export function AirportWeatherReports({ weather, atis }: Props) {
+  const ownAtis = useAtisChoice(weather, null);
+
   switch (weather.status) {
     case "loading":
       return <WeatherSkeleton />;
@@ -32,11 +31,11 @@ export function AirportWeatherReports({ weather }: Props) {
         <WeatherNote icon={LuTriangleAlert}>Weather could not be loaded. Reload the page to try again.</WeatherNote>
       );
     case "ready":
-      return <Reports reports={weather.reports} />;
+      return <Reports reports={weather.reports} atis={atis ?? ownAtis} />;
   }
 }
 
-function Reports({ reports }: { reports: AirportWeatherReport[] }) {
+function Reports({ reports, atis }: { reports: AirportWeatherReport[]; atis: AtisChoice }) {
   const { user } = useAuth();
   const [source, setSource] = useState(resolveWeatherSource(user?.defaultWeatherSource));
 
@@ -47,10 +46,6 @@ function Reports({ reports }: { reports: AirportWeatherReport[] }) {
   const coded = CODED_TYPES.flatMap((type) =>
     reports.filter((report) => report.source === source && report.informationType === type),
   );
-  const atis =
-    reports.find(
-      (report) => report.informationType === WeatherInformationType.Atis && allWeatherSources().includes(report.source),
-    ) ?? null;
 
   return (
     <div className="flex min-w-0 flex-col gap-3">
@@ -65,7 +60,7 @@ function Reports({ reports }: { reports: AirportWeatherReport[] }) {
         ) : (
           coded.map((report) => <CodedReport key={report.id} report={report} />)
         )}
-        <AtisReport report={atis} />
+        <AtisReports choice={atis} />
       </div>
     </div>
   );
@@ -91,30 +86,51 @@ function CodedReport({ report }: { report: AirportWeatherReport }) {
   );
 }
 
-function AtisReport({ report }: { report: AirportWeatherReport | null }) {
+function AtisReports({ choice }: { choice: AtisChoice }) {
+  if (choice.source === null) {
+    return (
+      <PanelSection className={SECTION_SPACING} title={translateWeatherInformationType(WeatherInformationType.Atis)}>
+        <WeatherNote icon={LuCloudOff}>No ATIS for this airport.</WeatherNote>
+      </PanelSection>
+    );
+  }
+
+  return (
+    <div className={`flex min-w-0 flex-col gap-3 ${SECTION_SPACING}`}>
+      {choice.sources.length > 1 && (
+        <div>
+          <AtisSourceSwitch sources={choice.sources} selected={choice.source} onSelect={choice.select} />
+        </div>
+      )}
+      {choice.reports.map((report) => (
+        <AtisReport key={report.id} report={report} />
+      ))}
+    </div>
+  );
+}
+
+function AtisReport({ report }: { report: AirportWeatherReport }) {
   return (
     <PanelSection
-      className={SECTION_SPACING}
-      title={translateWeatherInformationType(WeatherInformationType.Atis)}
-      aside={report === null ? null : <UpdatedAt report={report} source={report.source} />}
+      title={translateWeatherInformationType(report.informationType)}
+      aside={<UpdatedAt report={report} withSource />}
     >
-      {report === null ? (
-        <WeatherNote icon={LuCloudOff}>No ATIS for this airport.</WeatherNote>
-      ) : (
-        <p className="max-w-prose text-pretty font-mono text-xs leading-relaxed text-gray-800 dark:text-gray-200">
-          {report.content}
-        </p>
-      )}
+      <p className="max-w-prose whitespace-pre-line text-pretty font-mono text-xs leading-relaxed text-gray-800 dark:text-gray-200">
+        {report.content}
+      </p>
     </PanelSection>
   );
 }
 
-function UpdatedAt({ report, source }: { report: AirportWeatherReport; source?: WeatherSource }) {
+function UpdatedAt({ report, withSource = false }: { report: AirportWeatherReport; withSource?: boolean }) {
+  const published = report.publishedAt ?? null;
+  const verb = published === null ? "Updated" : "Published";
+
   return (
     <span>
-      {source === undefined ? "Updated" : `${translateWeatherSource(source)} · Updated`}{" "}
+      {withSource ? `${translateWeatherSource(report.source)} · ${verb}` : verb}{" "}
       <span className="font-mono text-gray-700 dark:text-gray-300">
-        {dateToZuluStamp(new Date(report.lastFetched))}
+        {dateToZuluStamp(new Date(published ?? report.lastFetched))}
       </span>
     </span>
   );

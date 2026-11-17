@@ -148,7 +148,12 @@ function StandDetails({ stand }: { stand: ParkingPosition }) {
   );
 }
 
-export function RunwaySection({ title, assigned, action, lock }: AssignableSectionProps<Runway> & { title: string }) {
+type RunwaySectionProps = AssignableSectionProps<Runway> & {
+  title: string;
+  chips: ReactNode;
+};
+
+export function RunwaySection({ title, assigned, action, lock, chips }: RunwaySectionProps) {
   return (
     <PanelSection className={SECTION_SPACING} title={title} aside={assigned.loading ? null : action}>
       {assigned.loading ? (
@@ -156,7 +161,7 @@ export function RunwaySection({ title, assigned, action, lock }: AssignableSecti
       ) : assigned.value === null ? (
         <PendingValue note={lock} />
       ) : (
-        <RunwayDetails runway={assigned.value} />
+        <RunwayDetails runway={assigned.value} chips={chips} />
       )}
     </PanelSection>
   );
@@ -173,12 +178,22 @@ function runwayCaption(runway: Runway): string {
   return `${surface} · ${lighting}`;
 }
 
-function RunwayDetails({ runway }: { runway: Runway }) {
+function RunwayDetails({ runway, chips }: { runway: Runway; chips: ReactNode }) {
   const displaced = runway.displace ?? 0;
 
   return (
     <>
-      <Designator code={runway.designator}>{runwayCaption(runway)}</Designator>
+      {chips === null ? (
+        <Designator code={runway.designator}>{runwayCaption(runway)}</Designator>
+      ) : (
+        <div className="flex min-w-0 flex-col gap-1">
+          <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-2">
+            <Designator code={runway.designator} />
+            <div className="ms-auto flex shrink-0 gap-1.5">{chips}</div>
+          </div>
+          <span className="text-sm text-gray-500 dark:text-gray-400">{runwayCaption(runway)}</span>
+        </div>
+      )}
       <dl className={STAT_STRIP}>
         <Stat label="Heading">
           <Figure value={formatDegrees(runway.magneticHeading)} unit="M" />

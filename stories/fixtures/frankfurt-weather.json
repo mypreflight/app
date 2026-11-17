@@ -4,34 +4,69 @@
     "source": "aviation_weather_gov",
     "informationType": "metar",
     "content": "EDDF 081200Z 24008KT 9999 FEW035 22/12 Q1018 NOSIG",
-    "lastFetched": "2026-07-08T12:00:00.000Z"
+    "lastFetched": "2026-07-08T12:00:00.000Z",
+    "publishedAt": null,
+    "arrivalRunways": [],
+    "departureRunways": []
   },
   {
     "id": "f721308b-9a04-4b20-8af9-89b25fd1986e",
     "source": "aviation_weather_gov",
     "informationType": "taf",
     "content": "EDDF 081100Z 0812/0918 24010KT 9999 FEW035 BECMG 0815/0817 27012KT PROB30 TEMPO 0818/0822 4000 TSRA BKN030CB",
-    "lastFetched": "2026-07-08T12:00:00.000Z"
+    "lastFetched": "2026-07-08T12:00:00.000Z",
+    "publishedAt": null,
+    "arrivalRunways": [],
+    "departureRunways": []
   },
   {
     "id": "0b6f3f7e-4c1d-4d5e-9a57-2f1d3b8e6c40",
     "source": "say_intentions",
     "informationType": "metar",
     "content": "EDDF 081150Z 24008KT 9999 FEW035 22/12 Q1018 NOSIG",
-    "lastFetched": "2026-07-08T11:55:00.000Z"
+    "lastFetched": "2026-07-08T11:55:00.000Z",
+    "publishedAt": null,
+    "arrivalRunways": [],
+    "departureRunways": []
   },
   {
     "id": "6a2c9d41-8e7b-4f0a-b3c5-1d9e7f2a4b68",
     "source": "say_intentions",
     "informationType": "taf",
     "content": "EDDF 081100Z 0812/0918 24010KT 9999 FEW035 BECMG 0815/0817 27012KT",
-    "lastFetched": "2026-07-08T11:55:00.000Z"
+    "lastFetched": "2026-07-08T11:55:00.000Z",
+    "publishedAt": null,
+    "arrivalRunways": [],
+    "departureRunways": []
   },
   {
     "id": "c4e8a2b6-3f71-4d09-8b5e-7a1c6d2f9e03",
     "source": "say_intentions",
     "informationType": "atis",
     "content": "Frankfurt information Kilo, time one one five zero Zulu. Expect ILS approach runway two five left. Departure runways two five centre and one eight. Wind two four zero degrees, eight knots. Visibility one zero kilometres or more. Few clouds three thousand five hundred feet. Temperature two two, dew point one two. QNH one zero one eight. Transition level seven zero. Advise on initial contact you have information Kilo.",
-    "lastFetched": "2026-07-08T11:55:00.000Z"
+    "lastFetched": "2026-07-08T11:55:00.000Z",
+    "publishedAt": null,
+    "arrivalRunways": ["01847392-32d8-4b6b-98e7-ee7b700677c5"],
+    "departureRunways": ["2fea3a8b-3fa8-41d4-ac9b-97004ebf2509", "290a31a8-ba88-436c-b9ab-d8a5c57ea81f"]
+  },
+  {
+    "id": "5b1e7c3a-9d24-4f6e-8a0b-3c7d2e9f1a48",
+    "source": "atis_guru",
+    "informationType": "atis_arrival",
+    "content": "EDDF ARR ATIS T\n1150Z\nARR-ATIS EDDF T METAR 081150\nEXPECT INDEPENDENT PARALLEL ILS APCH RWY 25R OR RWY 25L\nTRL 70\n24008KT 9999 FEW035 T22 DP12 QNH1018",
+    "lastFetched": "2026-07-08T11:55:00.000Z",
+    "publishedAt": "2026-07-08T11:52:14.000Z",
+    "arrivalRunways": ["01847392-32d8-4b6b-98e7-ee7b700677c5", "b0fb79c5-840a-4005-a4f5-b5b8131ca1c9"],
+    "departureRunways": []
+  },
+  {
+    "id": "9e4a2d6c-1b8f-4c37-b5e0-7f3a9d1c2e65",
+    "source": "atis_guru",
+    "informationType": "atis_departure",
+    "content": "EDDF DEP ATIS R\n1150Z\nDEP-ATIS EDDF R METAR 081150\nRWY 25C 18\nTRL 70\n24008KT 9999 FEW035 T22 DP12 QNH1018",
+    "lastFetched": "2026-07-08T11:55:00.000Z",
+    "publishedAt": "2026-07-08T11:51:40.000Z",
+    "arrivalRunways": [],
+    "departureRunways": ["2fea3a8b-3fa8-41d4-ac9b-97004ebf2509", "290a31a8-ba88-436c-b9ab-d8a5c57ea81f"]
   }
 ]

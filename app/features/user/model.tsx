@@ -45,6 +45,7 @@ export type User = {
   emails: UserEmail[];
   identities: UserIdentities;
   defaultWeatherSource: WeatherSource;
+  defaultAtisSource: WeatherSource;
 };
 
 export type SimbriefAirport = {
