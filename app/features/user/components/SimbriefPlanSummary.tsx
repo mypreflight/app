@@ -5,7 +5,6 @@ import { MetaRow } from "~/shared/ui/Display/MetaRow";
 
 type Props = {
   plan: SimbriefFlight;
-  showCallsign?: boolean;
   className?: string;
 };
 
@@ -23,7 +22,7 @@ function toDate(value: string | null): Date | null {
   return value === null ? null : new Date(value);
 }
 
-export function SimbriefPlanSummary({ plan, showCallsign = true, className = "" }: Props) {
+export function SimbriefPlanSummary({ plan, className = "" }: Props) {
   const { origin, destination, callsign, aircraft, scheduledOffBlockTime, generatedAt } = plan;
   const aircraftLabel = describeAircraft(aircraft);
   const departure = toDate(scheduledOffBlockTime);
@@ -31,7 +30,7 @@ export function SimbriefPlanSummary({ plan, showCallsign = true, className = "" 
 
   return (
     <div className={`space-y-1.5 text-sm ${className}`}>
-      {showCallsign && <MetaRow label="Latest plan" value={<span className="font-mono">{callsign}</span>} />}
+      <MetaRow label="Latest plan" value={<span className="font-mono">{callsign}</span>} />
       <MetaRow
         label="Route"
         value={

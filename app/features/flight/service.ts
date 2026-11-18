@@ -33,6 +33,7 @@ type FlightListFilters = {
   limit?: number;
   sort?: FlightListSort;
   order?: FlightListOrder;
+  captain?: "me";
 };
 
 function loadsheetUrl(id: string): string {
@@ -40,13 +41,14 @@ function loadsheetUrl(id: string): string {
 }
 
 export class FlightService extends AbstractAuthorizedApiService {
-  async fetchAllFlights({ phase = undefined, page = 1, limit = 100, sort, order }: FlightListFilters = {}) {
+  async fetchAllFlights({ phase = undefined, page = 1, limit = 100, sort, order, captain }: FlightListFilters = {}) {
     const params = new URLSearchParams({
       page: page.toString(),
       limit: limit.toString(),
       ...(phase !== undefined && { phase }),
       ...(sort !== undefined && { sort }),
       ...(order !== undefined && { order }),
+      ...(captain !== undefined && { captain }),
     });
 
     const url = `/api/v1/flight?${params.toString()}`;

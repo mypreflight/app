@@ -26,6 +26,7 @@ import { useCurrentRotation } from "~/features/rotation/hooks/useCurrentRotation
 import { RecentActivityBox } from "~/features/stats/components/Dashboard/RecentActivityBox";
 import { CurrentLocationBox } from "~/features/travel/components/CurrentLocationBox";
 import { CurrentLocationBoxLoader } from "~/features/travel/components/CurrentLocationBoxLoader";
+import { ChangeSimbriefIdModal } from "~/features/user/components/ChangeSimbriefIdModal";
 import { useUserTravels } from "~/features/user/hooks/useUserTravels";
 import { useAppEnvironment } from "~/shared/hooks/useAppEnvironment";
 import { usePageTitle } from "~/shared/hooks/usePageTitle";
@@ -41,7 +42,6 @@ export default function PilotDashboardRoute() {
     failed: failedCurrent,
     refresh: refreshCurrentFlight,
   } = useCurrentFlight();
-  const { nextFlight, loading: loadingNext, failed: failedNext } = useNextScheduledFlight(currentFlightId);
   const {
     currentLocation,
     latestTravel,
@@ -49,15 +49,25 @@ export default function PilotDashboardRoute() {
     failed: failedTravels,
     refresh: refreshTravels,
   } = useUserTravels();
-  const { rotation, loading: loadingRotation } = useCurrentRotation();
+  const { rotation, active: activeRotations, loading: loadingRotation } = useCurrentRotation();
+  const {
+    nextFlight,
+    loading: loadingNext,
+    failed: failedNext,
+  } = useNextScheduledFlight(activeRotations, loadingRotation, currentFlightId);
   const navigate = useNavigate();
   const { success } = useToast();
-  const [isImportOpen, setIsImportOpen] = useState(false);
+  const [simbriefModal, setSimbriefModal] = useState<"connect" | "import" | null>(null);
   usePageTitle("Dashboard");
 
   const simbriefUserId = user?.simbriefUserId ?? null;
   const simbriefImport =
-    currentFlightId === null ? { hasSimbriefId: simbriefUserId !== null, open: () => setIsImportOpen(true) } : null;
+    currentFlightId === null
+      ? {
+          hasSimbriefId: simbriefUserId !== null,
+          open: () => setSimbriefModal(simbriefUserId === null ? "connect" : "import"),
+        }
+      : null;
 
   const handleImported = async (flight: Flight) => {
     await refreshCurrentFlight();
@@ -74,6 +84,24 @@ export default function PilotDashboardRoute() {
   );
   const settlingCurrentFlight =
     loadingCurrent || (showLocation && (loadingLast || loadingTravels || loadingGround || loadingNext));
+  const nothingFlownYet = !loadingLast && !failedLast && recentFlights.length === 0;
+
+  const recentFlightsBox = loadingLast ? (
+    <RecentFlightsBoxLoader />
+  ) : (
+    <RecentFlightsBox flights={recentFlights} failed={failedLast} />
+  );
+  const nextScheduledFlightBox =
+    loadingNext || settlingCurrentFlight ? (
+      <NextScheduledFlightBoxLoader />
+    ) : (
+      <NextScheduledFlightBox
+        flight={nextFlight}
+        failed={failedNext}
+        departure={currentFlight?.destinationAirport ?? groundStop?.airport ?? null}
+        simbriefImport={simbriefImport}
+      />
+    );
 
   return (
     <>
@@ -89,23 +117,14 @@ export default function PilotDashboardRoute() {
           ) : (
             <NoCurrentFlightBox groundStop={groundStop} nextFlight={nextFlight} nextFlightFailed={failedNext} />
           )}
-          <div className="grid grid-cols-1 items-start gap-3 sm:grid-cols-2 md:grid-cols-1 xl:grid-cols-2">
-            {loadingLast ? (
-              <RecentFlightsBoxLoader />
-            ) : (
-              <RecentFlightsBox flights={recentFlights} failed={failedLast} />
-            )}
-            {loadingNext || settlingCurrentFlight ? (
-              <NextScheduledFlightBoxLoader />
-            ) : (
-              <NextScheduledFlightBox
-                flight={nextFlight}
-                failed={failedNext}
-                departure={currentFlight?.destinationAirport ?? groundStop?.airport ?? null}
-                simbriefImport={simbriefImport}
-              />
-            )}
-          </div>
+          {nothingFlownYet ? (
+            nextScheduledFlightBox
+          ) : (
+            <div className="grid grid-cols-1 items-start gap-3 sm:grid-cols-2 md:grid-cols-1 xl:grid-cols-2">
+              {recentFlightsBox}
+              {nextScheduledFlightBox}
+            </div>
+          )}
         </div>
         <div className="flex flex-col gap-3">
           {loadingRotation ? <CurrentRotationBoxLoader /> : rotation && <CurrentRotationBox rotation={rotation} />}
@@ -130,11 +149,18 @@ export default function PilotDashboardRoute() {
           <DebugFlightListBox />
         </div>
       )}
-      {isImportOpen && simbriefUserId !== null && (
+      {simbriefModal === "connect" && (
+        <ChangeSimbriefIdModal
+          current={null}
+          close={() => setSimbriefModal(null)}
+          onSaved={(saved) => setSimbriefModal(saved === null ? null : "import")}
+        />
+      )}
+      {simbriefModal === "import" && simbriefUserId !== null && (
         <ImportSimbriefFlightModal
           simbriefUserId={simbriefUserId}
           imported={handleImported}
-          close={() => setIsImportOpen(false)}
+          close={() => setSimbriefModal(null)}
         />
       )}
     </>

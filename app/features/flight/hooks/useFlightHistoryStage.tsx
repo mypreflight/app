@@ -129,7 +129,7 @@ export function FlightHistoryStageProvider({ flightId, children }: Props) {
       }
 
       flightService
-        .fetchAllFlights({ phase: FlightPhase.Finished, page, limit: PAGE_SIZE })
+        .fetchAllFlights({ captain: "me", phase: FlightPhase.Finished, page, limit: PAGE_SIZE })
         .then((response) => {
           if (!alive.current) return;
           setFlights((current) => withoutDuplicates(page === 1 ? response.flights : [...current, ...response.flights]));

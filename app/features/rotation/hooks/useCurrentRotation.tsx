@@ -4,6 +4,7 @@ import { useAssignedRotations } from "~/features/rotation/hooks/useAssignedRotat
 
 type CurrentRotation = {
   rotation: Rotation | null;
+  active: Rotation[];
   loading: boolean;
 };
 
@@ -20,5 +21,5 @@ export function useCurrentRotation(): CurrentRotation {
     return [...candidates].sort((a, b) => firstLegStart(a) - firstLegStart(b))[0] ?? null;
   }, [active]);
 
-  return { rotation, loading };
+  return { rotation, active, loading };
 }

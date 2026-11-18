@@ -4,7 +4,7 @@ import { FaCircleExclamation, FaFileImport } from "react-icons/fa6";
 import type { Flight } from "~/features/flight";
 import { describeSimbriefImportFailure } from "~/features/flight/lib/describeSimbriefImportFailure";
 import type { SimbriefFlight } from "~/features/user";
-import { SimbriefPlanSummary } from "~/features/user/components/SimbriefPlanSummary";
+import { SimbriefPlanTile } from "~/features/user/components/SimbriefPlanTile";
 import { useApi } from "~/shared/api/useApi";
 import { ModalActions } from "~/shared/ui/Modal/ModalActions";
 import { ModalTitle } from "~/shared/ui/Modal/ModalTitle";
@@ -80,7 +80,7 @@ export function ImportSimbriefFlightModal({ simbriefUserId, imported, close }: P
             Loading your latest plan…
           </p>
         )}
-        {latest.status === "ready" && <SimbriefPlanSummary plan={latest.plan} showCallsign={false} />}
+        {latest.status === "ready" && <SimbriefPlanTile plan={latest.plan} />}
         {latest.status === "failed" && (
           <p className="text-pretty text-sm text-gray-600 dark:text-gray-400">
             Your latest plan couldn’t be previewed. You can still import it.
