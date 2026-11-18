@@ -4,6 +4,7 @@ import { HiOutlineArrowRight } from "react-icons/hi";
 import { Link } from "react-router";
 import type { Aircraft } from "~/features/aircraft";
 import { AircraftIcon } from "~/features/aircraft/components/Aircraft/AircraftIcon";
+import { UnconfirmedAircraftBadge } from "~/features/aircraft/components/Aircraft/UnconfirmedAircraftBadge";
 import { aircraftStateColors } from "~/features/aircraft/i18n";
 import { formatWeightCategory } from "~/features/airframe/lib/formatAirframe";
 import type { Airport } from "~/features/airport";
@@ -30,6 +31,7 @@ export function AircraftListCard({ aircraft, operatorId, baseAirport }: Props) {
             {aircraft.registration}
           </span>
           <span className="block truncate text-xs text-gray-500 dark:text-gray-400">{aircraft.airframe.name}</span>
+          <UnconfirmedAircraftBadge aircraft={aircraft} className="mt-1" />
         </div>
         <Badge color={aircraftStateColors[aircraft.currentState]} size="sm" className="shrink-0">
           {toHuman.aircraft.state(aircraft.currentState)}
