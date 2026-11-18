@@ -1,12 +1,12 @@
 import React from "react";
-import { FaPlaneDeparture } from "react-icons/fa6";
+import { LuPlaneTakeoff } from "react-icons/lu";
 import { useAirportLayout } from "~/features/airport/hooks/useAirportLayout";
 import type { Flight } from "~/features/flight";
 import { GroundStopBox } from "~/features/flight/components/Dashboard/Main/Box/GroundStopBox";
 import type { GroundStop } from "~/features/flight/hooks/useGroundStop";
 import { CardHeader } from "~/shared/ui/Layout/CardHeader";
 import { Container } from "~/shared/ui/Layout/Container";
-import { TilePlaceholder } from "~/shared/ui/Layout/TilePlaceholder";
+import { EmptyState } from "~/shared/ui/Layout/EmptyState";
 
 type Props = {
   groundStop: GroundStop | null;
@@ -23,9 +23,11 @@ export function NoCurrentFlightBox({ groundStop, nextFlight, nextFlightFailed }:
   if (!groundStop) {
     return (
       <Container padding="condensed" className="hidden sm:flex" header={<CardHeader title="Current flight" />}>
-        <TilePlaceholder
-          icon={FaPlaneDeparture}
-          hint="No flight in progress. Each flight shows here from check-in until it closes."
+        <EmptyState
+          icon={LuPlaneTakeoff}
+          title="No flight in progress"
+          description="Each flight shows here from check-in until it closes."
+          className="py-8"
         />
       </Container>
     );

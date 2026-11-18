@@ -332,13 +332,19 @@ Precise and tactile: familiar affordances, quiet at rest, with a slight press �
   spacious.
 - **Footer link:** a full-width row with an icon tile, a title and a one-line description, used through
   `CardFooterLink`. Its focus ring is inset, so the card's rounded clip cannot cut it.
+- **Empty:** a card with nothing to show yet says so through `EmptyState`, centred: a 40px icon tile with 8px corners
+  and an inset ring, holding an outline icon (Lucide, 1.75 stroke); a short title in Ink Strong at 14px semibold; one
+  line in Muted, balanced and capped near 16rem; and at most one small action. The tile is neutral gray, or Signal
+  Indigo Tint when the card asks for an action, which is then the view's one filled button. No dashed well around it.
 - **Load failure:** a card whose data failed to load says so through `TilePlaceholder` — "Your recent flights could not
   be loaded. Reload the page to try again." — never an empty state.
 - **Between flights:** a dashboard card with real data to show keeps its working shape instead of falling back to a
   placeholder. The current flight card becomes `GroundStopBox`: the map on the airport and stand, local time, stand,
-  aircraft and a ticking time on the ground. The next flight card shows "Awaiting dispatch" with the known departure
-  filled in and dashed slots for what Operations has yet to decide. `TilePlaceholder` remains for when the location is
-  unknown.
+  aircraft and a ticking time on the ground. With no flight in progress and nothing scheduled, the next flight card
+  asks for the first step instead, as an `EmptyState` with the indigo tile: "No flight scheduled", one line of copy and
+  a small primary button, Add SimBrief ID (opening the SimBrief connection, then the import) or Import from SimBrief.
+  Until the pilot's first flight closes, Recent flights is left out and the next flight card spans its row. While a flight is in progress it shows "Awaiting dispatch" with the known departure filled in and dashed slots for what
+  Operations has yet to decide. `TilePlaceholder` remains for when the location is unknown.
 
 ### Inputs / Fields
 - **Style:** Flowbite floating-label inputs on a Paper Band fill with a `gray-300` stroke, 8px corners, 16px text on

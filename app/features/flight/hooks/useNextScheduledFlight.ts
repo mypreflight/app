@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import { type Flight, FlightListOrder, FlightListSort, FlightPhase, FlightStatus } from "~/features/flight";
+import { type Flight, FlightStatus } from "~/features/flight";
+import type { Rotation } from "~/features/rotation";
 import { useApi } from "~/shared/api/useApi";
 
 type Response = {
@@ -8,39 +9,62 @@ type Response = {
   failed: boolean;
 };
 
-const UPCOMING_PAGE_SIZE = 100;
+function nextReadyFlightId(rotations: Rotation[], currentFlightId: string | null): string | null {
+  const legs = rotations
+    .flatMap((rotation) => rotation.orderedLegs)
+    .filter((leg) => leg.flight?.status === FlightStatus.Ready && leg.flight.id !== currentFlightId)
+    .sort((a, b) => a.offBlockTime.getTime() - b.offBlockTime.getTime());
 
-export function useNextScheduledFlight(currentFlightId: string | null): Response {
+  return legs[0]?.flight?.id ?? null;
+}
+
+export function useNextScheduledFlight(
+  rotations: Rotation[],
+  rotationsLoading: boolean,
+  currentFlightId: string | null,
+): Response {
   const { flightService } = useApi();
-  const [upcoming, setUpcoming] = useState<Flight[]>([]);
+  const nextFlightId = useMemo(() => nextReadyFlightId(rotations, currentFlightId), [rotations, currentFlightId]);
+  const [nextFlight, setNextFlight] = useState<Flight | null>(null);
   const [loading, setLoading] = useState(true);
   const [failed, setFailed] = useState(false);
 
   useEffect(() => {
+    if (rotationsLoading) {
+      return;
+    }
+
+    if (nextFlightId === null) {
+      setNextFlight(null);
+      setFailed(false);
+      setLoading(false);
+      return;
+    }
+
+    let active = true;
     setLoading(true);
+
     flightService
-      .fetchAllFlights({
-        phase: FlightPhase.Upcoming,
-        sort: FlightListSort.ScheduledOffBlockTime,
-        order: FlightListOrder.Ascending,
-        limit: UPCOMING_PAGE_SIZE,
-      })
-      .then((res) => {
-        setUpcoming(res.flights);
+      .fetchById(nextFlightId)
+      .then((flight) => {
+        if (!active) return;
+        setNextFlight(flight);
         setFailed(false);
       })
       .catch((err) => {
-        console.error("Cannot fetch upcoming flights", err);
-        setUpcoming([]);
+        if (!active) return;
+        console.error("Cannot fetch the next scheduled flight", err);
+        setNextFlight(null);
         setFailed(true);
       })
-      .finally(() => setLoading(false));
-  }, [flightService]);
+      .finally(() => {
+        if (active) setLoading(false);
+      });
 
-  const nextFlight = useMemo(
-    () => upcoming.find((flight) => flight.status === FlightStatus.Ready && flight.id !== currentFlightId) ?? null,
-    [upcoming, currentFlightId],
-  );
+    return () => {
+      active = false;
+    };
+  }, [flightService, nextFlightId, rotationsLoading]);
 
   return { nextFlight, loading, failed };
 }

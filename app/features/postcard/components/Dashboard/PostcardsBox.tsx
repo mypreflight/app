@@ -2,6 +2,7 @@ import { Button } from "flowbite-react";
 import React, { useState } from "react";
 import { FaArrowRight } from "react-icons/fa";
 import { FaTriangleExclamation } from "react-icons/fa6";
+import { LuMail } from "react-icons/lu";
 import { Link } from "react-router";
 import { PostcardCeremony } from "~/features/postcard/components/Ceremony/PostcardCeremony";
 import { PostcardsBoxLoader } from "~/features/postcard/components/Dashboard/PostcardsBoxLoader";
@@ -12,7 +13,7 @@ import { MetaRow } from "~/shared/ui/Display/MetaRow";
 import { BoxFooter } from "~/shared/ui/Layout/BoxFooter";
 import { CardHeader } from "~/shared/ui/Layout/CardHeader";
 import { Container } from "~/shared/ui/Layout/Container";
-import { ContainerEmptyState } from "~/shared/ui/Layout/ContainerEmptyState";
+import { EmptyState } from "~/shared/ui/Layout/EmptyState";
 import { TilePlaceholder } from "~/shared/ui/Layout/TilePlaceholder";
 
 const NAMED_AT_MOST = 3;
@@ -50,7 +51,7 @@ export function PostcardsBox() {
     <>
       <Container padding="condensed" header={<CardHeader title="Postcards" />}>
         {collection.length === 0 ? (
-          <ContainerEmptyState>The cities you reach send you a postcard.</ContainerEmptyState>
+          <EmptyState icon={LuMail} title="No postcards yet" description="The cities you reach send you a postcard." />
         ) : (
           <div className="flex flex-col gap-1.5">
             {isWaiting && (

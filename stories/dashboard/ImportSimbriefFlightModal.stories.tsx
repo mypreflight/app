@@ -8,8 +8,8 @@ const latestPlan: SimbriefAccount = {
   simbriefUserId: "123456",
   latestFlight: {
     callsign: "DLH80",
-    origin: { icaoCode: "EDDF", iataCode: "FRA", name: "FRANKFURT/MAIN" },
-    destination: { icaoCode: "KJFK", iataCode: "JFK", name: "NEW YORK JFK" },
+    origin: { icaoCode: "EDDF", iataCode: "FRA", city: "Frankfurt", name: "FRANKFURT/MAIN" },
+    destination: { icaoCode: "KJFK", iataCode: "JFK", city: "New York", name: "NEW YORK JFK" },
     scheduledOffBlockTime: "2026-01-05T09:00:00.000Z",
     scheduledOnBlockTime: "2026-01-05T17:25:00.000Z",
     aircraft: { registration: "D-AIMC", type: "A339", name: "A330-900" },
@@ -46,13 +46,20 @@ type Story = StoryObj<typeof meta>;
 
 export const LatestPlan: Story = {
   parameters: {
-    docs: { description: { story: "The plan loaded from SimBrief: DLH80 from Frankfurt to New York on D-AIMC." } },
+    docs: {
+      description: {
+        story:
+          "The plan loaded from SimBrief, line by line: FRA to JFK with their cities, the scheduled off-block and on-block with the block time between them, and D-AIMC with its type.",
+      },
+    },
   },
   play: async () => {
     const body = within(document.body);
 
-    await expect(await body.findByText("EDDF → KJFK")).toBeInTheDocument();
-    await expect(body.getByText("A330-900 · D-AIMC")).toBeInTheDocument();
+    await expect(await body.findByText("D-AIMC")).toBeInTheDocument();
+    await expect(body.getByText("Frankfurt")).toBeInTheDocument();
+    await expect(body.getByText("8h 25m")).toBeInTheDocument();
+    await expect(body.getByText("A330-900")).toBeInTheDocument();
   },
 };
 
@@ -97,7 +104,7 @@ export const ImportRefused: Story = {
   play: async ({ args }) => {
     const body = within(document.body);
 
-    await body.findByText("EDDF → KJFK");
+    await body.findByText("D-AIMC");
     await userEvent.click(body.getByRole("button", { name: "Import and check in" }));
 
     await expect(await body.findByRole("alert")).toHaveTextContent("MyPreflight doesn’t have this plan’s airline yet.");

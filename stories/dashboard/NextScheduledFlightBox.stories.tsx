@@ -15,8 +15,11 @@ const meta = {
     simbriefImport: null,
   },
   argTypes: {
-    flight: { control: false, description: "The pilot's next ready flight." },
-    failed: { description: "The upcoming flights could not be loaded." },
+    flight: {
+      control: false,
+      description: "The earliest ready flight in a rotation Operations released to the pilot.",
+    },
+    failed: { description: "The next flight could not be loaded." },
     departure: {
       control: false,
       description:
@@ -32,10 +35,10 @@ const meta = {
     docs: {
       description: {
         component: `
-The pilot's next ready flight. With nothing scheduled it shows the shape that flight will take instead of a blank
-placeholder: the departure filled in when the app knows it, and dashed slots for whatever Operations has yet to decide.
-While the pilot has no flight in progress, the card also imports their latest SimBrief plan, or asks for a SimBrief ID
-first.
+The earliest ready flight in a rotation Operations released to the pilot. With nothing scheduled it shows the shape
+that flight will take instead of a blank placeholder: the departure filled in when the app knows it, and dashed slots for
+the rest. While the pilot has no flight in progress and nothing is scheduled for them, it imports their latest SimBrief
+plan, or asks for a SimBrief ID first.
 `,
       },
     },
@@ -79,52 +82,64 @@ export const AwaitingDispatchLocationUnknown: Story = {
 export const Unavailable: Story = {
   args: { failed: true },
   parameters: {
-    docs: { description: { story: "The upcoming flights failed to load. The card says so, never an empty state." } },
+    docs: { description: { story: "The next flight failed to load. The card says so, never an empty state." } },
   },
   play: async ({ canvas }) => {
     await expect(canvas.queryByText("Awaiting dispatch")).toBeNull();
   },
 };
 
-export const ScheduledWithImport: Story = {
+export const ScheduledLeavesImportOut: Story = {
   args: { flight: flightFromNewYork(), simbriefImport: { hasSimbriefId: true, open: fn() } },
   parameters: {
     docs: {
       description: {
-        story: "No flight in progress: the pilot can import their own plan beside the flight Operations dispatched.",
+        story: "Operations scheduled the pilot's next flight, so the card offers no import beside it.",
+      },
+    },
+  },
+  play: async ({ canvas }) => {
+    await expect(canvas.queryByText("Import from SimBrief")).toBeNull();
+  },
+};
+
+export const NothingScheduledWithImport: Story = {
+  args: { simbriefImport: { hasSimbriefId: true, open: fn() } },
+  parameters: {
+    docs: {
+      description: {
+        story: "Nothing is scheduled and no flight is in progress, so the card asks the pilot to import their plan.",
       },
     },
   },
   play: async ({ canvas, args }) => {
+    await expect(canvas.getByText("No flight scheduled")).toBeVisible();
+    await expect(canvas.queryByText("Awaiting dispatch")).toBeNull();
     await userEvent.click(canvas.getByRole("button", { name: "Import from SimBrief" }));
     await expect(args.simbriefImport?.open).toHaveBeenCalled();
   },
 };
 
-export const NothingScheduledWithImport: Story = {
-  args: { departure: groundStopAfterFlight().airport, simbriefImport: { hasSimbriefId: true, open: fn() } },
+export const NothingScheduledWithoutSimbriefId: Story = {
+  args: { simbriefImport: { hasSimbriefId: false, open: fn() } },
   parameters: {
     docs: {
       description: {
-        story: "Nothing is scheduled and no flight is in progress, so the card offers the import instead of waiting.",
+        story: "A new pilot without a SimBrief ID. The button opens the SimBrief connection right on the dashboard.",
       },
     },
   },
-  play: async ({ canvas }) => {
-    await expect(canvas.getByText("No flight scheduled")).toBeVisible();
-    await expect(canvas.queryByText("Awaiting dispatch")).toBeNull();
-    await expect(canvas.getByRole("button", { name: "Import from SimBrief" })).toBeVisible();
+  play: async ({ canvas, args }) => {
+    await expect(canvas.getByText("Add your SimBrief ID in order to import your first flight plan.")).toBeVisible();
+    await userEvent.click(canvas.getByRole("button", { name: "Add SimBrief ID" }));
+    await expect(args.simbriefImport?.open).toHaveBeenCalled();
   },
 };
 
-export const NothingScheduledWithoutSimbriefId: Story = {
-  args: { departure: groundStopAfterFlight().airport, simbriefImport: { hasSimbriefId: false, open: fn() } },
+export const NothingScheduledOnPhone: Story = {
+  args: { simbriefImport: { hasSimbriefId: false, open: fn() } },
+  decorators: [atWidth(CARD_WIDTHS.phone)],
   parameters: {
-    docs: {
-      description: { story: "The pilot hasn't added a SimBrief ID yet, so the card links to the account page." },
-    },
-  },
-  play: async ({ canvas }) => {
-    await expect(canvas.getByRole("link", { name: "Add your SimBrief ID" })).toHaveAttribute("href", "/me/account");
+    docs: { description: { story: "The same prompt at phone width, where it's the first flight card." } },
   },
 };

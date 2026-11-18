@@ -1,7 +1,8 @@
 import { Button } from "flowbite-react";
 import React, { useState } from "react";
 import { FaArrowRight } from "react-icons/fa";
-import { FaCircleCheck, FaCircleInfo, FaForward, FaLocationDot, FaTriangleExclamation } from "react-icons/fa6";
+import { FaCircleCheck, FaForward, FaLocationDot, FaTriangleExclamation } from "react-icons/fa6";
+import { LuMapPin } from "react-icons/lu";
 import { Link } from "react-router";
 import { TravelType, type UserTravel, type UserTravelAirport } from "~/features/travel";
 import { InitiateTravelModal } from "~/features/travel/components/InitiateTravelModal";
@@ -10,7 +11,7 @@ import { MetaRow } from "~/shared/ui/Display/MetaRow";
 import { BoxFooter } from "~/shared/ui/Layout/BoxFooter";
 import { CardHeader } from "~/shared/ui/Layout/CardHeader";
 import { Container } from "~/shared/ui/Layout/Container";
-import { ContainerEmptyState } from "~/shared/ui/Layout/ContainerEmptyState";
+import { EmptyState } from "~/shared/ui/Layout/EmptyState";
 import { TilePlaceholder } from "~/shared/ui/Layout/TilePlaceholder";
 
 type Props = {
@@ -81,10 +82,7 @@ export function CurrentLocationBox({ currentLocation, latestTravel, flightNumber
           </div>
         </div>
       ) : (
-        <ContainerEmptyState>
-          <FaCircleInfo className="inline mr-2" aria-hidden={true} />
-          <span>Location unknown.</span>
-        </ContainerEmptyState>
+        <EmptyState icon={LuMapPin} title="Location unknown" description="Your first flight or a new travel sets it." />
       )}
 
       <BoxFooter>

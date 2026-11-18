@@ -21,6 +21,7 @@ export function useRecentFlights(): Response {
     setLoading(true);
     flightService
       .fetchAllFlights({
+        captain: "me",
         phase: FlightPhase.Finished,
         sort: FlightListSort.ActualOnBlockTime,
         order: FlightListOrder.Descending,

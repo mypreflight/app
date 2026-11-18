@@ -1,7 +1,7 @@
 import { Button } from "flowbite-react";
 import React from "react";
-import { FaFileImport, FaGear, FaPlaneDeparture, FaTriangleExclamation } from "react-icons/fa6";
-import { Link } from "react-router";
+import { FaFileImport, FaPlaneDeparture, FaTriangleExclamation } from "react-icons/fa6";
+import { LuFileDown } from "react-icons/lu";
 import type { Airport } from "~/features/airport";
 import type { Flight } from "~/features/flight";
 import { BlockTimeStat } from "~/features/flight/components/Dashboard/Main/Box/BlockTimeStat";
@@ -11,6 +11,7 @@ import { DetailLinkButton } from "~/shared/ui/Button/DetailLinkButton";
 import { AirportEndpoint } from "~/shared/ui/Display/AirportEndpoint";
 import { CardHeader } from "~/shared/ui/Layout/CardHeader";
 import { Container } from "~/shared/ui/Layout/Container";
+import { EmptyState } from "~/shared/ui/Layout/EmptyState";
 import { TilePlaceholder } from "~/shared/ui/Layout/TilePlaceholder";
 
 export type SimbriefImportOption = {
@@ -25,41 +26,36 @@ type Props = {
   simbriefImport?: SimbriefImportOption | null;
 };
 
-const SUBTLE_ACTION =
-  "inline-flex items-center gap-1.5 rounded pointer-coarse:min-h-11 text-sm font-semibold text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:text-indigo-400";
-
-function SubtleImportAction({ simbriefImport }: { simbriefImport: SimbriefImportOption }) {
-  if (!simbriefImport.hasSimbriefId) {
-    return (
-      <Link to="/me/account" viewTransition className={SUBTLE_ACTION}>
-        Add your SimBrief ID
-      </Link>
-    );
-  }
-
-  return (
-    <button type="button" onClick={simbriefImport.open} className={SUBTLE_ACTION}>
-      <FaFileImport aria-hidden={true} className="size-3.5" />
-      Import from SimBrief
-    </button>
-  );
+function importLabel({ hasSimbriefId }: SimbriefImportOption): string {
+  return hasSimbriefId ? "Import from SimBrief" : "Add SimBrief ID";
 }
 
 function ImportButton({ simbriefImport }: { simbriefImport: SimbriefImportOption }) {
-  if (!simbriefImport.hasSimbriefId) {
-    return (
-      <Button as={Link} to="/me/account" viewTransition size="sm" color="alternative">
-        <FaGear className="me-2 size-3.5" aria-hidden={true} />
-        Add your SimBrief ID
-      </Button>
-    );
-  }
-
   return (
     <Button size="sm" color="alternative" onClick={simbriefImport.open}>
       <FaFileImport className="me-2 size-3.5" aria-hidden={true} />
-      Import from SimBrief
+      {importLabel(simbriefImport)}
     </Button>
+  );
+}
+
+function ImportPrompt({ simbriefImport }: { simbriefImport: SimbriefImportOption }) {
+  return (
+    <EmptyState
+      icon={LuFileDown}
+      tone="accent"
+      title="No flight scheduled"
+      description={
+        simbriefImport.hasSimbriefId
+          ? "Import your latest SimBrief flight plan and fly it right away."
+          : "Add your SimBrief ID in order to import your first flight plan."
+      }
+      action={
+        <Button color="indigo" size="sm" onClick={simbriefImport.open} className="px-4">
+          {importLabel(simbriefImport)}
+        </Button>
+      }
+    />
   );
 }
 
@@ -72,31 +68,19 @@ function PendingEndpoint({ caption, align = "left" }: { caption: string; align?:
   );
 }
 
-function AwaitingDispatch({
-  departure,
-  simbriefImport,
-}: {
-  departure: Airport | null;
-  simbriefImport: SimbriefImportOption | null;
-}) {
+function AwaitingDispatch({ departure }: { departure: Airport | null }) {
   return (
     <>
       <div className="flex min-w-0 items-center gap-2.5">
         <span className="ms-1 flex size-10 shrink-0 items-center justify-center rounded-lg border border-dashed border-gray-300 text-gray-400 dark:border-gray-600 dark:text-gray-500">
           <FaPlaneDeparture size={14} aria-hidden={true} />
         </span>
-        {simbriefImport ? (
-          <span className="block min-w-0 text-base font-bold leading-tight text-gray-900 dark:text-white">
-            No flight scheduled
+        <span className="min-w-0">
+          <span className="block text-base font-bold leading-tight text-gray-900 dark:text-white">
+            Awaiting dispatch
           </span>
-        ) : (
-          <span className="min-w-0">
-            <span className="block text-base font-bold leading-tight text-gray-900 dark:text-white">
-              Awaiting dispatch
-            </span>
-            <span className="block text-xs text-gray-500 dark:text-gray-400">Not yet scheduled by Operations.</span>
-          </span>
-        )}
+          <span className="block text-xs text-gray-500 dark:text-gray-400">Not yet scheduled by Operations.</span>
+        </span>
       </div>
 
       <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)_minmax(0,1fr)] items-start gap-3">
@@ -114,12 +98,6 @@ function AwaitingDispatch({
         </div>
         <PendingEndpoint caption="Destination" align="right" />
       </div>
-
-      {simbriefImport && (
-        <div className="flex justify-end">
-          <ImportButton simbriefImport={simbriefImport} />
-        </div>
-      )}
     </>
   );
 }
@@ -144,7 +122,7 @@ export function NextScheduledFlightBox({ flight, failed, departure = null, simbr
   if (!flight) {
     return (
       <Container padding="condensed" header={<CardHeader title="Next scheduled flight" />}>
-        <AwaitingDispatch departure={departure} simbriefImport={simbriefImport} />
+        {simbriefImport ? <ImportPrompt simbriefImport={simbriefImport} /> : <AwaitingDispatch departure={departure} />}
       </Container>
     );
   }
@@ -181,12 +159,7 @@ export function NextScheduledFlightBox({ flight, failed, departure = null, simbr
           />
         </div>
 
-        <div className="flex flex-wrap items-center justify-end gap-x-3 gap-y-2">
-          {simbriefImport && (
-            <div className="me-auto">
-              <SubtleImportAction simbriefImport={simbriefImport} />
-            </div>
-          )}
+        <div className="flex justify-end">
           <DetailLinkButton to={`/track/${flight.id}`}>See flight details</DetailLinkButton>
         </div>
       </div>

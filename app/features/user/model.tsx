@@ -51,6 +51,7 @@ export type User = {
 export type SimbriefAirport = {
   icaoCode: string;
   iataCode: string | null;
+  city: string | null;
   name: string | null;
 };
 

@@ -1,6 +1,7 @@
 import React from "react";
 import { FaArrowRight } from "react-icons/fa";
-import { FaCircleInfo, FaClockRotateLeft, FaTriangleExclamation } from "react-icons/fa6";
+import { FaClockRotateLeft, FaTriangleExclamation } from "react-icons/fa6";
+import { LuPlaneLanding } from "react-icons/lu";
 import { Link } from "react-router";
 import type { Flight } from "~/features/flight";
 import { listOffBlockTimeOf } from "~/features/flight/lib/flightListTimes";
@@ -10,7 +11,7 @@ import { dateToDayMonth } from "~/shared/ui/Date/FormattedIcaoDate";
 import { CardFooterLink } from "~/shared/ui/Layout/CardFooterLink";
 import { CardHeader } from "~/shared/ui/Layout/CardHeader";
 import { Container } from "~/shared/ui/Layout/Container";
-import { ContainerEmptyState } from "~/shared/ui/Layout/ContainerEmptyState";
+import { EmptyState } from "~/shared/ui/Layout/EmptyState";
 import { TilePlaceholder } from "~/shared/ui/Layout/TilePlaceholder";
 
 type Props = {
@@ -72,10 +73,11 @@ export function RecentFlightsBox({ flights, failed }: Props) {
   if (flights.length === 0) {
     return (
       <Container padding="condensed" header={header}>
-        <ContainerEmptyState>
-          <FaCircleInfo className="inline mr-2" aria-hidden={true} />
-          <span>No finished flights yet.</span>
-        </ContainerEmptyState>
+        <EmptyState
+          icon={LuPlaneLanding}
+          title="No finished flights yet"
+          description="Each flight shows here once it closes."
+        />
       </Container>
     );
   }
