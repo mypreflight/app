@@ -22,7 +22,9 @@ import { FormattedIcaoDate } from "~/shared/ui/Date/FormattedIcaoDate";
 import { FormattedIcaoTime } from "~/shared/ui/Date/FormattedIcaoTime";
 import { LoadFailedState } from "~/shared/ui/Display/LoadFailedState";
 import { TransparentContainer } from "~/shared/ui/Layout/TransparentContainer";
-import { SectionHeader } from "~/shared/ui/Section/SectionHeader";
+import { PageHeader } from "~/shared/ui/Shell/PageHeader";
+import { LinkedTableRow } from "~/shared/ui/Table/LinkedTableRow";
+import { denseTableTheme } from "~/styles/theme";
 
 const TABS: { status: DelayRequestStatusFilter; label: string }[] = [
   { status: "pending", label: "To review" },
@@ -87,7 +89,7 @@ export default function DelaysWorklistRoute() {
 
   return (
     <>
-      <SectionHeader title="Delay reviews" />
+      <PageHeader title="Delay reviews" />
       <Tabs key={status} variant="underline" onActiveTabChange={handleTabChange}>
         {TABS.map((tab, i) => (
           <TabItem key={tab.status} active={activeIndex === i} title={tab.label} />
@@ -106,7 +108,7 @@ export default function DelaysWorklistRoute() {
       ) : (
         <TransparentContainer>
           <div className="rounded-2xl overflow-x-auto">
-            <Table>
+            <Table theme={denseTableTheme}>
               <TableHead>
                 <TableRow>
                   <TableHeadCell>Flight no</TableHeadCell>
@@ -120,10 +122,10 @@ export default function DelaysWorklistRoute() {
                   </TableHeadCell>
                 </TableRow>
               </TableHead>
-              <TableBody className="divide-y">
+              <TableBody className="divide-y divide-gray-200 dark:divide-gray-800">
                 {entries.map(({ delayRequest, flight }) => (
-                  <TableRow key={delayRequest.id}>
-                    <TableCell className="text-base font-bold font-mono text-gray-900 dark:text-white">
+                  <LinkedTableRow key={delayRequest.id} to={`/flights/${flight.id}/delays`}>
+                    <TableCell className="font-mono font-bold text-gray-900 dark:text-white">
                       {flight.flightNumberWithoutSpaces}
                     </TableCell>
                     <TableCell>
@@ -169,7 +171,7 @@ export default function DelaysWorklistRoute() {
                         {status === "pending" ? "Review" : "View"}
                       </Link>
                     </TableCell>
-                  </TableRow>
+                  </LinkedTableRow>
                 ))}
               </TableBody>
             </Table>

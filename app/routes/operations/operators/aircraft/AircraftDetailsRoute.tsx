@@ -7,10 +7,11 @@ import { AircraftDetailsHeader } from "~/features/aircraft/components/AircraftDe
 import { AircraftDetailsTabs } from "~/features/aircraft/components/AircraftDetails/AircraftDetailsTabs";
 import type { AircraftDetailsContext } from "~/features/aircraft/components/AircraftDetails/aircraftDetailsContext";
 import { AircraftService } from "~/features/aircraft/service";
+import { operatorCrumbs } from "~/features/operator/navigation";
 import { OperatorService } from "~/features/operator/service";
 import { usePageTitle } from "~/shared/hooks/usePageTitle";
 import { ContainerEmptyState } from "~/shared/ui/Layout/ContainerEmptyState";
-import { Breadcrumbs } from "~/shared/ui/Section/Breadcrumbs";
+import { PageHeader } from "~/shared/ui/Shell/PageHeader";
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
   const aircraftService = new AircraftService();
@@ -38,7 +39,7 @@ export default function AircraftDetailsRoute({ params }: Route.ComponentProps) {
   if (!aircraft || !operator) {
     return (
       <div className="pb-8">
-        <Breadcrumbs className="my-6" items={[{ label: "Operators", to: "/operators" }, { label: "Aircraft" }]} />
+        <PageHeader crumbs={[{ label: "Operators", to: "/operators" }, { label: "Aircraft" }]} />
         <ContainerEmptyState>
           This aircraft could not be found. It may have been removed from the fleet.
         </ContainerEmptyState>
@@ -57,26 +58,22 @@ export default function AircraftDetailsRoute({ params }: Route.ComponentProps) {
 
   return (
     <div className="pb-8">
-      <div className="mb-5 mt-2 flex items-center justify-between gap-4">
-        <Breadcrumbs
-          items={[
-            { label: "Operators", to: "/operators" },
-            { label: operator.shortName, to: `/operators/${params.operatorId}/fleet` },
-            { label: aircraft.registration, mono: true },
-          ]}
-        />
-        <Button
-          as={Link}
-          to={`/operators/${params.operatorId}/aircraft/${aircraft.id}/edit`}
-          viewTransition
-          size="xs"
-          color="alternative"
-          className="shrink-0 space-x-1.5"
-        >
-          <HiPencil />
-          <span>Update airframe data</span>
-        </Button>
-      </div>
+      <PageHeader
+        crumbs={[...operatorCrumbs(operator, "fleet"), { label: aircraft.registration, mono: true }]}
+        actions={
+          <Button
+            as={Link}
+            to={`/operators/${params.operatorId}/aircraft/${aircraft.id}/edit`}
+            viewTransition
+            size="xs"
+            color="alternative"
+            className="space-x-1.5"
+          >
+            <HiPencil />
+            <span>Update airframe data</span>
+          </Button>
+        }
+      />
 
       <AircraftDetailsHeader aircraft={aircraft} />
 

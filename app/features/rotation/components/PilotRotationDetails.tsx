@@ -1,6 +1,4 @@
 import React from "react";
-import { FaArrowLeft } from "react-icons/fa6";
-import { Link } from "react-router";
 import type { Airport } from "~/features/airport";
 import { useCurrentFlight } from "~/features/flight/hooks/useCurrentFlight";
 import type { Operator } from "~/features/operator";
@@ -13,6 +11,7 @@ import { RotationStatusBadge } from "~/features/rotation/components/RotationStat
 import { RotationTmi } from "~/features/rotation/components/RotationTmi";
 import { FieldLabel } from "~/shared/ui/Display/FieldLabel";
 import { Container } from "~/shared/ui/Layout/Container";
+import { PageHeader } from "~/shared/ui/Shell/PageHeader";
 
 type Props = {
   rotation: Rotation;
@@ -36,16 +35,7 @@ export function PilotRotationDetails({ rotation, airports, operator }: Props) {
 
   return (
     <div className="pb-6">
-      <div className="mb-3">
-        <Link
-          to="/rotations"
-          viewTransition
-          className="inline-flex items-center gap-2 rounded text-sm font-semibold text-gray-500 hover:text-gray-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:text-gray-400 dark:hover:text-gray-200"
-        >
-          <FaArrowLeft size={12} aria-hidden={true} />
-          Rotations
-        </Link>
-      </div>
+      <PageHeader crumbs={[{ label: "Rotations", to: "/rotations" }, { label: rotation.name }]} />
 
       <Container padding="spacious" className="mb-4 gap-5">
         <header className="flex flex-wrap items-start justify-between gap-3">

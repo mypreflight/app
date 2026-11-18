@@ -9,7 +9,7 @@ import type { CollectedPostcard } from "~/features/postcard/model";
 import { usePageTitle } from "~/shared/hooks/usePageTitle";
 import { FieldLabel } from "~/shared/ui/Display/FieldLabel";
 import { ContainerEmptyState } from "~/shared/ui/Layout/ContainerEmptyState";
-import { SectionHeader } from "~/shared/ui/Section/SectionHeader";
+import { PageHeader } from "~/shared/ui/Shell/PageHeader";
 import { LoadingData } from "~/shared/ui/Table/LoadingStates/LoadingData";
 
 export default function MyPostcardsRoute() {
@@ -43,7 +43,7 @@ export default function MyPostcardsRoute() {
 
   return (
     <>
-      <SectionHeader title="Postcards" />
+      <PageHeader title="Postcards" />
 
       {collection === null ? (
         <LoadingData />

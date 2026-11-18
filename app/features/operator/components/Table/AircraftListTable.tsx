@@ -1,21 +1,16 @@
 import { Badge, Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow } from "flowbite-react";
 import React, { useMemo } from "react";
-import { HiOutlineArrowRight } from "react-icons/hi";
+import { HiChevronRight } from "react-icons/hi";
 import { Link } from "react-router";
 import type { Aircraft } from "~/features/aircraft";
-import { AircraftIcon } from "~/features/aircraft/components/Aircraft/AircraftIcon";
 import { CabinCoverageBadge } from "~/features/aircraft/components/Aircraft/CabinCoverageBadge";
-import { AircraftAirportRow } from "~/features/aircraft/components/AircraftDetails/AircraftAirportRow";
 import { aircraftStateColors } from "~/features/aircraft/i18n";
-import {
-  formatCruiseSpeed,
-  formatPerformanceCode,
-  formatServiceCeiling,
-  formatWeightCategory,
-} from "~/features/airframe/lib/formatAirframe";
+import { formatCruiseSpeed, formatServiceCeiling, formatWeightCategory } from "~/features/airframe/lib/formatAirframe";
 import type { Airport } from "~/features/airport";
 import { AircraftListCard } from "~/features/operator/components/Table/AircraftListCard";
 import { toHuman } from "~/i18n/translate";
+import { LinkedTableRow } from "~/shared/ui/Table/LinkedTableRow";
+import { denseTableTheme } from "~/styles/theme";
 
 type Props = {
   operatorId: string;
@@ -39,7 +34,7 @@ export function AircraftListTable({ operatorId, aircraft, airports }: Props) {
         ))}
       </div>
 
-      <Table className="hidden md:table">
+      <Table theme={denseTableTheme} className="hidden md:table">
         <TableHead>
           <TableRow>
             <TableHeadCell>Registration</TableHeadCell>
@@ -47,42 +42,39 @@ export function AircraftListTable({ operatorId, aircraft, airports }: Props) {
             <TableHeadCell>SELCAL</TableHeadCell>
             <TableHeadCell>Performance</TableHeadCell>
             <TableHeadCell>Base</TableHeadCell>
-            <TableHeadCell>Livery</TableHeadCell>
-            <TableHeadCell className="hidden lg:table-cell">Cabin</TableHeadCell>
-            <TableHeadCell>Actions</TableHeadCell>
+            <TableHeadCell className="hidden @4xl:table-cell">Livery</TableHeadCell>
+            <TableHeadCell className="hidden @4xl:table-cell">Cabin</TableHeadCell>
+            <TableHeadCell>
+              <span className="sr-only">Details</span>
+            </TableHeadCell>
           </TableRow>
         </TableHead>
-        <TableBody className="divide-y">
+        <TableBody className="divide-y divide-gray-200 dark:divide-gray-800">
           {aircraft.map((each: Aircraft) => {
             const baseAirport = each.baseAirport ? (airportsById.get(each.baseAirport.id) ?? null) : null;
+            const detailsPath = `/operators/${operatorId}/aircraft/${each.id}`;
 
             return (
-              <TableRow key={each.id}>
-                <TableCell className="text-gray-900 dark:text-gray-100">
-                  <div className="flex items-center gap-3">
-                    <AircraftIcon type={each.airframe.type} name={each.airframe.name} />
-                    <div>
-                      <Link
-                        to={`/operators/${operatorId}/aircraft/${each.id}`}
-                        viewTransition
-                        className="block font-mono text-lg font-bold hover:text-indigo-600 dark:hover:text-indigo-400"
-                      >
-                        {each.registration}
-                      </Link>
-                      <span className="block text-xs text-gray-500 dark:text-gray-400">{each.airframe.name}</span>
-                    </div>
-                  </div>
+              <LinkedTableRow key={each.id} to={detailsPath}>
+                <TableCell>
+                  <Link
+                    to={detailsPath}
+                    viewTransition
+                    className="block font-mono text-sm font-bold text-gray-900 hover:text-indigo-600 dark:text-white dark:hover:text-indigo-400"
+                  >
+                    {each.registration}
+                  </Link>
+                  <span className="block text-xs text-gray-500 dark:text-gray-400">{each.airframe.name}</span>
                 </TableCell>
                 <TableCell>
                   <Badge color={aircraftStateColors[each.currentState]} size="sm" className="w-fit">
                     {toHuman.aircraft.state(each.currentState)}
                   </Badge>
                 </TableCell>
-                <TableCell className="font-mono text-gray-500 dark:text-gray-400">{each.selcal || "—"}</TableCell>
+                <TableCell className="font-mono text-gray-700 dark:text-gray-300">{each.selcal || "—"}</TableCell>
                 <TableCell>
-                  <span className="block font-bold">
-                    {formatWeightCategory(each.airframe.weightCategory)} ·{" "}
-                    {formatPerformanceCode(each.airframe.performanceCode)}
+                  <span className="block font-medium text-gray-900 dark:text-white">
+                    {formatWeightCategory(each.airframe.weightCategory)} · {each.airframe.performanceCode}
                   </span>
                   <span className="block text-xs text-gray-500 dark:text-gray-400">
                     {formatCruiseSpeed(each.airframe.cruiseSpeed)} ·{" "}
@@ -91,26 +83,35 @@ export function AircraftListTable({ operatorId, aircraft, airports }: Props) {
                 </TableCell>
                 <TableCell>
                   {baseAirport ? (
-                    <AircraftAirportRow airport={baseAirport} />
+                    <>
+                      <span className="block font-mono font-bold text-gray-900 dark:text-white">
+                        {baseAirport.iataCode}
+                      </span>
+                      <span className="block max-w-44 truncate text-xs text-gray-500 dark:text-gray-400">
+                        {baseAirport.name}
+                      </span>
+                    </>
                   ) : (
-                    <span className="text-gray-500 dark:text-gray-400">—</span>
+                    "—"
                   )}
                 </TableCell>
-                <TableCell>{each.livery}</TableCell>
-                <TableCell className="hidden lg:table-cell">
+                <TableCell className="hidden max-w-40 truncate text-gray-700 @4xl:table-cell dark:text-gray-300">
+                  {each.livery}
+                </TableCell>
+                <TableCell className="hidden @4xl:table-cell">
                   <CabinCoverageBadge aircraft={each} />
                 </TableCell>
-                <TableCell>
+                <TableCell className="w-px">
                   <Link
-                    className="inline-flex items-center gap-1.5 text-indigo-600 dark:text-indigo-400 font-bold"
-                    to={`/operators/${operatorId}/aircraft/${each.id}`}
+                    to={detailsPath}
                     viewTransition
+                    aria-label={`${each.registration} details`}
+                    className="flex text-gray-500 transition-colors hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400"
                   >
-                    <span>View details</span>
-                    <HiOutlineArrowRight className="size-4" />
+                    <HiChevronRight className="size-4" aria-hidden={true} />
                   </Link>
                 </TableCell>
-              </TableRow>
+              </LinkedTableRow>
             );
           })}
         </TableBody>

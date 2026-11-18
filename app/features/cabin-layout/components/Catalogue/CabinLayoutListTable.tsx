@@ -3,6 +3,8 @@ import React from "react";
 import { Link } from "react-router";
 import type { CabinLayout } from "~/features/cabin-layout/model";
 import { FormattedIcaoDate } from "~/shared/ui/Date/FormattedIcaoDate";
+import { LinkedTableRow } from "~/shared/ui/Table/LinkedTableRow";
+import { denseTableTheme } from "~/styles/theme";
 
 type Props = {
   layouts: CabinLayout[];
@@ -10,7 +12,7 @@ type Props = {
 
 export function CabinLayoutListTable({ layouts }: Props) {
   return (
-    <Table>
+    <Table theme={denseTableTheme}>
       <TableHead>
         <TableRow>
           <TableHeadCell>Layout</TableHeadCell>
@@ -24,10 +26,10 @@ export function CabinLayoutListTable({ layouts }: Props) {
           </TableHeadCell>
         </TableRow>
       </TableHead>
-      <TableBody className="divide-y">
+      <TableBody className="divide-y divide-gray-200 dark:divide-gray-800">
         {layouts.map((layout) => (
-          <TableRow key={layout.id}>
-            <TableCell className="font-mono text-base font-bold text-gray-900 dark:text-white">
+          <LinkedTableRow key={layout.id} to={`/cabin-layouts/${layout.id}`}>
+            <TableCell className="font-mono font-bold text-gray-900 dark:text-white">
               <Link
                 to={`/cabin-layouts/${layout.id}`}
                 viewTransition
@@ -40,7 +42,7 @@ export function CabinLayoutListTable({ layouts }: Props) {
             <TableCell className="font-mono">{layout.aircraftIata}</TableCell>
             <TableCell className="font-mono">{layout.variant ?? "—"}</TableCell>
             <TableCell className="font-mono text-xs">{layout.sourceSlugs.join(", ")}</TableCell>
-            <TableCell className="whitespace-nowrap">
+            <TableCell>
               <FormattedIcaoDate date={new Date(layout.firstSeenAt)} />
             </TableCell>
             <TableCell>
@@ -50,7 +52,7 @@ export function CabinLayoutListTable({ layouts }: Props) {
                 </Badge>
               )}
             </TableCell>
-          </TableRow>
+          </LinkedTableRow>
         ))}
       </TableBody>
     </Table>

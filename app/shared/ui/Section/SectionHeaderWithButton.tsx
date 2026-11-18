@@ -1,6 +1,7 @@
 import { Button } from "flowbite-react";
 import React from "react";
 import { Link } from "react-router";
+import { PageHeader } from "~/shared/ui/Shell/PageHeader";
 
 type ActionButton = {
   text: string;
@@ -34,7 +35,7 @@ function ActionButton({ button }: { button: ActionButton }) {
         as={Link}
         to={button.url}
         viewTransition={button.viewTransition ?? true}
-        size="sm"
+        size="xs"
         color={button.color}
         className={actionButtonClassName}
         onClick={button.onClick}
@@ -46,7 +47,7 @@ function ActionButton({ button }: { button: ActionButton }) {
 
   return (
     <Button
-      size="sm"
+      size="xs"
       color={button.color}
       className={actionButtonClassName}
       onClick={button.onClick}
@@ -58,13 +59,19 @@ function ActionButton({ button }: { button: ActionButton }) {
 }
 
 export function SectionHeaderWithButton({ sectionTitle, primaryButton, secondaryButton }: Props) {
+  const hasButtons = primaryButton !== undefined || secondaryButton !== undefined;
+
   return (
-    <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-      <h1 className="text-3xl font-bold text-gray-800 dark:text-white">{sectionTitle}</h1>
-      <div className="flex gap-2 flex-row flex-wrap">
-        {secondaryButton && <ActionButton button={secondaryButton} />}
-        {primaryButton && <ActionButton button={primaryButton} />}
-      </div>
-    </div>
+    <PageHeader
+      title={sectionTitle}
+      actions={
+        hasButtons && (
+          <>
+            {secondaryButton && <ActionButton button={secondaryButton} />}
+            {primaryButton && <ActionButton button={primaryButton} />}
+          </>
+        )
+      }
+    />
   );
 }

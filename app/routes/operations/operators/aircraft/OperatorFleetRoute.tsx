@@ -38,7 +38,7 @@ export default function OperatorFleetRoute({ params }: Route.ComponentProps) {
   return (
     <div>
       <FleetControls operator={operator} type={selectedType} changeType={setSelectedType} />
-      <TransparentContainer className="overflow-x-auto">
+      <TransparentContainer className="@container overflow-x-auto">
         <AircraftListTable operatorId={params.operatorId} aircraft={filtered} airports={airports} />
       </TransparentContainer>
     </div>

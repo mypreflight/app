@@ -1,7 +1,6 @@
 import type { Route } from ".react-router/types/app/routes/pilot/airports/+types/AirportPreviewLayout";
 import React, { useCallback, useMemo, useState } from "react";
-import { LuChevronLeft } from "react-icons/lu";
-import { Link, Outlet, useLoaderData, useLocation } from "react-router";
+import { Outlet, useLoaderData, useLocation } from "react-router";
 import type { AirportWeatherReport } from "~/features/airport";
 import { AirportHeadline } from "~/features/airport/components/Header/AirportHeadline";
 import { AirportWeatherPanel } from "~/features/airport/components/Library/AirportWeatherPanel";
@@ -11,6 +10,7 @@ import { sectionItemCount } from "~/features/airport/components/Management/airpo
 import { filterAirportSection } from "~/features/airport/components/Management/airportSectionFilters";
 import {
   AIRPORT_LIBRARY_BASE,
+  airportCrumbs,
   resolveActiveSection,
   sectionMapTitle,
 } from "~/features/airport/components/Management/airportSections";
@@ -24,6 +24,7 @@ import { RunwayService } from "~/features/runway/service";
 import { TerminalService } from "~/features/terminal/service";
 import { usePageTitle } from "~/shared/hooks/usePageTitle";
 import { FilterInput } from "~/shared/ui/Filter/FilterInput";
+import { PageHeader } from "~/shared/ui/Shell/PageHeader";
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
   const [airport, runways, terminals, parkingPositions, gates, notams, weather] = await Promise.all([
@@ -54,14 +55,9 @@ export default function AirportPreviewLayout() {
 
   return (
     <div className="space-y-6">
-      <Link
-        to="/airports-library"
-        viewTransition
-        className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400"
-      >
-        <LuChevronLeft size={16} />
-        Airports library
-      </Link>
+      <PageHeader
+        crumbs={airportCrumbs({ path: AIRPORT_LIBRARY_BASE, label: "Airports library" }, data.airport, section)}
+      />
 
       <AirportHeadline airport={data.airport} readOnly />
 

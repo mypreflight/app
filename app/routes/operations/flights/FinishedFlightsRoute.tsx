@@ -4,7 +4,7 @@ import { blockTimeColumn } from "~/features/flight/components/List/FlightListCol
 import { FlightListView } from "~/features/flight/components/Table/FlightListView";
 import { FlightListProvider } from "~/features/flight/hooks/useFlightList";
 import { usePageTitle } from "~/shared/hooks/usePageTitle";
-import { SectionHeader } from "~/shared/ui/Section/SectionHeader";
+import { PageHeader } from "~/shared/ui/Shell/PageHeader";
 
 const PHASES = [FlightPhase.Finished];
 
@@ -13,7 +13,7 @@ export default function FinishedFlightsRoute() {
 
   return (
     <>
-      <SectionHeader title="Flight history" />
+      <PageHeader title="Flight history" />
       <FlightListProvider>
         <FlightListView phases={PHASES} emptyMessage="No finished flights found." trailingColumn={blockTimeColumn} />
       </FlightListProvider>

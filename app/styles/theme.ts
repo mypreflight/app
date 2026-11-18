@@ -1,6 +1,20 @@
 import { createTheme } from "flowbite-react";
 import type { DeepPartial, FlowbiteTheme } from "flowbite-react/types";
 
+export const denseTableTheme = {
+  head: {
+    base: "group/head text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400",
+    cell: {
+      base: "whitespace-nowrap border-b border-gray-200 bg-gray-50 px-3 py-2.5 sm:px-3 dark:border-gray-700 dark:bg-gray-800",
+    },
+  },
+  body: {
+    cell: {
+      base: "whitespace-nowrap px-3 py-2.5 sm:px-3 sm:py-2.5",
+    },
+  },
+};
+
 export default function theme(): DeepPartial<FlowbiteTheme> {
   return createTheme({
     drawer: {

@@ -4,6 +4,7 @@ import { FaCircleCheck } from "react-icons/fa6";
 import { useNavigate } from "react-router";
 import { useToast } from "~/app-state/useToast";
 import type { Airport } from "~/features/airport";
+import { operatorCrumbs } from "~/features/operator/navigation";
 import { formatBlockTime, type Rotation } from "~/features/rotation";
 import { EditRotationModal } from "~/features/rotation/components/EditRotationModal";
 import { RotationCancellationNotice } from "~/features/rotation/components/RotationCancellationNotice";
@@ -17,7 +18,7 @@ import { FieldLabel } from "~/shared/ui/Display/FieldLabel";
 import { Container } from "~/shared/ui/Layout/Container";
 import { ModalActions } from "~/shared/ui/Modal/ModalActions";
 import { ModalTitle } from "~/shared/ui/Modal/ModalTitle";
-import { Breadcrumbs } from "~/shared/ui/Section/Breadcrumbs";
+import { PageHeader } from "~/shared/ui/Shell/PageHeader";
 
 type Props = {
   initialRotation: Rotation;
@@ -85,11 +86,9 @@ export function RotationDetails({ initialRotation, airports, operatorId, operato
   return (
     <div className="pb-6">
       <div className="mb-6">
-        <Breadcrumbs
-          className="mb-4"
-          items={[
-            { label: "Operators", to: "/operators" },
-            { label: operatorName, to: `/operators/${operatorId}/rotations` },
+        <PageHeader
+          crumbs={[
+            ...operatorCrumbs({ id: operatorId, shortName: operatorName }, "rotations"),
             { label: current.name },
           ]}
         />

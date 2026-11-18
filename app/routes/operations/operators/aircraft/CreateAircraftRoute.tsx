@@ -12,11 +12,12 @@ import {
 import type { AircraftIdentityFormValues, AircraftLifecycleFormValues } from "~/features/aircraft/schema";
 import { AirframeService } from "~/features/airframe/service";
 import { AirportService } from "~/features/airport/service";
+import { operatorCrumbs } from "~/features/operator/navigation";
 import { OperatorService } from "~/features/operator/service";
 import { useApi } from "~/shared/api/useApi";
 import { usePageTitle } from "~/shared/hooks/usePageTitle";
 import { FormSubmit } from "~/shared/ui/Form/FormSubmit";
-import { SectionHeaderWithBackButton } from "~/shared/ui/Section/SectionHeaderWithBackButton";
+import { PageHeader } from "~/shared/ui/Shell/PageHeader";
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
   const [operator, airframes, airports] = await Promise.all([
@@ -30,7 +31,7 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
 export default function CreateAircraftRoute({ params, loaderData }: Route.ComponentProps) {
   usePageTitle("Create new aircraft");
 
-  const { airframes, airports } = loaderData;
+  const { operator, airframes, airports } = loaderData;
   const { aircraftService } = useApi();
   const navigate = useNavigate();
 
@@ -65,11 +66,7 @@ export default function CreateAircraftRoute({ params, loaderData }: Route.Compon
 
   return (
     <div className="mx-auto max-w-lg pb-4">
-      <SectionHeaderWithBackButton
-        sectionTitle="Create new aircraft"
-        backText="Back to fleet"
-        backUrl={`/operators/${params.operatorId}/fleet`}
-      />
+      <PageHeader crumbs={[...operatorCrumbs(operator, "fleet"), { label: "Create new aircraft" }]} />
       <div className="space-y-4">
         <AircraftIdentificationFormSection data={formData.identity} airframes={airframes} onSubmit={onIdentitySubmit} />
         <AircraftLifecycleFormSection data={formData.lifecycle} airports={airports} onSubmit={onLifecycleSubmit} />

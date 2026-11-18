@@ -8,7 +8,7 @@ import { useApi } from "~/shared/api/useApi";
 import { usePageTitle } from "~/shared/hooks/usePageTitle";
 import { CardHeader } from "~/shared/ui/Layout/CardHeader";
 import { Container } from "~/shared/ui/Layout/Container";
-import { Breadcrumbs } from "~/shared/ui/Section/Breadcrumbs";
+import { PageHeader } from "~/shared/ui/Shell/PageHeader";
 import { LoadingData } from "~/shared/ui/Table/LoadingStates/LoadingData";
 
 type LayoutState =
@@ -59,14 +59,12 @@ export default function CargoHoldDetailsRoute() {
 
   return (
     <div className="pb-8">
-      <div className="mb-5 mt-2 flex items-center justify-between gap-4">
-        <Breadcrumbs
-          items={[
-            { label: "Cargo holds", to: "/cargo-holds" },
-            { label: type, mono: true },
-          ]}
-        />
-      </div>
+      <PageHeader
+        crumbs={[
+          { label: "Cargo holds", to: "/cargo-holds" },
+          { label: type, mono: true },
+        ]}
+      />
 
       {state.status === "loading" && <LoadingData />}
 
