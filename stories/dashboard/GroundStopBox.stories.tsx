@@ -66,7 +66,7 @@ export const AfterAFlight: Story = {
     },
   },
   play: async ({ canvas }) => {
-    await expect(canvas.getByText("Wait for dispatch")).toBeVisible();
+    await expect(canvas.getByText("Import a flight from SimBrief")).toBeVisible();
     await expect(canvas.getByText("On ground since on-block")).toBeVisible();
     await expect(canvas.getByText(newYorkLayout.stand?.name ?? "")).toBeVisible();
   },
@@ -121,7 +121,7 @@ export const NextFlightsUnavailable: Story = {
     },
   },
   play: async ({ canvas }) => {
-    await expect(canvas.queryByText("Wait for dispatch")).toBeNull();
+    await expect(canvas.queryByText("Import a flight from SimBrief")).toBeNull();
   },
 };
 

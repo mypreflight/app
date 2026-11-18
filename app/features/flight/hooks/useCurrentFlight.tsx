@@ -7,7 +7,7 @@ type CurrentFlightContextValue = {
   currentFlight: Flight | null;
   loading: boolean;
   failed: boolean;
-  refresh: () => void;
+  refresh: () => Promise<void>;
 };
 
 const CurrentFlightContext = createContext<CurrentFlightContextValue | null>(null);

@@ -1,8 +1,6 @@
 import { Modal, ModalBody, ModalHeader } from "flowbite-react";
 import React, { useState } from "react";
-import { FaTriangleExclamation } from "react-icons/fa6";
 import type { FilledSchedule, Flight } from "~/features/flight";
-import { NoticePanel } from "~/features/flight/components/Dashboard/Tracking/Progress/NoticePanel";
 import { CheckInScheduleForm } from "~/features/flight/components/Forms/CheckInScheduleForm";
 import { updateScheduleSchema } from "~/features/flight/schema";
 import { Form } from "~/shared/ui/Form/Form";
@@ -38,16 +36,6 @@ export function CheckInFlightModal({ flight, checkIn, close }: Props) {
         <p className="mb-5 text-pretty text-sm text-gray-600 dark:text-gray-400">
           Enter the times visible on the “estimated” section of your operational flight plan.
         </p>
-        {flight.departureParkingPositionId === null && (
-          <div className="mb-5">
-            <NoticePanel
-              tone="warning"
-              icon={FaTriangleExclamation}
-              title="No departure stand set"
-              description="You can check in without one, but the stand can’t be set or changed after check‑in. To choose one first, cancel and use Set parking stand in the Travel plan card."
-            />
-          </div>
-        )}
         <Form<FilledSchedule>
           id="checkInFlightForm"
           initialValues={schedule}

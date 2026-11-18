@@ -1,5 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router";
 import { useAuth } from "~/app-state/useAuth";
+import { useToast } from "~/app-state/useToast";
+import type { Flight } from "~/features/flight";
 import { CurrentFlightBox } from "~/features/flight/components/Dashboard/Main/Box/CurrentFlightBox";
 import { CurrentFlightUnavailableBox } from "~/features/flight/components/Dashboard/Main/Box/CurrentFlightUnavailableBox";
 import { DebugFlightListBox } from "~/features/flight/components/Dashboard/Main/Box/DebugFlightListBox";
@@ -10,6 +13,7 @@ import { NextScheduledFlightBox } from "~/features/flight/components/Dashboard/M
 import { NoCurrentFlightBox } from "~/features/flight/components/Dashboard/Main/Box/NoCurrentFlightBox";
 import { RecentFlightsBox } from "~/features/flight/components/Dashboard/Main/Box/RecentFlightsBox";
 import { UserHeader } from "~/features/flight/components/Dashboard/Main/UserHeader";
+import { ImportSimbriefFlightModal } from "~/features/flight/components/Modal/ImportSimbriefFlightModal";
 import { useCurrentFlight } from "~/features/flight/hooks/useCurrentFlight";
 import { useFlightNumber } from "~/features/flight/hooks/useFlightNumber";
 import { useGroundStop } from "~/features/flight/hooks/useGroundStop";
@@ -31,7 +35,12 @@ export default function PilotDashboardRoute() {
   const { isDebug } = useAppEnvironment();
   const currentFlightId = user?.currentFlightId ?? null;
   const { recentFlights, lastFlight, loading: loadingLast, failed: failedLast } = useRecentFlights();
-  const { currentFlight, loading: loadingCurrent, failed: failedCurrent } = useCurrentFlight();
+  const {
+    currentFlight,
+    loading: loadingCurrent,
+    failed: failedCurrent,
+    refresh: refreshCurrentFlight,
+  } = useCurrentFlight();
   const { nextFlight, loading: loadingNext, failed: failedNext } = useNextScheduledFlight(currentFlightId);
   const {
     currentLocation,
@@ -41,7 +50,20 @@ export default function PilotDashboardRoute() {
     refresh: refreshTravels,
   } = useUserTravels();
   const { rotation, loading: loadingRotation } = useCurrentRotation();
+  const navigate = useNavigate();
+  const { success } = useToast();
+  const [isImportOpen, setIsImportOpen] = useState(false);
   usePageTitle("Dashboard");
+
+  const simbriefUserId = user?.simbriefUserId ?? null;
+  const simbriefImport =
+    currentFlightId === null ? { hasSimbriefId: simbriefUserId !== null, open: () => setIsImportOpen(true) } : null;
+
+  const handleImported = async (flight: Flight) => {
+    await refreshCurrentFlight();
+    success(`${flight.flightNumber} imported. You’re checked in.`);
+    navigate(`/track/${flight.id}`, { viewTransition: true });
+  };
 
   const showLocation = !loadingCurrent && !currentFlight && !failedCurrent;
   const travelFlightNumber = useFlightNumber(showLocation ? (latestTravel?.flightId ?? null) : null);
@@ -80,6 +102,7 @@ export default function PilotDashboardRoute() {
                 flight={nextFlight}
                 failed={failedNext}
                 departure={currentFlight?.destinationAirport ?? groundStop?.airport ?? null}
+                simbriefImport={simbriefImport}
               />
             )}
           </div>
@@ -106,6 +129,13 @@ export default function PilotDashboardRoute() {
         <div className="pt-4">
           <DebugFlightListBox />
         </div>
+      )}
+      {isImportOpen && simbriefUserId !== null && (
+        <ImportSimbriefFlightModal
+          simbriefUserId={simbriefUserId}
+          imported={handleImported}
+          close={() => setIsImportOpen(false)}
+        />
       )}
     </>
   );

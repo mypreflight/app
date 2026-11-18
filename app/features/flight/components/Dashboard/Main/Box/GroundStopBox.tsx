@@ -94,7 +94,7 @@ function NextStep({ airport, nextFlight }: { airport: Airport; nextFlight: Fligh
   if (!nextFlight) {
     return (
       <>
-        Next step: <span className="font-semibold text-gray-900 dark:text-white">Wait for dispatch</span>
+        Next step: <span className="font-semibold text-gray-900 dark:text-white">Import a flight from SimBrief</span>
       </>
     );
   }
