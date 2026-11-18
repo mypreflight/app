@@ -5,6 +5,7 @@ import { HiPlus } from "react-icons/hi";
 import { Link, useNavigate } from "react-router";
 import { useAuth } from "~/app-state/useAuth";
 import { useToast } from "~/app-state/useToast";
+import { describeSimbriefImportFailure } from "~/features/flight/lib/describeSimbriefImportFailure";
 import { useApi } from "~/shared/api/useApi";
 import { CardHeader } from "~/shared/ui/Layout/CardHeader";
 import { Container } from "~/shared/ui/Layout/Container";
@@ -26,7 +27,7 @@ export function PlanFlightOptions() {
       navigate(`/flights/${flight.id}/overview`);
     } catch (err) {
       console.error("Failed to import flight from SimBrief", err);
-      error("Failed to import flight from SimBrief");
+      error(describeSimbriefImportFailure(err));
     } finally {
       setImporting(false);
     }

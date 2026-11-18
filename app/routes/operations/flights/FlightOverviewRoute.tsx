@@ -33,7 +33,11 @@ const DEPARTURE_RUNWAY_CHANGEABLE = new Set<FlightStatus>([
   FlightStatus.BoardingFinished,
 ]);
 
-const DEPARTURE_PARKING_POSITION_CHANGEABLE = new Set<FlightStatus>([FlightStatus.Created, FlightStatus.Ready]);
+const DEPARTURE_PARKING_POSITION_CHANGEABLE = new Set<FlightStatus>([
+  FlightStatus.Created,
+  FlightStatus.Ready,
+  FlightStatus.CheckedIn,
+]);
 
 const ARRIVAL_RUNWAY_CHANGEABLE = new Set<FlightStatus>([
   FlightStatus.Created,

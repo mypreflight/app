@@ -283,7 +283,7 @@ export const DepartureNothingAssignedAfterOffBlock: Story = {
     const canvas = within(canvasElement);
 
     await expect(await canvas.findByText("Cannot assign after off-block")).toBeInTheDocument();
-    await expect(canvas.getByText("Cannot assign after check-in")).toBeInTheDocument();
+    await expect(canvas.getByText("Cannot assign after boarding starts")).toBeInTheDocument();
     await expect(canvas.queryByRole("button", { name: /^Set / })).not.toBeInTheDocument();
   },
 };

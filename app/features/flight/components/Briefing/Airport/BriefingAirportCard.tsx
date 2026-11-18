@@ -49,7 +49,7 @@ const RUNWAY_CHANGEABLE: Record<AirportEnd, Set<FlightStatus>> = {
 };
 
 const PARKING_POSITION_CHANGEABLE: Record<AirportEnd, Set<FlightStatus>> = {
-  departure: new Set([FlightStatus.Created, FlightStatus.Ready]),
+  departure: new Set([FlightStatus.Created, FlightStatus.Ready, FlightStatus.CheckedIn]),
   arrival: new Set([...BEFORE_TAXI, FlightStatus.TaxiingOut, FlightStatus.InCruise, FlightStatus.TaxiingIn]),
 };
 
@@ -59,7 +59,7 @@ const RUNWAY_LOCKED_AFTER: Record<AirportEnd, string> = {
 };
 
 const PARKING_POSITION_LOCKED_AFTER: Record<AirportEnd, string> = {
-  departure: "check-in",
+  departure: "boarding starts",
   arrival: "on-block",
 };
 
