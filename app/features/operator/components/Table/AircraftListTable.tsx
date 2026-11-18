@@ -4,6 +4,7 @@ import { HiChevronRight } from "react-icons/hi";
 import { Link } from "react-router";
 import type { Aircraft } from "~/features/aircraft";
 import { CabinCoverageBadge } from "~/features/aircraft/components/Aircraft/CabinCoverageBadge";
+import { UnconfirmedAircraftBadge } from "~/features/aircraft/components/Aircraft/UnconfirmedAircraftBadge";
 import { aircraftStateColors } from "~/features/aircraft/i18n";
 import { formatCruiseSpeed, formatServiceCeiling, formatWeightCategory } from "~/features/airframe/lib/formatAirframe";
 import type { Airport } from "~/features/airport";
@@ -57,13 +58,16 @@ export function AircraftListTable({ operatorId, aircraft, airports }: Props) {
             return (
               <LinkedTableRow key={each.id} to={detailsPath}>
                 <TableCell>
-                  <Link
-                    to={detailsPath}
-                    viewTransition
-                    className="block font-mono text-sm font-bold text-gray-900 hover:text-indigo-600 dark:text-white dark:hover:text-indigo-400"
-                  >
-                    {each.registration}
-                  </Link>
+                  <span className="flex items-center gap-2">
+                    <Link
+                      to={detailsPath}
+                      viewTransition
+                      className="font-mono text-sm font-bold text-gray-900 hover:text-indigo-600 dark:text-white dark:hover:text-indigo-400"
+                    >
+                      {each.registration}
+                    </Link>
+                    <UnconfirmedAircraftBadge aircraft={each} />
+                  </span>
                   <span className="block text-xs text-gray-500 dark:text-gray-400">{each.airframe.name}</span>
                 </TableCell>
                 <TableCell>

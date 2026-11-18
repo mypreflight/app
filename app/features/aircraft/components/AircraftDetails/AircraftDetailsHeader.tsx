@@ -1,6 +1,7 @@
 import React from "react";
 import type { Aircraft } from "~/features/aircraft";
 import { AircraftProfile } from "~/features/aircraft/components/Aircraft/AircraftProfile";
+import { UnconfirmedAircraftBadge } from "~/features/aircraft/components/Aircraft/UnconfirmedAircraftBadge";
 import { AircraftSpecStrip } from "~/features/aircraft/components/AircraftDetails/AircraftSpecStrip";
 
 type Props = {
@@ -24,6 +25,7 @@ export function AircraftDetailsHeader({ aircraft }: Props) {
             {aircraft.registration}
           </h1>
           <p className="mt-1 text-base font-semibold text-gray-500 dark:text-gray-400">{airframe.name}</p>
+          <UnconfirmedAircraftBadge aircraft={aircraft} className="mt-2" />
         </div>
       </div>
 

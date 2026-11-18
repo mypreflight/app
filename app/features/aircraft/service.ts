@@ -74,4 +74,11 @@ export class AircraftService extends AbstractAuthorizedApiService {
       method: "PATCH",
     });
   }
+
+  async confirm(operatorId: string, aircraftId: string) {
+    return this.fetchWithAuth<Aircraft>(`/api/v1/operator/${operatorId}/aircraft/${aircraftId}`, {
+      body: JSON.stringify({ isConfirmed: true }),
+      method: "PATCH",
+    });
+  }
 }

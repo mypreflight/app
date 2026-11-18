@@ -41,6 +41,7 @@ export type Aircraft = {
   lastParkingPosition: AircraftParkingPosition | null;
   cabinLayout: AircraftCabinLayout | null;
   holdVariant: string | null;
+  isConfirmed: boolean;
 };
 
 export type UserAircraftEntryOperator = {
