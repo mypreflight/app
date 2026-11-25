@@ -29,7 +29,7 @@ The app SHALL derive load advisories only from fields the API supplies, and SHAL
 
 ### Requirement: The load is checked against the compartments it sits in
 
-The app SHALL raise an advisory when a compartment carries dry ice and is not ventilated, when a shipment of live animals sits in a compartment that is not both heated and ventilated, when a shipment restricted to cargo aircraft is aboard a flight carrying passengers, when a unit's weight exceeds the limit of the position it occupies, and when a compartment's load exceeds its weight or volume limit.
+The app SHALL raise an advisory when a compartment carries dry ice and is not ventilated, when a shipment of live animals sits in a compartment that is not both heated and ventilated, when the manifest reports two handling codes that must be kept apart sharing a compartment, when a shipment restricted to cargo aircraft is aboard a flight carrying passengers, when a unit's weight exceeds the limit of the position it occupies, and when a compartment's load exceeds its weight or volume limit.
 
 #### Scenario: Dry ice in an unventilated compartment
 
@@ -55,6 +55,13 @@ The app SHALL raise an advisory when a compartment carries dry ice and is not ve
 - **WHEN** the load is checked
 - **THEN** an advisory reports which capability the compartment lacks
 
+#### Scenario: Incompatible loads sharing a compartment
+
+- **GIVEN** the manifest reports two handling codes that must be kept apart in the same compartment
+- **WHEN** the load is checked
+- **THEN** an advisory names the compartment and both loads in words
+- **AND** names the waybill and code of each loaded shipment carrying them
+
 #### Scenario: A cargo-aircraft-only shipment on a passenger flight
 
 - **GIVEN** a flight whose service carries passengers
@@ -75,7 +82,7 @@ The app SHALL raise an advisory when a compartment carries dry ice and is not ve
 
 ### Requirement: Temperature-controlled load is drawn as endurance against exposure
 
-For each shipment needing temperature control the app SHALL present the regime it must be kept within, the solution carrying it, its endurance, the exposure across this flight and any onward leg, the resulting margin and the risk level, drawing endurance and exposure so the margin between them is visible. The app SHALL present the assessment as advisory and SHALL carry the API's own explanation of it.
+For each shipment needing temperature control the app SHALL present the regime it must be kept within, the solution carrying it, its endurance, the exposure across this flight and any onward leg, the resulting margin and the risk level, drawing endurance and exposure so the margin between them is visible. The app SHALL present the assessment as advisory and SHALL word the reason the API gives for its risk: an exceeded endurance, a transfer point hotter than the solution is validated for (with its temperature), a connection too long for the solution (with its length), a thin margin with no cooling in flight, or a load within its margin.
 
 #### Scenario: A temperature-controlled shipment
 
@@ -87,7 +94,7 @@ For each shipment needing temperature control the app SHALL present the regime i
 
 - **WHEN** a cold chain assessment is shown
 - **THEN** it is presented as advisory
-- **AND** the API's explanation of the assessment accompanies it
+- **AND** the reason for its risk accompanies it, worded from the reason the API gives
 
 #### Scenario: The temperature band
 

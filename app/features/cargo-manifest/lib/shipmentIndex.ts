@@ -1,10 +1,10 @@
-import type { HoldDeckName } from "~/features/cargo-hold/model";
+import type { HoldDeckName, LoadingPosition } from "~/features/cargo-hold/model";
 import type { CargoShipmentEntry, CargoUnitEntry, FlightCargoManifest } from "~/features/cargo-manifest/model";
 
 export type IndexedShipment = {
   shipment: CargoShipmentEntry;
   unit: CargoUnitEntry;
-  positionDesignator: string | null;
+  loadingPosition: LoadingPosition | null;
   compartment: number | null;
   deck: HoldDeckName | null;
 };
@@ -14,7 +14,7 @@ export function shipmentIndex(manifest: FlightCargoManifest): IndexedShipment[] 
     unit.shipments.map((shipment) => ({
       shipment,
       unit,
-      positionDesignator: unit.positionDesignator,
+      loadingPosition: unit.loadingPosition,
       compartment: unit.compartment,
       deck: unit.deck,
     })),

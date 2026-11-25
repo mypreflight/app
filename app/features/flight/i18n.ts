@@ -202,11 +202,19 @@ export function translateSpecialServiceRequest(request: SpecialServiceRequest): 
     [SpecialServiceRequest.WheelchairToRamp]: "Wheelchair to ramp",
     [SpecialServiceRequest.WheelchairToSteps]: "Wheelchair to steps",
     [SpecialServiceRequest.WheelchairToSeat]: "Wheelchair to seat",
+    [SpecialServiceRequest.WheelchairDryBattery]: "Wheelchair, dry battery",
+    [SpecialServiceRequest.WheelchairWetBattery]: "Wheelchair, wet battery",
+    [SpecialServiceRequest.WheelchairLithiumBattery]: "Wheelchair, lithium battery",
+    [SpecialServiceRequest.Stretcher]: "Stretcher",
+    [SpecialServiceRequest.MedicalCase]: "Medical case",
     [SpecialServiceRequest.UnaccompaniedMinor]: "Unaccompanied minor",
     [SpecialServiceRequest.Blind]: "Blind or low vision",
     [SpecialServiceRequest.Deaf]: "Deaf or hard of hearing",
     [SpecialServiceRequest.MeetAndAssist]: "Meet and assist",
     [SpecialServiceRequest.PetInCabin]: "Pet in cabin",
+    [SpecialServiceRequest.DeporteeEscorted]: "Deportee, escorted",
+    [SpecialServiceRequest.DeporteeUnescorted]: "Deportee, unescorted",
+    [SpecialServiceRequest.Inadmissible]: "Inadmissible passenger",
   };
 
   return labels[request];

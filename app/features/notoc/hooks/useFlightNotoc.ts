@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import type { Flight } from "~/features/flight/model";
 import { type FlightNotoc, NotocStage } from "~/features/notoc/model";
 import { useApi } from "~/shared/api/useApi";
 
@@ -24,11 +23,9 @@ function issuedStagesFrom(latest: NotocStage): NotocStage[] {
   return latest === NotocStage.Final ? [NotocStage.Preliminary, NotocStage.Final] : [NotocStage.Preliminary];
 }
 
-export function useFlightNotoc(flight: Flight | null, stage?: NotocStage): FlightNotocState {
+export function useFlightNotoc(flightId: string | null, stage?: NotocStage): FlightNotocState {
   const { notocService } = useApi();
   const [state, setState] = useState<FlightNotocState>({ status: "loading" });
-
-  const flightId = flight?.id ?? null;
 
   useEffect(() => {
     if (flightId === null) {

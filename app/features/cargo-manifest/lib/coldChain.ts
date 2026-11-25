@@ -28,9 +28,6 @@ export function coldChainEntries(shipments: IndexedShipment[]): ColdChainEntry[]
     });
 }
 
-export function temperatureBand(coldChain: ColdChain): string | null {
-  if (coldChain.minC === null || coldChain.maxC === null) {
-    return null;
-  }
+export function temperatureBand(coldChain: ColdChain): string {
   return `${coldChain.minC} to ${coldChain.maxC} °C`;
 }

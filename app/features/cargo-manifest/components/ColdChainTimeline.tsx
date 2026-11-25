@@ -1,5 +1,6 @@
 import { Badge } from "flowbite-react";
 import React from "react";
+import { coldChainExplanationOf } from "~/features/cargo-manifest/lib/cargoWording";
 import { type ColdChainEntry, temperatureBand } from "~/features/cargo-manifest/lib/coldChain";
 import { ColdChainRisk } from "~/features/cargo-manifest/model";
 import { toHuman } from "~/i18n/translate";
@@ -35,7 +36,6 @@ export function ColdChainTimeline({ entries }: Props) {
       <ul className="divide-y divide-gray-200 dark:divide-gray-800">
         {entries.map((entry) => {
           const { coldChain } = entry;
-          const band = temperatureBand(coldChain);
 
           return (
             <li key={entry.awb} className="flex flex-col gap-2 py-3">
@@ -43,9 +43,9 @@ export function ColdChainTimeline({ entries }: Props) {
                 <span className="font-mono text-xs text-gray-500 dark:text-gray-400">{entry.awb}</span>
                 <span className="text-sm font-semibold text-gray-900 dark:text-white">{entry.description}</span>
                 <Badge color="info">{toHuman.cargoManifest.coldChainRegime(coldChain.regime)}</Badge>
-                {band !== null && (
-                  <span className="font-mono text-xs tabular-nums text-gray-500 dark:text-gray-400">{band}</span>
-                )}
+                <span className="font-mono text-xs tabular-nums text-gray-500 dark:text-gray-400">
+                  {temperatureBand(coldChain)}
+                </span>
                 <Badge color={RISK_BADGE[coldChain.risk]}>
                   {toHuman.cargoManifest.coldChainRisk(coldChain.risk)} risk
                 </Badge>
@@ -67,7 +67,8 @@ export function ColdChainTimeline({ entries }: Props) {
 
               <p className="text-sm text-gray-600 dark:text-gray-300">
                 {toHuman.cargoManifest.coldChainSolution(coldChain.solution)}
-                {coldChain.setPointC !== null && `, set to ${coldChain.setPointC} °C`}. {coldChain.explanation}
+                {coldChain.setPointC !== null && `, set to ${coldChain.setPointC} °C`}.{" "}
+                {coldChainExplanationOf(coldChain)}
               </p>
             </li>
           );

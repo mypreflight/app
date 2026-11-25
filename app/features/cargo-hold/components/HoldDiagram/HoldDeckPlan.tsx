@@ -1,6 +1,7 @@
 import React from "react";
 import { twMerge } from "tailwind-merge";
 import { HoldPositionTile } from "~/features/cargo-hold/components/HoldDiagram/HoldPositionTile";
+import { designatorOf } from "~/features/cargo-hold/lib/designator";
 import { type DeckPlacement, envelopeClipPath, envelopePoints } from "~/features/cargo-hold/lib/holdFrame";
 import type { HoldReading, PositionAppearance } from "~/features/cargo-hold/lib/holdReading";
 import { CompartmentLoading, type HoldPosition } from "~/features/cargo-hold/model";
@@ -75,8 +76,8 @@ export function HoldDeckPlan({ placement, heightPx, reading, width, labelWidthPx
             const appearance = reading.appearanceOf(slot.position);
             return (
               <HoldPositionTile
-                key={`${placement.deck.deck}-${slot.position.designator}`}
-                designator={slot.position.designator}
+                key={`${placement.deck.deck}-${designatorOf(slot.position)}`}
+                designator={designatorOf(slot.position)}
                 appearance={appearance}
                 tapered={slot.tapered}
                 showLabel={slot.length * width >= labelWidthPx}

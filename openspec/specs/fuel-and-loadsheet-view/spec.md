@@ -89,7 +89,7 @@ The system SHALL provide, within the fuel-and-loadsheet layout, a `[Preliminary 
 
 ### Requirement: Fuel & loadsheet layout
 
-The system SHALL present the fuel figures and the loadsheet side by side, with the fuel column occupying roughly one third of the width and the loadsheet occupying the remaining two thirds on wide viewports, and stacking vertically on narrow viewports. The loadsheet column SHALL show the same souls-on-board and weight figures already shown for a loadsheet.
+The system SHALL present the fuel figures and the loadsheet side by side, with the fuel column occupying roughly one third of the width and the loadsheet occupying the remaining two thirds on wide viewports, and stacking vertically on narrow viewports. The loadsheet column SHALL show the souls-on-board and weight figures of the selected loadsheet as one compact row of figures, not as a grid of tiles.
 
 #### Scenario: Wide viewport
 
@@ -100,6 +100,25 @@ The system SHALL present the fuel figures and the loadsheet side by side, with t
 
 - **WHEN** the layout renders on a narrow viewport
 - **THEN** the fuel and loadsheet columns stack vertically and remain readable
+
+### Requirement: The loadsheet carries the load of its stage
+
+Below its figures, the loadsheet column SHALL show the load recorded by the notification to captain of the same stage as the loadsheet switch: the weight and dry ice in each compartment, the deadload they add up to, the cargo and baggage that make up the deadload, the container, pallet and loose lot counts, and each cold chain assessment with its risk, margin and regime, marked as advisory. Where that stage has no notification, or the reader may not read it, the column SHALL show the figures alone, with no error.
+
+#### Scenario: Switching the stage switches the load
+
+- **WHEN** the loadsheet switch moves from Preliminary to Final
+- **THEN** the compartments, deadload and cold chain shown are those of the final notification
+
+#### Scenario: No notification for the stage
+
+- **WHEN** the selected stage has no notification to captain
+- **THEN** only the loadsheet figures are shown
+
+#### Scenario: Cold chain is advisory
+
+- **WHEN** cold chain assessments are shown
+- **THEN** their section says that they are advisory
 
 ### Requirement: Operator flight-detail tab
 

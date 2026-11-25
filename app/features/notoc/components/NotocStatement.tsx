@@ -1,12 +1,12 @@
 import React from "react";
 import { twMerge } from "tailwind-merge";
+import { toHuman } from "~/i18n/translate";
 
 type Props = {
-  statement: string;
   carriesDangerousGoods: boolean;
 };
 
-export function NotocStatement({ statement, carriesDangerousGoods }: Props) {
+export function NotocStatement({ carriesDangerousGoods }: Props) {
   return (
     <p
       className={twMerge(
@@ -16,7 +16,7 @@ export function NotocStatement({ statement, carriesDangerousGoods }: Props) {
           : "border-gray-200 bg-gray-50 text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100",
       )}
     >
-      {statement}
+      {toHuman.notoc.statement(carriesDangerousGoods)}
     </p>
   );
 }

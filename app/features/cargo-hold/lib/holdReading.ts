@@ -1,4 +1,5 @@
 import type { IconType } from "react-icons";
+import { designatorOf } from "~/features/cargo-hold/lib/designator";
 import { acceptedTypes } from "~/features/cargo-hold/lib/positionFit";
 import type { HoldPosition } from "~/features/cargo-hold/model";
 import { PositionSide, UldBase } from "~/features/cargo-hold/model";
@@ -47,7 +48,7 @@ export function describePosition(position: HoldPosition): string {
   const types = acceptedTypes(position);
   const fits = types.length === 0 ? "no catalogued device" : types.join(", ");
   const side = toHuman.cargoHold.positionSide(position.side);
-  return `Position ${position.designator}, ${side.toLowerCase()}, accepts ${fits}, up to ${position.maxWeightKg} kg`;
+  return `Position ${designatorOf(position)}, ${side.toLowerCase()}, accepts ${fits}, up to ${position.maxWeightKg} kg`;
 }
 
 export const acceptedReading: HoldReading = {

@@ -2,108 +2,72 @@
 
 ## Purpose
 
-Presents the notification to captain as the document it is, laid out to be read on paper and carrying the hazard marks a commander would see on the real form.
+Lets the reader download the notification to captain as the paper form a commander is handed: a landscape A4 sheet laid out column for column like the IATA-style NOTOC, ready to print or file.
 
 ## Requirements
 
-### Requirement: The notification is available as a document as well as a panel
+### Requirement: The notification is downloadable as a PDF
 
-The app SHALL present the notification in two forms: an in-app panel following the app's own conventions, and a document form laid out as the notification is laid out. The reader SHALL be able to move between them, and both SHALL carry the same content.
+The app SHALL present the notification digitally by default and SHALL offer, beside it, a download of the same notification as a PDF. The download SHALL carry the same entries as the panel, and neither SHALL carry content the other omits, apart from the paper form's printed instructions, distribution list and signature lines.
 
-#### Scenario: Moving to the document form
+#### Scenario: Downloading the PDF
 
-- **WHEN** the reader chooses to view the notification as a document
-- **THEN** the document form is shown
+- **WHEN** the reader chooses to download the notification
+- **THEN** a PDF of it is downloaded, named after the flight and its date
 
 #### Scenario: The two forms agree
 
-- **GIVEN** a notification shown as a panel and as a document
+- **GIVEN** a notification shown in the panel and downloaded as a PDF
 - **WHEN** the two are compared
-- **THEN** they carry the same entries, drills, special loads, assessments and summary
-- **AND** neither carries content the other omits
+- **THEN** they carry the same dangerous goods, special loads, special category passengers, header and certification
 
-### Requirement: The document identifies the flight and the moment it records
+#### Scenario: The PDF cannot be prepared
 
-The document SHALL carry a header identifying the flight, the stage of the notification, the time it was issued and, where it has been accepted, who accepted it and when. It SHALL state that it records the load at the moment it was issued.
+- **WHEN** preparing the PDF fails
+- **THEN** the app says so and the reader can try again
 
-#### Scenario: The document header
+### Requirement: The PDF is laid out as the paper form
 
-- **WHEN** the document form is shown
-- **THEN** the flight, the stage and the issue time are carried in the header
+The PDF SHALL be a landscape A4 form with: the distribution list and the title; boxes for the completion instructions, the port of loading, flight number, date and aircraft registration, and the dangerous goods preparation certification; a dangerous goods table whose columns are numbered 1 to 15 (destination, air waybill, proper shipping name, class or division, UN number, subsidiary risk, packages, net quantity, transport index, radioactive category, packing group, code, CAO, loaded ULD and position, emergency response code); a special load table (destination, air waybill, contents, packages, quantity, supplementary information, code, loaded ULD and position); a table of special category passengers where there are any; and the captain's acceptance beside the certification by the person supervising loading. Tables SHALL keep blank rows up to a minimum, as a printed form does.
 
-#### Scenario: An accepted document
+#### Scenario: The form's columns
 
-- **WHEN** an accepted notification is shown as a document
-- **THEN** who accepted it and when are carried in the header
+- **WHEN** the PDF of a notification carrying dangerous goods is opened
+- **THEN** each dangerous good fills one row of the numbered columns
 
-### Requirement: Hazard is carried by the standard mark on the document
+#### Scenario: A long notification
 
-On the document form the app SHALL present each dangerous good's hazard class as the standard hazard mark for that class, in the colours that mark carries. The class number and the proper shipping name SHALL accompany every mark, so the mark never carries the meaning alone.
+- **WHEN** a notification has more rows than one page holds
+- **THEN** the form continues on further pages, each numbered, and no row is split across a page
 
-#### Scenario: A hazard mark
+### Requirement: The form names the operator, not a real form's owner
 
-- **WHEN** a dangerous goods entry is shown on the document form
-- **THEN** the standard mark for its hazard class is presented
-- **AND** the class number and proper shipping name accompany it
+The PDF SHALL carry the flight's operator wherever a paper form names its owner (the instructions, the manuals the certifications refer to and the mark at its top), and SHALL NOT carry the name, mark or form number of any real company's form.
 
-#### Scenario: A subsidiary risk
+#### Scenario: The operator's name
 
-- **WHEN** an entry reports a subsidiary risk
-- **THEN** the mark for that risk is presented alongside the primary one
+- **WHEN** the PDF is opened
+- **THEN** its instructions and certifications name the flight's operator
 
-#### Scenario: Hazard marks stay on the document
+### Requirement: Signatures are filled from the record
 
-- **WHEN** the in-app panel is shown
-- **THEN** the standard hazard colours are not used there
-- **AND** hazard is conveyed by the app's own status conventions instead
+The PDF SHALL fill the preparer and the loading supervisor from the notification's header, and the captain's name and signature only where the notification has been accepted. Where the notification has not been accepted, the captain's lines SHALL stay blank, as on an unsigned form.
 
-### Requirement: The document prints as a document
+#### Scenario: An accepted notification
 
-The app SHALL provide for printing the document form such that it prints as a standalone document: without application navigation, sidebars or controls, on a light ground regardless of the theme in use, with entries kept whole across page boundaries where possible.
+- **WHEN** an accepted notification is downloaded
+- **THEN** the captain's name and the time of acceptance fill the captain's lines
 
-#### Scenario: Printing the document
+#### Scenario: An unaccepted notification
 
-- **WHEN** the reader prints the document form
-- **THEN** no application navigation or control appears in the output
+- **WHEN** a notification that has not been accepted is downloaded
+- **THEN** the captain's lines are blank
 
-#### Scenario: Printing from a dark theme
+### Requirement: The form is legible without colour
 
-- **GIVEN** the app is being viewed in the dark theme
-- **WHEN** the document is printed
-- **THEN** it prints on a light ground
-
-#### Scenario: A long dangerous goods list
-
-- **WHEN** a document carrying many entries is printed
-- **THEN** an entry and its drill are kept together across a page boundary where the page allows
-
-### Requirement: The document is legible without colour
-
-Because a hazard mark carries meaning that must survive a monochrome printer, the document SHALL convey every hazard class, risk level and status in text as well as by any colour or mark, and SHALL remain readable when rendered without colour.
+The PDF SHALL be black on white, carry every class, category and restriction in text, and SHALL NOT depend on colour or hazard marks for any meaning, so it survives a monochrome printer.
 
 #### Scenario: Printed in monochrome
 
-- **WHEN** the document is printed without colour
-- **THEN** every hazard class, subsidiary risk and cold chain risk remains identifiable from the text
-- **AND** no entry becomes ambiguous
-
-#### Scenario: A cold chain risk on the document
-
-- **WHEN** a cold chain assessment is shown on the document
-- **THEN** its risk level is stated in words
-- **AND** is not distinguished by colour alone
-
-### Requirement: A clean document is still a document
-
-Where a notification reports no dangerous goods, the document form SHALL present the header, the statement that none are loaded, any special loads and cold chain assessments, and the load summary. It SHALL NOT present an empty page or omit the document form.
-
-#### Scenario: A document with no dangerous goods
-
-- **WHEN** the document form of a notification reporting none is shown
-- **THEN** the statement that none are loaded is carried prominently
-- **AND** the special loads, assessments and load summary are carried
-
-#### Scenario: The document form remains available
-
-- **WHEN** a notification reports no dangerous goods
-- **THEN** the reader can still move to the document form and print it
+- **WHEN** the PDF is printed without colour
+- **THEN** every entry remains identifiable from its text

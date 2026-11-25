@@ -1,5 +1,6 @@
 import { Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow } from "flowbite-react";
 import React from "react";
+import { designatorOf } from "~/features/cargo-hold/lib/designator";
 import { acceptedTypes } from "~/features/cargo-hold/lib/positionFit";
 import { CompartmentLoading, type HoldDeck } from "~/features/cargo-hold/model";
 import { toHuman } from "~/i18n/translate";
@@ -31,13 +32,13 @@ export function HoldPositionTable({ deck, id, query = "" }: Props) {
           ]
         : []
       : compartment.positions
-          .filter((position) => matches(position.designator))
+          .filter((position) => matches(designatorOf(position)))
           .map((position) => {
             const fits = acceptedTypes(position);
             return (
-              <TableRow key={`${deck.deck}-${position.designator}`}>
+              <TableRow key={`${deck.deck}-${designatorOf(position)}`}>
                 <TableCell className="font-mono font-medium text-gray-900 dark:text-white">
-                  {position.designator}
+                  {designatorOf(position)}
                 </TableCell>
                 <TableCell className="font-mono tabular-nums">{position.compartment}</TableCell>
                 <TableCell>{toHuman.cargoHold.positionSide(position.side)}</TableCell>

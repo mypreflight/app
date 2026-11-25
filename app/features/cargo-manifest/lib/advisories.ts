@@ -1,8 +1,9 @@
-import { resolvePositionDesignator } from "~/features/cargo-hold/lib/designator";
+import { designatorOf, samePosition } from "~/features/cargo-hold/lib/designator";
 import { compartmentsOf, type HoldCompartment, type HoldVariant, positionsOf } from "~/features/cargo-hold/model";
-import type { FlightCargoManifest } from "~/features/cargo-manifest/model";
-import { unitTotalKg } from "~/features/cargo-manifest/model";
+import type { FlightCargoManifest, SegregationAdvisory } from "~/features/cargo-manifest/model";
+import { ShipmentStatus, SpecialHandlingCode, unitTotalKg } from "~/features/cargo-manifest/model";
 import { FlightServiceType } from "~/features/flight";
+import { toHuman } from "~/i18n/translate";
 
 export enum AdvisoryOutcome {
   Raised = "raised",
@@ -29,8 +30,6 @@ export type AdvisoryInput = {
   serviceType: FlightServiceType;
   holdDataNote: string;
 };
-
-const LIVE_ANIMAL_CODE = "AVI";
 
 function kg(value: number): string {
   return `${value.toLocaleString()} kg`;
@@ -89,7 +88,7 @@ function liveAnimalConditions({ manifest, variant, holdDataNote }: AdvisoryInput
 
   for (const unit of manifest.units) {
     for (const shipment of unit.shipments) {
-      if (!shipment.shc.includes(LIVE_ANIMAL_CODE) || unit.compartment === null) {
+      if (!shipment.shc.includes(SpecialHandlingCode.LiveAnimals) || unit.compartment === null) {
         continue;
       }
       const compartment = compartments.get(unit.compartment);
@@ -105,6 +104,38 @@ function liveAnimalConditions({ manifest, variant, holdDataNote }: AdvisoryInput
       });
     }
   }
+
+  return resolve(key, label, findings);
+}
+
+function lowerFirst(text: string): string {
+  return text.charAt(0).toLowerCase() + text.slice(1);
+}
+
+function carriersOf(
+  manifest: FlightCargoManifest,
+  { compartment, deck }: SegregationAdvisory,
+  code: SpecialHandlingCode,
+): string[] {
+  return manifest.units
+    .filter((unit) => unit.compartment === compartment && unit.deck === deck)
+    .flatMap((unit) => unit.shipments)
+    .filter((shipment) => shipment.status === ShipmentStatus.Loaded && shipment.shc.includes(code))
+    .map((shipment) => `AWB ${shipment.awb} ${code}`);
+}
+
+function segregation({ manifest, holdDataNote }: AdvisoryInput): AdvisoryCheck {
+  const key = "segregation";
+  const label = "Incompatible loads kept in separate compartments";
+
+  if (manifest.holdVariant === null) {
+    return notApplicable(key, label, holdDataNote);
+  }
+
+  const findings = manifest.segregationAdvisories.map((advisory) => ({
+    headline: `Compartment ${advisory.compartment} carries ${lowerFirst(toHuman.cargoManifest.specialHandling(advisory.one))} together with ${lowerFirst(toHuman.cargoManifest.specialHandling(advisory.other))}`,
+    basis: [...carriersOf(manifest, advisory, advisory.one), ...carriersOf(manifest, advisory, advisory.other)],
+  }));
 
   return resolve(key, label, findings);
 }
@@ -125,7 +156,7 @@ function cargoAircraftOnly({ manifest, serviceType }: AdvisoryInput): AdvisoryCh
         basis: [
           `AWB ${shipment.awb}`,
           `UN${shipment.dangerousGoods?.unNumber} class ${shipment.dangerousGoods?.hazardClass}`,
-          unit.positionDesignator === null ? "Loose load" : `Position ${unit.positionDesignator}`,
+          unit.loadingPosition === null ? "Loose load" : `Position ${designatorOf(unit.loadingPosition)}`,
         ],
       })),
   );
@@ -142,22 +173,20 @@ function positionWeight({ manifest, variant, holdDataNote }: AdvisoryInput): Adv
   }
 
   const positions = positionsOf(variant);
-  const published = new Set(positions.map((position) => position.designator));
-  const limits = new Map(positions.map((position) => [position.designator, position.maxWeightKg]));
 
   const findings = manifest.units.flatMap((unit) => {
-    if (unit.positionDesignator === null) {
+    const loadingPosition = unit.loadingPosition;
+    if (loadingPosition === null) {
       return [];
     }
-    const designator = resolvePositionDesignator(unit.positionDesignator, unit.compartment, published);
-    const limit = designator === null ? undefined : limits.get(designator);
+    const limit = positions.find((position) => samePosition(position, loadingPosition))?.maxWeightKg;
     const total = unitTotalKg(unit);
     if (limit === undefined || total <= limit) {
       return [];
     }
     return [
       {
-        headline: `${unit.uldCode ?? "Unit"} at ${designator} carries ${kg(total)} against a ${kg(limit)} limit`,
+        headline: `${unit.uldCode ?? "Unit"} at ${designatorOf(loadingPosition)} carries ${kg(total)} against a ${kg(limit)} limit`,
         basis: [`Contents ${kg(unit.grossKg)}`, `Tare ${kg(unit.tareKg)}`, `Position limit ${kg(limit)}`],
       },
     ];
@@ -205,7 +234,14 @@ function compartmentLimits({ manifest, variant, holdDataNote }: AdvisoryInput): 
   return resolve(key, label, findings);
 }
 
-const CHECKS = [dryIceVentilation, liveAnimalConditions, cargoAircraftOnly, positionWeight, compartmentLimits];
+const CHECKS = [
+  dryIceVentilation,
+  liveAnimalConditions,
+  segregation,
+  cargoAircraftOnly,
+  positionWeight,
+  compartmentLimits,
+];
 
 export function loadAdvisories(input: AdvisoryInput): AdvisoryCheck[] {
   return CHECKS.map((check) => check(input));

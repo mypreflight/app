@@ -80,7 +80,16 @@ export function FuelAndLoadsheetPanel({
             />
           </CardToolbar>
         )}
-        {loadLoadsheet ? <LoadsheetFigures loadsheet={loadLoadsheet} serviceType={serviceType} /> : <EmptyState />}
+        {loadLoadsheet ? (
+          <LoadsheetFigures
+            flightId={flightId}
+            loadsheet={loadLoadsheet}
+            variant={loadVariant}
+            serviceType={serviceType}
+          />
+        ) : (
+          <EmptyState />
+        )}
 
         {showEditPreliminary && (
           <div className="mt-auto flex justify-end border-t border-gray-200 pt-3 dark:border-gray-800">

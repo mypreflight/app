@@ -1,5 +1,5 @@
 import type { HoldCompartment, HoldDeck, HoldDeckName, HoldPosition, HoldVariant } from "~/features/cargo-hold/model";
-import { ordinalOf, PositionSide, UldBase } from "~/features/cargo-hold/model";
+import { PositionSide, UldBase } from "~/features/cargo-hold/model";
 
 const TAPER_INSET = 0.18;
 const NOSE_RUN = 0.05;
@@ -31,7 +31,7 @@ export type CompartmentPlacement = {
   compartment: HoldCompartment;
   start: number;
   length: number;
-  ordinals: number;
+  rows: number;
   positions: PositionPlacement[];
 };
 
@@ -46,12 +46,11 @@ export type HoldFrame = {
   decks: DeckPlacement[];
 };
 
-function ordinalsOf(compartment: HoldCompartment): string[] {
-  const seen: string[] = [];
+function rowsOf(compartment: HoldCompartment): number[] {
+  const seen: number[] = [];
   for (const position of compartment.positions) {
-    const ordinal = ordinalOf(position);
-    if (!seen.includes(ordinal)) {
-      seen.push(ordinal);
+    if (!seen.includes(position.row)) {
+      seen.push(position.row);
     }
   }
   return seen;
@@ -80,16 +79,15 @@ function placePositions(
   length: number,
   widest: Map<string, number>,
 ): PositionPlacement[] {
-  const ordinals = ordinalsOf(compartment);
-  if (ordinals.length === 0) {
+  const rows = rowsOf(compartment);
+  if (rows.length === 0) {
     return [];
   }
 
-  const slot = length / ordinals.length;
+  const slot = length / rows.length;
 
   return compartment.positions.map((position) => {
-    const ordinal = ordinalOf(position);
-    const index = ordinals.indexOf(ordinal);
+    const index = rows.indexOf(position.row);
     const full = position.side === PositionSide.Full;
 
     return {
@@ -156,7 +154,7 @@ function placeDeck(deck: HoldDeck, acrossMm: number): DeckPlacement {
       compartment,
       start: cursor,
       length: share,
-      ordinals: ordinalsOf(compartment).length,
+      rows: rowsOf(compartment).length,
       positions: placePositions(compartment, cursor, share, widest),
     };
     cursor += share;

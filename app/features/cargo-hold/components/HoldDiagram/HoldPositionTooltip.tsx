@@ -1,6 +1,7 @@
 import React, { useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { TooltipRow } from "~/features/cabin-layout/components/SeatMap/TooltipRow";
+import { designatorOf } from "~/features/cargo-hold/lib/designator";
 import type { PositionAppearance } from "~/features/cargo-hold/lib/holdReading";
 import { acceptedTypes } from "~/features/cargo-hold/lib/positionFit";
 import type { HoldPosition } from "~/features/cargo-hold/model";
@@ -50,7 +51,7 @@ export function HoldPositionTooltip({ position, appearance, x, y, below }: Props
         ref={cardRef}
         className={`relative animate-in fade-in zoom-in-95 rounded-lg bg-gray-900 px-3 py-2 shadow-lg duration-[90ms] ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:animate-none dark:bg-gray-700 ${below ? "origin-top" : "origin-bottom"}`}
       >
-        <p className="mb-1.5 font-mono text-xs font-bold text-white">{position.designator}</p>
+        <p className="mb-1.5 font-mono text-xs font-bold text-white">{designatorOf(position)}</p>
         <dl className="grid grid-cols-[auto_auto] gap-x-4 gap-y-1 text-xs">
           <TooltipRow label="Side" value={toHuman.cargoHold.positionSide(position.side)} />
           <TooltipRow label="Compartment" value={position.compartment} />

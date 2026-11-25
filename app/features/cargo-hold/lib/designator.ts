@@ -1,25 +1,21 @@
-export function resolvePositionDesignator(
-  designator: string,
-  compartment: number | null,
-  published: ReadonlySet<string>,
-): string | null {
-  if (published.has(designator)) {
-    return designator;
-  }
+import { HoldDeckName, type LoadingPosition, PositionSide } from "~/features/cargo-hold/model";
 
-  if (compartment === null) {
-    return null;
-  }
+const SIDE_SUFFIX: Record<PositionSide, string> = {
+  [PositionSide.Left]: "L",
+  [PositionSide.Right]: "R",
+  [PositionSide.Full]: "P",
+};
 
-  const prefix = String(compartment);
+const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-  if (designator.startsWith(prefix)) {
-    const stripped = designator.slice(prefix.length);
-    if (published.has(stripped)) {
-      return stripped;
-    }
-  }
+export function designatorOf({ deck, compartment, row, side }: LoadingPosition): string {
+  const ordinal = deck === HoldDeckName.Main ? LETTERS[row - 1] : `${compartment}${row}`;
 
-  const prefixed = `${prefix}${designator}`;
-  return published.has(prefixed) ? prefixed : null;
+  return `${ordinal}${SIDE_SUFFIX[side]}`;
+}
+
+export function samePosition(one: LoadingPosition, other: LoadingPosition): boolean {
+  return (
+    one.deck === other.deck && one.compartment === other.compartment && one.row === other.row && one.side === other.side
+  );
 }

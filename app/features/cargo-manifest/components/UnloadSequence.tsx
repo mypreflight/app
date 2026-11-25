@@ -1,5 +1,6 @@
 import { Badge } from "flowbite-react";
 import React from "react";
+import { designatorOf } from "~/features/cargo-hold/lib/designator";
 import type { UnloadSequence as Sequence } from "~/features/cargo-manifest/lib/unloadSequence";
 import { ContentClass } from "~/features/cargo-manifest/model";
 import { toHuman } from "~/i18n/translate";
@@ -30,7 +31,7 @@ export function UnloadSequence({ sequence, holdDataNote }: Props) {
             </span>
             <span className="min-w-0 flex-1 truncate text-sm text-gray-600 dark:text-gray-300">
               {toHuman.cargoManifest.contentClass(entry.unit.contentClass)}
-              {entry.unit.positionDesignator !== null && ` · ${entry.unit.positionDesignator}`}
+              {entry.unit.loadingPosition !== null && ` · ${designatorOf(entry.unit.loadingPosition)}`}
             </span>
             <span className="flex flex-wrap items-center gap-1.5">
               {entry.unit.priority && <Badge color="indigo">Priority</Badge>}

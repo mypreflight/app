@@ -1,8 +1,14 @@
 import type { IndexedShipment } from "~/features/cargo-manifest/lib/shipmentIndex";
-import type { ColdChainRisk, HazardClass, ShipmentStatus, TransferRole } from "~/features/cargo-manifest/model";
+import type {
+  ColdChainRisk,
+  HazardClass,
+  ShipmentStatus,
+  SpecialHandlingCode,
+  TransferRole,
+} from "~/features/cargo-manifest/model";
 
 export type LedgerFilters = {
-  handlingCode: string;
+  handlingCode: SpecialHandlingCode | "";
   hazardClass: HazardClass | "";
   transferRole: TransferRole | "";
   status: ShipmentStatus | "";
@@ -42,7 +48,7 @@ export function applyFilters(entries: IndexedShipment[], filters: LedgerFilters)
   });
 }
 
-export function handlingCodesPresent(entries: IndexedShipment[]): string[] {
+export function handlingCodesPresent(entries: IndexedShipment[]): SpecialHandlingCode[] {
   return [...new Set(entries.flatMap(({ shipment }) => shipment.shc))].sort();
 }
 

@@ -189,26 +189,27 @@ The app SHALL determine where a position is drawn from the hold geometry alone. 
 - **THEN** every position keeps the place it had
 - **AND** only its appearance differs
 
-### Requirement: Designators are normalised before they are used
+### Requirement: Positions are written from their parts
 
-Position designators SHALL be normalised on read so that a designator identifies the same position wherever it is reported. Normalisation SHALL compose a designator from its compartment number, its ordinal and its side, and SHALL leave a designator that already carries its compartment number unchanged.
+The app SHALL write a position from the deck, compartment, row and side the API reports: a lower deck position as compartment, row and side, a main deck row as a letter from A followed by its side, and a position spanning the width with `P` for its side. The app SHALL write a position the same way wherever it shows one, in the drawing, the table, the cargo manifest and the notification to captain, and SHALL match a loaded or vacated unit to a hold position by those parts rather than by text.
 
-#### Scenario: A designator reported without its compartment
+#### Scenario: A lower deck position
 
-- **GIVEN** a position whose reported designator omits its compartment number
-- **WHEN** the designator is read
-- **THEN** it is normalised to carry the compartment number
+- **GIVEN** a lower deck position in compartment 1, row 2, on the right
+- **WHEN** it is shown
+- **THEN** it reads 12R
 
-#### Scenario: A designator already carrying its compartment
+#### Scenario: A main deck position
 
-- **GIVEN** a position whose reported designator already begins with its compartment number
-- **WHEN** the designator is read
-- **THEN** it is left unchanged
+- **GIVEN** a main deck position in row 3, on the left
+- **WHEN** it is shown
+- **THEN** it reads CL
 
-#### Scenario: Designators identify positions uniquely
+#### Scenario: A position spanning the width
 
-- **WHEN** the designators of a variant are read
-- **THEN** no two positions of that variant share a designator
+- **GIVEN** a lower deck position in compartment 2, row 1, spanning the width
+- **WHEN** it is shown
+- **THEN** it reads 21P
 
 ### Requirement: The drawing has an accessible equivalent
 
