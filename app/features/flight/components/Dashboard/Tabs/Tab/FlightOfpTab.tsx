@@ -1,6 +1,9 @@
 import React from "react";
+import { BriefingDocumentSummary } from "~/features/flight/components/Briefing/BriefingDocumentSummary";
+import { BriefingDocumentText } from "~/features/flight/components/Briefing/BriefingDocumentText";
 import { useFlightOfp } from "~/features/flight/hooks/useFlightOfp";
 import { useTrackedFlight } from "~/features/flight/hooks/useTrackedFlight";
+import { ofpIssue } from "~/features/flight/lib/simbriefIssue";
 import { Container } from "~/shared/ui/Layout/Container";
 import { RawHtml } from "~/shared/ui/RawHtml";
 
@@ -20,11 +23,18 @@ export function FlightOfpTab() {
   }
 
   return (
-    <Container>
-      <RawHtml
-        className="overflow-auto max-h-186 text-gray-700 dark:text-gray-300 font-mono"
-        html={unescapeOFP(ofp.ofpContent) || ""}
+    <div className="flex flex-col gap-5">
+      <BriefingDocumentSummary
+        label="Operational flight plan"
+        issueLabel="Release"
+        issue={ofpIssue(ofp.ofpContent)}
+        pdfUrl={ofp.ofpDocumentUrl}
       />
-    </Container>
+      <Container>
+        <BriefingDocumentText>
+          <RawHtml html={unescapeOFP(ofp.ofpContent) || ""} />
+        </BriefingDocumentText>
+      </Container>
+    </div>
   );
 }

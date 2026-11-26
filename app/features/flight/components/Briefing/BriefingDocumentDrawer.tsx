@@ -75,7 +75,7 @@ export function BriefingDocumentDrawer({
           WIDTHS[width],
         )}
       >
-        <header className="flex items-start justify-between gap-3 border-b border-gray-200 px-5 py-3 dark:border-gray-800">
+        <header className="flex items-center justify-between gap-3 border-b border-gray-200 px-5 py-3 dark:border-gray-800">
           <div className="min-w-0">
             <h2 id={titleId} className="text-lg font-bold text-gray-900 dark:text-white">
               {title}

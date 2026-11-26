@@ -1,6 +1,9 @@
 import React from "react";
+import { BriefingDocumentSummary } from "~/features/flight/components/Briefing/BriefingDocumentSummary";
+import { BriefingDocumentText } from "~/features/flight/components/Briefing/BriefingDocumentText";
 import { useFlightOfp } from "~/features/flight/hooks/useFlightOfp";
 import { useTrackedFlight } from "~/features/flight/hooks/useTrackedFlight";
+import { runwayAnalysisIssue } from "~/features/flight/lib/simbriefIssue";
 import { Container } from "~/shared/ui/Layout/Container";
 import { RawHtml } from "~/shared/ui/RawHtml";
 
@@ -17,13 +20,21 @@ export function FlightRunwayAnalysisTab() {
   }
 
   return (
-    <Container>
-      <div className="overflow-auto leading-tight text-xs max-h-186 text-gray-700 dark:text-gray-300 font-mono">
-        <b>[ Runway analysis ]</b>
-        <br />
-        <b>--------------------------------------------------------------------</b>
-        <RawHtml html={unescapeRunwayAnalysis(ofp.runwayAnalysis) || ""} />
-      </div>
-    </Container>
+    <div className="flex flex-col gap-5">
+      <BriefingDocumentSummary
+        label="Takeoff and landing report"
+        issueLabel="Report"
+        issue={runwayAnalysisIssue(ofp.runwayAnalysis)}
+        pdfUrl={ofp.ofpDocumentUrl}
+      />
+      <Container>
+        <BriefingDocumentText>
+          <b>[ Runway analysis ]</b>
+          <br />
+          <b>--------------------------------------------------------------------</b>
+          <RawHtml html={unescapeRunwayAnalysis(ofp.runwayAnalysis) || ""} />
+        </BriefingDocumentText>
+      </Container>
+    </div>
   );
 }

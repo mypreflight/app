@@ -56,6 +56,20 @@ parameter, and closing the panel SHALL return focus to the button that opened it
 - **WHEN** the pilot is on the Tracking view and selects Timesheet in the bottom bar
 - **THEN** the panel opens over the map and the address becomes `/track/:id/tracking?document=timesheet`
 
+### Requirement: SimBrief documents open with a summary and the original PDF
+
+The OFP and Runway analysis panels SHALL open with a summary naming the document (operational flight plan, takeoff and landing report) and, where the document states them, its release or report number and the time it was issued. The summary SHALL offer Download PDF, which saves SimBrief's own PDF of the plan as SimBrief issued it, without the app rebuilding it, and says so when SimBrief no longer has it. The document's text SHALL fill the panel's width, and only lines wider than SimBrief's 69 columns SHALL scroll sideways, within the text.
+
+#### Scenario: Downloading the OFP
+
+- **WHEN** the pilot selects Download PDF in the OFP panel of a flight imported from SimBrief
+- **THEN** SimBrief's PDF of the plan is saved under SimBrief's file name, and the pilot stays on the page
+
+#### Scenario: Reading the OFP
+
+- **WHEN** the pilot opens the OFP panel
+- **THEN** the plan's text spans the panel's width and scrolls only with the panel
+
 ### Requirement: The PIL lists special service requests
 
 The PIL SHALL list every passenger with a special service request, with seat, name, cabin, the
