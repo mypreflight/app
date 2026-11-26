@@ -53,10 +53,6 @@ const passengerRemarkLines: Record<SpecialServiceRequest, string[]> = {
   [SpecialServiceRequest.Inadmissible]: ["TRAVEL DOCUMENTS HELD BY CREW"],
 };
 
-export function translateNotocStatement(carriesDangerousGoods: boolean): string {
-  return carriesDangerousGoods ? "Dangerous goods loaded as listed below." : "No dangerous goods loaded.";
-}
-
 export function translateNotocStage(stage: NotocStage): string {
   return stageLabels[stage];
 }

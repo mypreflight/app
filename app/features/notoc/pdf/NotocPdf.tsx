@@ -4,8 +4,9 @@ import latinBold from "@fontsource/arimo/files/arimo-latin-700-normal.woff?url";
 import extendedItalic from "@fontsource/arimo/files/arimo-latin-ext-400-italic.woff?url";
 import extendedRegular from "@fontsource/arimo/files/arimo-latin-ext-400-normal.woff?url";
 import extendedBold from "@fontsource/arimo/files/arimo-latin-ext-700-normal.woff?url";
-import { Document, Font, Page, StyleSheet, Text, View } from "@react-pdf/renderer";
+import { Document, Font, Page, Path, StyleSheet, Svg, Text, View } from "@react-pdf/renderer";
 import React from "react";
+import logoSource from "~/assets/logo.svg?raw";
 import { designatorOf } from "~/features/cargo-hold/lib/designator";
 import type { LoadingPosition } from "~/features/cargo-hold/model";
 import { netQuantityOf, responseCodeOf } from "~/features/cargo-manifest/lib/cargoWording";
@@ -63,6 +64,14 @@ const FONT = ["Arimo", "ArimoExtended"];
 const RULE = 1.4;
 const HAIRLINE = 0.8;
 const MIN_ROWS = 5;
+const TABLE_LEAD = 110;
+const PAGE_MARGIN = 28;
+const FOOTER_SPACE = 16;
+const CONTINUATION_HEIGHT = 20;
+const LOGO_SIZE = 40;
+const LOGO_COLOR = "#374151";
+const LOGO_PATH = logoSource.match(/\sd="([^"]+)"/)?.[1] ?? "";
+const LOGO_VIEW_BOX = logoSource.match(/viewBox="([^"]+)"/)?.[1] ?? "0 0 353 353";
 
 const DANGEROUS_GOODS_COLUMNS = [5.5, 8.5, 17, 4.6, 5.8, 3.6, 5, 8, 7.4, 6.6, 5, 3.8, 3.2, 6.5, 4.5, 5];
 const DANGEROUS_GOODS_COLUMN_IDS = [
@@ -97,18 +106,16 @@ const SPECIAL_LOAD_COLUMN_IDS = [
 ];
 
 const styles = StyleSheet.create({
-  page: { fontFamily: FONT, fontSize: 7.5, color: "#000", paddingHorizontal: 20, paddingTop: 12, paddingBottom: 20 },
-  top: { flexDirection: "row", alignItems: "flex-end", marginBottom: 4 },
-  mark: {
-    width: 30,
-    height: 30,
-    borderWidth: RULE,
-    transform: "rotate(45deg)",
-    alignItems: "center",
-    justifyContent: "center",
-    marginHorizontal: 10,
+  page: {
+    fontFamily: FONT,
+    fontSize: 7.5,
+    color: "#000",
+    paddingHorizontal: PAGE_MARGIN,
+    paddingTop: PAGE_MARGIN + CONTINUATION_HEIGHT,
+    paddingBottom: PAGE_MARGIN + FOOTER_SPACE,
   },
-  markText: { transform: "rotate(-45deg)", fontSize: 8, fontWeight: 700 },
+  top: { flexDirection: "row", alignItems: "flex-end", marginTop: -CONTINUATION_HEIGHT, marginBottom: 4 },
+  logo: { width: LOGO_SIZE, height: LOGO_SIZE, marginRight: 10 },
   distribution: { fontSize: 7.5, lineHeight: 1.25 },
   title: { flexGrow: 1, textAlign: "right", fontSize: 19, fontWeight: 700, letterSpacing: 2.4, marginLeft: 16 },
   boxes: { flexDirection: "row", gap: 6, marginBottom: 4 },
@@ -119,23 +126,46 @@ const styles = StyleSheet.create({
   fact: { flexGrow: 1, justifyContent: "center", paddingHorizontal: 5 },
   factLabel: { fontSize: 8, fontWeight: 700 },
   factValue: { fontSize: 10, fontWeight: 400 },
-  table: { borderWidth: RULE, marginBottom: 4 },
+  table: { marginBottom: 4 },
   tableTitle: {
     flexDirection: "row",
     alignItems: "center",
-    borderBottomWidth: RULE,
+    borderWidth: RULE,
     paddingHorizontal: 4,
     minHeight: 14,
   },
   tableTitleText: { fontSize: 9.5, fontWeight: 700 },
-  row: { flexDirection: "row", borderBottomWidth: HAIRLINE, minHeight: 13 },
-  lastRow: { flexDirection: "row", minHeight: 13 },
+  row: {
+    flexDirection: "row",
+    borderLeftWidth: RULE,
+    borderRightWidth: RULE,
+    borderBottomWidth: HAIRLINE,
+    minHeight: 13,
+  },
+  lastRow: {
+    flexDirection: "row",
+    borderLeftWidth: RULE,
+    borderRightWidth: RULE,
+    borderBottomWidth: RULE,
+    minHeight: 13,
+  },
   cell: { borderRightWidth: HAIRLINE, paddingHorizontal: 2.5, paddingVertical: 1.5, justifyContent: "center" },
   lastCell: { paddingHorizontal: 2.5, paddingVertical: 1.5, justifyContent: "center" },
   number: { fontSize: 10, fontWeight: 700, textAlign: "center" },
   heading: { fontSize: 6.8, textAlign: "center", lineHeight: 1.15 },
   data: { fontSize: 7.5 },
   bottom: { flexDirection: "row", gap: 6 },
+  continuation: {
+    position: "absolute",
+    top: PAGE_MARGIN,
+    left: PAGE_MARGIN,
+    right: PAGE_MARGIN,
+    flexDirection: "row",
+    alignItems: "flex-end",
+    gap: 18,
+  },
+  continuationFact: { flexDirection: "row", alignItems: "flex-end", gap: 3 },
+  continuationTitle: { flexGrow: 1, fontSize: 10, fontWeight: 700, letterSpacing: 1 },
   signatureLine: { flexDirection: "row", alignItems: "flex-end", marginTop: 3 },
   dotted: { flexGrow: 1, borderBottomWidth: 0.8, borderBottomStyle: "dotted", marginLeft: 3, minHeight: 11 },
   signature: { fontStyle: "italic", fontSize: 9, paddingLeft: 6 },
@@ -143,9 +173,9 @@ const styles = StyleSheet.create({
   hint: { fontSize: 6, fontStyle: "italic", textAlign: "right" },
   footer: {
     position: "absolute",
-    bottom: 8,
-    left: 20,
-    right: 20,
+    bottom: PAGE_MARGIN,
+    left: PAGE_MARGIN,
+    right: PAGE_MARGIN,
     flexDirection: "row",
     justifyContent: "space-between",
     fontSize: 6.5,
@@ -324,33 +354,35 @@ function DangerousGoodsTable({ entries, dryIce }: { entries: NotocDangerousGoods
 
   return (
     <View style={styles.table}>
-      <View style={styles.tableTitle}>
-        <Text style={styles.tableTitleText}>DANGEROUS GOODS</Text>
-      </View>
-      <ColumnNumbers
-        widths={[...widths.slice(0, 13), loadedWidth, widths[15]]}
-        labels={["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15"]}
-      />
-      <View style={styles.row}>
-        {headingsBefore.map((heading, index) => (
-          <Cell key={heading} width={widths[index]}>
-            <Text style={index === 2 ? [styles.heading, { fontSize: 8.5 }] : styles.heading}>{heading}</Text>
-          </Cell>
-        ))}
-        <View style={[styles.cell, { width: `${loadedWidth}%`, padding: 0 }]}>
-          <Text style={[styles.heading, { paddingVertical: 1.5, borderBottomWidth: HAIRLINE }]}>Loaded</Text>
-          <View style={{ flexDirection: "row", flexGrow: 1 }}>
-            <View style={[styles.cell, { width: `${(widths[13] / loadedWidth) * 100}%` }]}>
-              <Text style={styles.heading}>ULD</Text>
-            </View>
-            <View style={[styles.lastCell, { width: `${(widths[14] / loadedWidth) * 100}%` }]}>
-              <Text style={styles.heading}>Position</Text>
+      <View fixed>
+        <View style={styles.tableTitle}>
+          <Text style={styles.tableTitleText}>DANGEROUS GOODS</Text>
+        </View>
+        <ColumnNumbers
+          widths={[...widths.slice(0, 13), loadedWidth, widths[15]]}
+          labels={["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15"]}
+        />
+        <View style={styles.row}>
+          {headingsBefore.map((heading, index) => (
+            <Cell key={heading} width={widths[index]}>
+              <Text style={index === 2 ? [styles.heading, { fontSize: 8.5 }] : styles.heading}>{heading}</Text>
+            </Cell>
+          ))}
+          <View style={[styles.cell, { width: `${loadedWidth}%`, padding: 0 }]}>
+            <Text style={[styles.heading, { paddingVertical: 1.5, borderBottomWidth: HAIRLINE }]}>Loaded</Text>
+            <View style={{ flexDirection: "row", flexGrow: 1 }}>
+              <View style={[styles.cell, { width: `${(widths[13] / loadedWidth) * 100}%` }]}>
+                <Text style={styles.heading}>ULD</Text>
+              </View>
+              <View style={[styles.lastCell, { width: `${(widths[14] / loadedWidth) * 100}%` }]}>
+                <Text style={styles.heading}>Position</Text>
+              </View>
             </View>
           </View>
+          <Cell width={widths[15]} last>
+            <Text style={styles.heading}>Emergency Response Code</Text>
+          </Cell>
         </View>
-        <Cell width={widths[15]} last>
-          <Text style={styles.heading}>Emergency Response Code</Text>
-        </Cell>
       </View>
       {rows.map((row) => (
         <DangerousGoodsRow key={row.id} cells={row.entry} last={row === rows[rows.length - 1]} />
@@ -383,34 +415,36 @@ function SpecialLoadTable({
 
   return (
     <View style={styles.table}>
-      <View style={styles.tableTitle}>
-        <Text style={styles.tableTitleText}>SPECIAL LOAD</Text>
-        <Text style={{ fontSize: 7.5, marginLeft: 4 }}>
-          {" "}
-          - the person entering the Special Load details is to print their name here {"->"} (1) Freight Agent:
-        </Text>
-        <View style={[styles.dotted, { marginRight: 8 }]}>
-          <Text style={styles.printed}>{preparedBy}</Text>
+      <View fixed>
+        <View style={styles.tableTitle}>
+          <Text style={styles.tableTitleText}>SPECIAL LOAD</Text>
+          <Text style={{ fontSize: 7.5, marginLeft: 4 }}>
+            {" "}
+            - the person entering the Special Load details is to print their name here {"->"} (1) Freight Agent:
+          </Text>
+          <View style={[styles.dotted, { marginRight: 8 }]}>
+            <Text style={styles.printed}>{preparedBy}</Text>
+          </View>
+          <Text style={{ fontSize: 7.5 }}>(2) Pit Crew Leader:</Text>
+          <View style={styles.dotted} />
         </View>
-        <Text style={{ fontSize: 7.5 }}>(2) Pit Crew Leader:</Text>
-        <View style={styles.dotted} />
-      </View>
-      <View style={styles.row}>
-        {headings.map((heading, index) => (
-          <Cell key={heading} width={widths[index]}>
-            <Text style={index === 2 || index === 5 ? [styles.heading, { fontSize: 8.5 }] : styles.heading}>
-              {heading}
-            </Text>
-          </Cell>
-        ))}
-        <View style={[styles.lastCell, { width: `${loadedWidth}%`, padding: 0 }]}>
-          <Text style={[styles.heading, { paddingVertical: 1.5, borderBottomWidth: HAIRLINE }]}>Loaded</Text>
-          <View style={{ flexDirection: "row", flexGrow: 1 }}>
-            <View style={[styles.cell, { width: "50%" }]}>
-              <Text style={styles.heading}>ULD</Text>
-            </View>
-            <View style={[styles.lastCell, { width: "50%" }]}>
-              <Text style={styles.heading}>Position</Text>
+        <View style={styles.row}>
+          {headings.map((heading, index) => (
+            <Cell key={heading} width={widths[index]}>
+              <Text style={index === 2 || index === 5 ? [styles.heading, { fontSize: 8.5 }] : styles.heading}>
+                {heading}
+              </Text>
+            </Cell>
+          ))}
+          <View style={[styles.lastCell, { width: `${loadedWidth}%`, padding: 0 }]}>
+            <Text style={[styles.heading, { paddingVertical: 1.5, borderBottomWidth: HAIRLINE }]}>Loaded</Text>
+            <View style={{ flexDirection: "row", flexGrow: 1 }}>
+              <View style={[styles.cell, { width: "50%" }]}>
+                <Text style={styles.heading}>ULD</Text>
+              </View>
+              <View style={[styles.lastCell, { width: "50%" }]}>
+                <Text style={styles.heading}>Position</Text>
+              </View>
             </View>
           </View>
         </View>
@@ -432,17 +466,19 @@ function SpecialPassengerTable({ passengers }: { passengers: NotocSpecialPasseng
 
   return (
     <View style={styles.table}>
-      <View style={styles.tableTitle}>
-        <Text style={styles.tableTitleText}>SPECIAL CATEGORY PASSENGERS</Text>
-      </View>
-      <View style={styles.row}>
-        {PASSENGER_COLUMN_IDS.map((id, column) => (
-          <Cell key={id} width={widths[column]} last={column === widths.length - 1}>
-            <Text style={column === 1 || column === 4 ? [styles.heading, { fontSize: 8.5 }] : styles.heading}>
-              {headings[column]}
-            </Text>
-          </Cell>
-        ))}
+      <View fixed>
+        <View style={styles.tableTitle}>
+          <Text style={styles.tableTitleText}>SPECIAL CATEGORY PASSENGERS</Text>
+        </View>
+        <View style={styles.row}>
+          {PASSENGER_COLUMN_IDS.map((id, column) => (
+            <Cell key={id} width={widths[column]} last={column === widths.length - 1}>
+              <Text style={column === 1 || column === 4 ? [styles.heading, { fontSize: 8.5 }] : styles.heading}>
+                {headings[column]}
+              </Text>
+            </Cell>
+          ))}
+        </View>
       </View>
       {groups.map((group, position) => {
         const values = [
@@ -578,6 +614,31 @@ function LoadingCertification({ header }: { header: NotocHeader }) {
   );
 }
 
+function continuedOnly(text: string) {
+  return ({ pageNumber }: { pageNumber: number }) => (pageNumber > 1 ? text : "");
+}
+
+function ContinuationLine({ header }: { header: NotocHeader }) {
+  const facts = [
+    { label: "FLIGHT NUMBER:", value: header.flightNumber },
+    { label: "DATE:", value: formDate(header.flightDate) },
+    { label: "AIRCRAFT REG:", value: header.aircraftRegistration },
+    { label: "PORT OF LOADING:", value: `${header.stationOfLoadingCity} (${header.stationOfLoading})` },
+  ];
+
+  return (
+    <View style={styles.continuation} fixed>
+      <Text style={styles.continuationTitle} render={continuedOnly("NOTIFICATION TO CAPTAIN (NOTOC) · CONTINUED")} />
+      {facts.map((fact) => (
+        <View key={fact.label} style={styles.continuationFact}>
+          <Text style={styles.factLabel} render={continuedOnly(fact.label)} />
+          <Text style={styles.factValue} render={continuedOnly(fact.value)} />
+        </View>
+      ))}
+    </View>
+  );
+}
+
 export function NotocPdf({ notoc, acceptance }: NotocPdfProps) {
   const { header } = notoc.document;
   const issuedAt = new Date(notoc.issuedAt);
@@ -590,10 +651,11 @@ export function NotocPdf({ notoc, acceptance }: NotocPdfProps) {
       subject="Notification to captain"
     >
       <Page size="A4" orientation="landscape" style={styles.page}>
+        <ContinuationLine header={header} />
         <View style={styles.top}>
-          <View style={styles.mark}>
-            <Text style={styles.markText}>{header.flightNumber.slice(0, 2)}</Text>
-          </View>
+          <Svg viewBox={LOGO_VIEW_BOX} style={styles.logo}>
+            <Path d={LOGO_PATH} fill={LOGO_COLOR} />
+          </Svg>
           <View style={styles.distribution}>
             <Text style={{ fontWeight: 700 }}>NOTOC DISTRIBUTION :</Text>
             <Text>1. Top Copy (white) : Captain</Text>
@@ -610,13 +672,17 @@ export function NotocPdf({ notoc, acceptance }: NotocPdfProps) {
         </View>
 
         <DangerousGoodsTable entries={notoc.document.dangerousGoods} dryIce={notoc.document.dryIce} />
+        <View minPresenceAhead={TABLE_LEAD} />
         <SpecialLoadTable
           loads={notoc.document.specialLoads}
           coldChain={notoc.document.coldChain}
           preparedBy={header.preparedBy}
         />
         {notoc.document.specialPassengers.length > 0 && (
-          <SpecialPassengerTable passengers={notoc.document.specialPassengers} />
+          <>
+            <View minPresenceAhead={TABLE_LEAD} />
+            <SpecialPassengerTable passengers={notoc.document.specialPassengers} />
+          </>
         )}
 
         <View style={styles.bottom} wrap={false}>

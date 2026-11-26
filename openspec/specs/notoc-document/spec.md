@@ -39,10 +39,28 @@ The PDF SHALL be a landscape A4 form with: the distribution list and the title; 
 
 - **WHEN** a notification has more rows than one page holds
 - **THEN** the form continues on further pages, each numbered, and no row is split across a page
+- **AND** each further page names the notification, the flight, its date, the aircraft registration and the port of loading at its top
+- **AND** a table that continues onto a further page repeats its title and column headings there
+- **AND** a table starts on a page only with its headings and its first rows, and otherwise starts on the next page
+- **AND** the captain's acceptance and the loading certification come after the last table
+
+### Requirement: The form prints whole and carries MyPreflight's mark
+
+The PDF SHALL keep a margin of at least 10 mm on every side of every page, the page's footer and its continuation heading included, so a printer reproduces the whole form. The first page SHALL carry the MyPreflight logo in dark grey at its top left, where a paper form carries its owner's mark.
+
+#### Scenario: Printing the form
+
+- **WHEN** a page of the PDF is printed
+- **THEN** nothing on it lies within 10 mm of the paper's edge
+
+#### Scenario: The mark on the first page
+
+- **WHEN** the PDF is opened
+- **THEN** the top left of its first page shows the MyPreflight logo in dark grey
 
 ### Requirement: The form names the operator, not a real form's owner
 
-The PDF SHALL carry the flight's operator wherever a paper form names its owner (the instructions, the manuals the certifications refer to and the mark at its top), and SHALL NOT carry the name, mark or form number of any real company's form.
+The PDF SHALL carry the flight's operator wherever a paper form names its owner in words (the instructions and the manuals the certifications refer to), and SHALL NOT carry the name, mark or form number of any real company's form.
 
 #### Scenario: The operator's name
 

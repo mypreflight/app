@@ -58,7 +58,6 @@ import {
   translateHandlingRemark,
   translateHoldCondition,
   translateNotocStage,
-  translateNotocStatement,
   translatePassengerRemarks,
   translateTemperatureSolution,
 } from "~/features/notoc/i18n";
@@ -141,7 +140,6 @@ export const toHuman = {
   },
   notoc: {
     stage: translateNotocStage,
-    statement: translateNotocStatement,
     handlingRemark: translateHandlingRemark,
     holdCondition: translateHoldCondition,
     temperatureSolution: translateTemperatureSolution,

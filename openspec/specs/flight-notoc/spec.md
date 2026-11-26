@@ -178,6 +178,20 @@ The notification SHALL present the header, the dangerous goods, the special load
 - **WHEN** a notification carrying cold chain assessments is shown
 - **THEN** no cold chain assessment and no load summary are presented on it
 
+### Requirement: Listed sections fold to a summary
+
+The dangerous goods, special load and special category passengers sections SHALL each show how many entries they hold, and the pilot SHALL be able to fold each to a single line summarising what it holds and unfold it again. Sections SHALL open unfolded. A notification with no dangerous goods SHALL show its dangerous goods section as a statement that none are loaded, which does not fold.
+
+#### Scenario: Folding the special load
+
+- **WHEN** the pilot folds the special load section of a notification listing special loads
+- **THEN** its entries are hidden and a one-line summary of what it holds is shown beside its title and count
+
+#### Scenario: No dangerous goods
+
+- **WHEN** a notification reporting no dangerous goods is shown
+- **THEN** its dangerous goods section states that no dangerous goods are loaded
+
 ### Requirement: The notification carries the form's header and certification
 
 Every notification carries a header. The app SHALL present the port of loading, the airport of unloading, the flight number and date, and the aircraft registration and type above the entries, and SHALL present who prepared it, who supervised loading and certified the positions, and the emergency telephone number below them. A notification issued on the form before this one is not served by the API and SHALL read as not issued.

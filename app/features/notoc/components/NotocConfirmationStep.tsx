@@ -1,4 +1,5 @@
 import React from "react";
+import { LuPackageCheck } from "react-icons/lu";
 import { useAuth } from "~/app-state/useAuth";
 import { designatorOf } from "~/features/cargo-hold/lib/designator";
 import type { Flight } from "~/features/flight/model";
@@ -9,16 +10,23 @@ import { NotocChangesSummary } from "~/features/notoc/components/NotocChangesSum
 import { NotocFormHeader } from "~/features/notoc/components/NotocFormHeader";
 import { NotocIssuedAt } from "~/features/notoc/components/NotocIssuedAt";
 import { NotocPdfButton } from "~/features/notoc/components/NotocPdfButton";
-import { NotocStatement } from "~/features/notoc/components/NotocStatement";
+import { NotocSection } from "~/features/notoc/components/NotocSection";
+import {
+  DangerousGoodsSummary,
+  SpecialLoadSummary,
+  SpecialPassengerSummary,
+} from "~/features/notoc/components/NotocSectionSummaries";
 import { NotocUnavailableState } from "~/features/notoc/components/NotocUnavailableState";
 import { SpecialLoadLine } from "~/features/notoc/components/SpecialLoadLine";
 import { SpecialPassengerLine } from "~/features/notoc/components/SpecialPassengerLine";
 import { useFlightNotoc } from "~/features/notoc/hooks/useFlightNotoc";
 import { notocFileName } from "~/features/notoc/lib/notocHeader";
+import { dangerousGoodsTally, specialHandlingCodesOf, specialPassengerTally } from "~/features/notoc/lib/notocSummary";
 import { groupSpecialPassengers } from "~/features/notoc/lib/specialPassengerGroups";
 import type { FlightNotoc } from "~/features/notoc/model";
 import { toHuman } from "~/i18n/translate";
 import { FormSectionLabel } from "~/shared/ui/Form/FormSectionLabel";
+import { EmptyState } from "~/shared/ui/Layout/EmptyState";
 import { LoadingData } from "~/shared/ui/Table/LoadingStates/LoadingData";
 
 type Props = {
@@ -74,13 +82,22 @@ export function NotocConfirmationStep({ flight }: Props) {
 
       {notoc.changes !== null && <NotocChangesSummary changes={notoc.changes} />}
 
-      <section className="flex flex-col">
-        <FormSectionLabel>Dangerous goods</FormSectionLabel>
-        {dangerousGoods.length + dryIce.length === 0 ? (
-          <div className="mt-2">
-            <NotocStatement carriesDangerousGoods={false} />
-          </div>
-        ) : (
+      {dangerousGoods.length + dryIce.length === 0 ? (
+        <section className="flex flex-col">
+          <FormSectionLabel>Dangerous goods</FormSectionLabel>
+          <EmptyState icon={LuPackageCheck} title="No dangerous goods loaded" className="pt-4 pb-1" />
+        </section>
+      ) : (
+        <NotocSection
+          title="Dangerous goods"
+          count={dangerousGoods.length + dryIce.length}
+          summary={
+            <DangerousGoodsSummary
+              tally={dangerousGoodsTally(dangerousGoods, dryIce)}
+              cargoAircraftOnly={dangerousGoods.some((entry) => entry.cargoAircraftOnly)}
+            />
+          }
+        >
           <ul className="divide-y divide-gray-100 dark:divide-gray-800">
             {dangerousGoods.map((entry) => (
               <DangerousGoodsLine
@@ -97,12 +114,15 @@ export function NotocConfirmationStep({ flight }: Props) {
               />
             ))}
           </ul>
-        )}
-      </section>
+        </NotocSection>
+      )}
 
       {specialLoads.length > 0 && (
-        <section className="flex flex-col">
-          <FormSectionLabel>Special load</FormSectionLabel>
+        <NotocSection
+          title="Special load"
+          count={specialLoads.length}
+          summary={<SpecialLoadSummary codes={specialHandlingCodesOf(specialLoads)} />}
+        >
           <ul className="divide-y divide-gray-100 dark:divide-gray-800">
             {specialLoads.map((load) => (
               <SpecialLoadLine
@@ -113,18 +133,21 @@ export function NotocConfirmationStep({ flight }: Props) {
               />
             ))}
           </ul>
-        </section>
+        </NotocSection>
       )}
 
       {specialPassengers.length > 0 && (
-        <section className="flex flex-col">
-          <FormSectionLabel>Special category passengers</FormSectionLabel>
+        <NotocSection
+          title="Special category passengers"
+          count={specialPassengers.length}
+          summary={<SpecialPassengerSummary tally={specialPassengerTally(specialPassengers)} />}
+        >
           <ul className="divide-y divide-gray-100 dark:divide-gray-800">
             {groupSpecialPassengers(specialPassengers).map((group) => (
               <SpecialPassengerLine key={`${group.ssr}-${group.seats[0]}`} group={group} />
             ))}
           </ul>
-        </section>
+        </NotocSection>
       )}
 
       <NotocCertification header={header} acceptance={acceptance} />

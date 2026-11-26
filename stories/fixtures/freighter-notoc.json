@@ -1,0 +1,260 @@
+{
+  "flightId": "2fbd8bb1-6d47-4e35-9f0a-5c2e17a4d380",
+  "stage": "preliminary",
+  "issuedAt": "2026-06-02T07:40:00.000Z",
+  "acknowledgedById": null,
+  "acknowledgedAt": null,
+  "document": {
+    "dryIce": [
+      {
+        "kg": 900,
+        "drill": {
+          "inherentRisk": "A hazard that no other class covers, such as heat, an anaesthetic vapour, a magnetic field or harm to the environment.",
+          "responseCode": {
+            "drillNumber": 9,
+            "drillLetters": ["A"]
+          },
+          "additionalRisks": ["Anaesthetic or narcotic vapour."],
+          "spillAndFireProcedure": "Ventilate and keep clear of the spill. Fight the fire with the agent suited to the surrounding material.",
+          "riskToAircraftAndOccupants": "Depends on the substance; may affect instruments, air quality or the health of anyone exposed."
+        },
+        "packages": 41,
+        "compartment": 1,
+        "unloadingAirport": "JFK"
+      }
+    ],
+    "header": {
+      "flightDate": "2026-06-02",
+      "preparedBy": "Jana Brandt",
+      "aircraftType": "B74F",
+      "flightNumber": "CV2020",
+      "operatorName": "Cargolux Airlines International S.A.",
+      "stationOfLoading": "FRA",
+      "loadingSupervisor": "Hennes Umlauft",
+      "emergencyTelephone": "+44 20 7946 0588",
+      "aircraftRegistration": "LX-VCA",
+      "stationOfLoadingCity": "Frankfurt"
+    },
+    "summary": {
+      "cargoKg": 14900,
+      "baggageKg": 0,
+      "deadloadKg": 14900,
+      "beyondCount": 0,
+      "palletCount": 3,
+      "compartments": [
+        {
+          "deck": "lower",
+          "dryIceKg": 900,
+          "weightKg": 3946,
+          "compartment": 1
+        },
+        {
+          "deck": "lower",
+          "dryIceKg": 0,
+          "weightKg": 782,
+          "compartment": 3
+        },
+        {
+          "deck": "main",
+          "dryIceKg": 0,
+          "weightKg": 10172,
+          "compartment": 6
+        }
+      ],
+      "looseLotCount": 0,
+      "containerCount": 4,
+      "tightestConnectionMinutes": null
+    },
+    "coldChain": [
+      {
+        "awb": "172-62001166",
+        "risk": "low",
+        "reason": {
+          "kind": "within_margin"
+        },
+        "regime": "COL",
+        "solution": "active",
+        "description": "Vaccine doses, 2-8C",
+        "marginHours": 88.5,
+        "exposureHours": 11.5,
+        "enduranceHours": 100
+      }
+    ],
+    "specialLoads": [
+      {
+        "awb": "172-62001100",
+        "shc": ["AVI", "HEA"],
+        "uldId": "AMA62011CV",
+        "pieces": 7,
+        "grossKg": 4000,
+        "compartment": 6,
+        "description": "Live horses in air stalls",
+        "temperature": null,
+        "heaviestPiece": {
+          "kg": 572,
+          "widthCm": 110,
+          "heightCm": 230,
+          "lengthCm": 300
+        },
+        "holdCondition": "heated_and_ventilated",
+        "handlingRemark": "horses_with_groom",
+        "loadingPosition": {
+          "row": 1,
+          "deck": "main",
+          "side": "L",
+          "compartment": 6
+        },
+        "unloadingAirport": "JFK"
+      },
+      {
+        "awb": "172-62001111",
+        "shc": ["HEA", "BIG"],
+        "uldId": "AMA62012CV",
+        "pieces": 4,
+        "grossKg": 4200,
+        "compartment": 6,
+        "description": "Main landing gear leg, AOG",
+        "temperature": null,
+        "heaviestPiece": {
+          "kg": 1050,
+          "widthCm": 130,
+          "heightCm": 150,
+          "lengthCm": 300
+        },
+        "holdCondition": null,
+        "handlingRemark": null,
+        "loadingPosition": {
+          "row": 2,
+          "deck": "main",
+          "side": "L",
+          "compartment": 6
+        },
+        "unloadingAirport": "JFK"
+      },
+      {
+        "awb": "172-62001122",
+        "shc": ["HUM", "HEA"],
+        "uldId": "AMA62013CV",
+        "pieces": 6,
+        "grossKg": 1072,
+        "compartment": 6,
+        "description": "Human remains in coffin",
+        "temperature": null,
+        "heaviestPiece": {
+          "kg": 179,
+          "widthCm": 70,
+          "heightCm": 60,
+          "lengthCm": 220
+        },
+        "holdCondition": null,
+        "handlingRemark": "coffin_apart_from_foodstuffs",
+        "loadingPosition": {
+          "row": 3,
+          "deck": "main",
+          "side": "L",
+          "compartment": 6
+        },
+        "unloadingAirport": "JFK"
+      },
+      {
+        "awb": "172-62001166",
+        "shc": ["PIL", "COL", "ACT"],
+        "uldId": "AKE62017CV",
+        "pieces": 50,
+        "grossKg": 700,
+        "compartment": 3,
+        "description": "Vaccine doses, 2-8C",
+        "temperature": {
+          "maxC": 8,
+          "minC": 2
+        },
+        "heaviestPiece": null,
+        "holdCondition": null,
+        "handlingRemark": null,
+        "loadingPosition": {
+          "row": 1,
+          "deck": "lower",
+          "side": "L",
+          "compartment": 3
+        },
+        "unloadingAirport": "JFK"
+      }
+    ],
+    "dangerousGoods": [
+      {
+        "awb": "172-62001133",
+        "drill": {
+          "inherentRisk": "Flammable liquid or solid; vapours may form an explosive mixture.",
+          "responseCode": {
+            "drillNumber": 3,
+            "drillLetters": ["L"]
+          },
+          "additionalRisks": ["No significant risk beyond the drill itself."],
+          "spillAndFireProcedure": "Contain the spill and keep every ignition source away. Fight the fire with water spray, foam, dry chemical or carbon dioxide.",
+          "riskToAircraftAndOccupants": "Rapid fire spread and dense smoke; heat may weaken structure and burn anyone in reach."
+        },
+        "uldId": "AKE62014CV",
+        "impCode": "RFL",
+        "packages": 78,
+        "unNumber": "1263",
+        "compartment": 1,
+        "hazardClass": "3",
+        "netQuantity": {
+          "unit": "L",
+          "amount": 5
+        },
+        "radioactive": null,
+        "packingGroup": "II",
+        "subsidiaryRisk": null,
+        "classOrDivision": "3",
+        "loadingPosition": {
+          "row": 1,
+          "deck": "lower",
+          "side": "L",
+          "compartment": 1
+        },
+        "unloadingAirport": "JFK",
+        "cargoAircraftOnly": false,
+        "properShippingName": "Paint"
+      },
+      {
+        "awb": "172-62001144",
+        "drill": {
+          "inherentRisk": "A hazard that no other class covers, such as heat, an anaesthetic vapour, a magnetic field or harm to the environment.",
+          "responseCode": {
+            "drillNumber": 9,
+            "drillLetters": ["F"]
+          },
+          "additionalRisks": ["Flammable."],
+          "spillAndFireProcedure": "Ventilate and keep clear of the spill. Fight the fire with the agent suited to the surrounding material.",
+          "riskToAircraftAndOccupants": "Depends on the substance; may affect instruments, air quality or the health of anyone exposed."
+        },
+        "uldId": "AKE62015CV",
+        "impCode": "RLI",
+        "packages": 140,
+        "unNumber": "3480",
+        "compartment": 1,
+        "hazardClass": "9",
+        "netQuantity": {
+          "unit": "kg",
+          "amount": 10
+        },
+        "radioactive": null,
+        "packingGroup": "II",
+        "subsidiaryRisk": null,
+        "classOrDivision": "9",
+        "loadingPosition": {
+          "row": 1,
+          "deck": "lower",
+          "side": "R",
+          "compartment": 1
+        },
+        "unloadingAirport": "JFK",
+        "cargoAircraftOnly": true,
+        "properShippingName": "Lithium ion batteries"
+      }
+    ],
+    "specialPassengers": []
+  },
+  "changes": null
+}
