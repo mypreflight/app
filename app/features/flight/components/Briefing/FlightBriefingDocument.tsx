@@ -66,7 +66,7 @@ function documentView(
     case BriefingDocument.NavLog:
       return { title: "Nav log", body: <NavLogDocument /> };
     case BriefingDocument.Ofp:
-      return { title: "Operational flight plan", body: <FlightOfpTab /> };
+      return { title: "OFP", body: <FlightOfpTab /> };
     case BriefingDocument.RunwayAnalysis:
       return { title: "Runway analysis", body: <FlightRunwayAnalysisTab /> };
     case BriefingDocument.Notoc:
