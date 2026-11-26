@@ -185,11 +185,19 @@ export enum SpecialServiceRequest {
   WheelchairToRamp = "WCHR",
   WheelchairToSteps = "WCHS",
   WheelchairToSeat = "WCHC",
+  WheelchairDryBattery = "WCBD",
+  WheelchairWetBattery = "WCBW",
+  WheelchairLithiumBattery = "WCLB",
+  Stretcher = "STCR",
+  MedicalCase = "MEDA",
   UnaccompaniedMinor = "UMNR",
   Blind = "BLND",
   Deaf = "DEAF",
   MeetAndAssist = "MAAS",
   PetInCabin = "PETC",
+  DeporteeEscorted = "DEPA",
+  DeporteeUnescorted = "DEPU",
+  Inadmissible = "INAD",
 }
 
 export type ManifestPassenger = {

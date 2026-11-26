@@ -54,10 +54,14 @@ export enum UldType {
   Rap = "RAP",
 }
 
-export type HoldPosition = {
-  designator: string;
+export type LoadingPosition = {
+  deck: HoldDeckName;
   compartment: number;
+  row: number;
   side: PositionSide;
+};
+
+export type HoldPosition = LoadingPosition & {
   acceptedBases: UldBase[];
   acceptedContours: UldContour[];
   maxWeightKg: number;
@@ -117,12 +121,4 @@ export function volumeOf(variant: HoldVariant): number {
 
 export function isMultiDeck(variant: HoldVariant): boolean {
   return variant.decks.length > 1;
-}
-
-export function isPaired(position: HoldPosition): boolean {
-  return position.side === PositionSide.Left || position.side === PositionSide.Right;
-}
-
-export function ordinalOf(position: HoldPosition): string {
-  return isPaired(position) ? position.designator.slice(0, -1) : position.designator;
 }

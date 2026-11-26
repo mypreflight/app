@@ -37,7 +37,7 @@ The app SHALL resolve a flight to either a notification or a named reason there 
 
 ### Requirement: A notification always says whether dangerous goods are aboard
 
-Every notification carries a statement in words of whether dangerous goods are loaded. Where none are loaded the app SHALL present that statement prominently, so a clean hold is stated rather than left as an absence. Where dangerous goods are loaded the entries themselves carry that fact, and the app SHALL list them rather than repeat the statement above them.
+Every notification states in words whether dangerous goods are loaded, worded by the app from whether the notification lists any dangerous goods or dry ice. Where none are loaded the app SHALL present that statement prominently, so a clean hold is stated rather than left as an absence. Where dangerous goods are loaded the entries themselves carry that fact, and the app SHALL list them rather than repeat the statement above them.
 
 #### Scenario: A flight carrying no dangerous goods
 
@@ -83,25 +83,38 @@ The final notification reports what changed since the preliminary one. Where suc
 - **WHEN** a preliminary notification is shown
 - **THEN** no change report is presented
 
+#### Scenario: A load that moved between stages
+
+- **GIVEN** a final notification reporting that a load moved from 11L to 21R
+- **WHEN** the change report is shown
+- **THEN** it names the air waybill with the position it left and the position it holds now
+- **AND** a load that no longer holds a position reads as loose
+
 ### Requirement: Every dangerous good reports its declaration and its position
 
-For each dangerous good the app SHALL report the air waybill, the proper shipping name, the UN number, the hazard class, the subsidiary risk, the packing group, the number of packages, the net quantity per package, the airport it comes off at, whether it is restricted to cargo aircraft, and the hold position and compartment it occupies. Where the load is loose or the airframe type carries no curated hold data, no position is reported and the app SHALL present that as how the load sits rather than as missing data.
+For each dangerous good the app SHALL report what the paper form's columns carry: the air waybill, the proper shipping name, the UN number, the class or division as the form prints it (with the compatibility group for an explosive), the subsidiary risk, the packing group, the number of packages, the net quantity per package, the dangerous goods handling code, whether it is restricted to cargo aircraft, the unit load device and the hold position it occupies, and the airport it comes off at. For radioactive material the app SHALL report the package category and transport index in place of a net quantity. Dry ice SHALL be reported as one line per compartment with the number of packages and the total quantity in that compartment, under its own proper shipping name, UN number, class and handling code. Where the load is loose or the airframe type carries no curated hold data, no position is reported and the app SHALL present that as how the load sits rather than as missing data.
 
 #### Scenario: A declared dangerous good
 
 - **WHEN** a dangerous goods entry is shown
-- **THEN** its waybill, proper shipping name, UN number, hazard class and packing group are reported
-- **AND** its packages, net quantity per package and unloading airport are reported
+- **THEN** its waybill, proper shipping name, UN number, class or division, packing group and handling code are reported
+- **AND** its packages, net quantity per package, unit load device and position are reported
 
-#### Scenario: A positioned entry
+#### Scenario: A radioactive package
 
-- **WHEN** a dangerous goods entry reporting a position is shown
-- **THEN** the position designator and compartment are reported
+- **WHEN** an entry of radioactive material is shown
+- **THEN** its package category and transport index are reported instead of a net quantity
+
+#### Scenario: Dry ice
+
+- **WHEN** dry ice is aboard
+- **THEN** one line per compartment reports the total dry ice in it
+- **AND** that line names no waybill, since it totals several
 
 #### Scenario: An entry without a position
 
 - **WHEN** a dangerous goods entry reports no position
-- **THEN** the app presents the absence as loose load or as an uncurated airframe type
+- **THEN** the app presents its compartment, or presents it as loose load or as an uncurated airframe type
 - **AND** does not report it as missing data
 
 #### Scenario: A cargo-aircraft-only entry
@@ -117,12 +130,12 @@ For each dangerous good the app SHALL report the air waybill, the proper shippin
 
 ### Requirement: Every dangerous good carries its drill
 
-Each dangerous good arrives with the emergency response drill derived from the published drill chart. The app SHALL present, for each, the emergency response code, the inherent risk, the risk to aircraft and occupants, the spill and fire procedure and the additional risks the drill letter adds. The app SHALL render the supplied text and SHALL NOT compose, summarise or paraphrase it.
+Each dangerous good arrives with the emergency response drill derived from the published drill chart. As on the paper form, the entry SHALL show the emergency response code, written from the drill number and drill letters the API reports, and the code SHALL open the drill: the inherent risk, the risk to aircraft and occupants, the spill and fire procedure and the additional risks the drill letter adds. The app SHALL render the supplied text and SHALL NOT compose, summarise or paraphrase it.
 
 #### Scenario: Reading a drill
 
-- **WHEN** a dangerous goods entry's drill is shown
-- **THEN** its emergency response code, inherent risk, risk to aircraft and occupants, and spill and fire procedure are presented
+- **WHEN** the reader opens a dangerous goods entry's emergency response code
+- **THEN** its inherent risk, risk to aircraft and occupants, and spill and fire procedure are presented
 - **AND** the additional risks it reports are presented
 
 #### Scenario: The text is the API's
@@ -137,22 +150,18 @@ Each dangerous good arrives with the emergency response drill derived from the p
 
 ### Requirement: Special loads are reported with their handling codes
 
-For each notifiable special load the app SHALL report the air waybill, the description, the handling codes that make it notifiable, its gross weight, its position and compartment where it has them, and the airport it comes off at. Where a heaviest piece is reported for a heavy or outsized load, the app SHALL present its weight and its dimensions with their units.
+For each notifiable special load, perishable and temperature-controlled loads included, the app SHALL report the air waybill, the description, the handling codes that make it notifiable, the number of packages, its gross weight, its unit load device and position where it has them, the airport it comes off at, and its supplementary information, one line each in the form's wording: the handling remark, the temperature to keep, the container or packing that keeps it, the hold conditions it needs and the weight and dimensions of its heaviest piece. The API supplies each of these as a coded fact; the app SHALL word them, so the panel and the PDF print the same lines.
 
 #### Scenario: A special load
 
 - **WHEN** a special load is shown
-- **THEN** its waybill, description, handling codes, gross weight and unloading airport are reported
+- **THEN** its waybill, description, handling codes, packages, gross weight and position are reported
+- **AND** its supplementary information is presented line by line
 
-#### Scenario: A heavy or outsized load
+#### Scenario: A special load with no supplementary information
 
-- **WHEN** a special load reporting a heaviest piece is shown
-- **THEN** the weight and the dimensions of that piece are presented with their units
-
-#### Scenario: A special load with no heaviest piece
-
-- **WHEN** a special load reports no heaviest piece
-- **THEN** no dimensions are presented for it
+- **WHEN** a special load carries no supplementary information
+- **THEN** no empty line is presented for it
 
 #### Scenario: Sensitive consignments are reported plainly
 
@@ -160,42 +169,58 @@ For each notifiable special load the app SHALL report the air waybill, the descr
 - **THEN** it appears as an ordinary row of the notification
 - **AND** does not appear in a heading, a figure or a summary line
 
-### Requirement: Cold chain assessments are carried as advisory
+### Requirement: The notification shows what the paper form shows
 
-Where the notification reports cold chain assessments the app SHALL present, for each, the air waybill, the description, the regime, the risk, the margin in hours and the API's own explanation, and SHALL state that the assessment is advisory and gates nothing.
+The notification SHALL present the header, the dangerous goods, the special load, the special category passengers and the certification, and nothing the paper form does not carry. Cold chain assessments and the load summary SHALL NOT be presented on the notification; they are presented with the loadsheet of the same stage.
 
-#### Scenario: A cold chain assessment
+#### Scenario: No cold chain on the notification
 
-- **WHEN** a cold chain assessment is shown
-- **THEN** its waybill, description, regime, risk and margin are reported
-- **AND** the API's explanation accompanies it
+- **WHEN** a notification carrying cold chain assessments is shown
+- **THEN** no cold chain assessment and no load summary are presented on it
 
-#### Scenario: The assessment gates nothing
+### Requirement: Listed sections fold to a summary
 
-- **WHEN** a cold chain assessment is shown
-- **THEN** it is presented as advisory
-- **AND** no action available to the reader is prevented by it
+The dangerous goods, special load and special category passengers sections SHALL each show how many entries they hold, and the pilot SHALL be able to fold each to a single line summarising what it holds and unfold it again. Sections SHALL open unfolded. A notification with no dangerous goods SHALL show its dangerous goods section as a statement that none are loaded, which does not fold.
 
-### Requirement: The load summary reports the document's own figures
+#### Scenario: Folding the special load
 
-The app SHALL present the notification's load summary — the weight and dry ice in each compartment, the container, pallet and loose lot counts, the cargo, baggage and deadload weights, what continues beyond this flight and the tightest onward connection — using the document's own definitions. Where a figure of the same name is reported differently by the cargo manifest, the app SHALL NOT present the two as one quantity.
+- **WHEN** the pilot folds the special load section of a notification listing special loads
+- **THEN** its entries are hidden and a one-line summary of what it holds is shown beside its title and count
 
-#### Scenario: Reading the summary
+#### Scenario: No dangerous goods
 
-- **WHEN** the load summary is shown
-- **THEN** each compartment's weight and dry ice are reported
-- **AND** the container, pallet and loose lot counts and the cargo, baggage and deadload weights are reported
+- **WHEN** a notification reporting no dangerous goods is shown
+- **THEN** its dangerous goods section states that no dangerous goods are loaded
 
-#### Scenario: Counts are not conflated
+### Requirement: The notification carries the form's header and certification
 
-- **GIVEN** that the notification splits a load into containers and pallets while the cargo manifest counts units
-- **WHEN** both surfaces are available for one flight
-- **THEN** neither figure is presented as the other
+Every notification carries a header. The app SHALL present the port of loading, the airport of unloading, the flight number and date, and the aircraft registration and type above the entries, and SHALL present who prepared it, who supervised loading and certified the positions, and the emergency telephone number below them. A notification issued on the form before this one is not served by the API and SHALL read as not issued.
 
-#### Scenario: Nothing continues beyond
+#### Scenario: The header and certification
 
-- **WHEN** no shipment continues beyond this flight
-- **THEN** no onward connection is presented
+- **WHEN** a notification is shown
+- **THEN** its port of loading, flight, date and aircraft are presented above the entries
+- **AND** who prepared it, who supervised loading and the emergency telephone are presented below them
+
+#### Scenario: A notification issued on the earlier form
+
+- **WHEN** a flight's only notification was issued on the form before this one
+- **THEN** the app states that no notification has been issued
+
+### Requirement: Special category passengers are notified
+
+The commander is told in advance which special category passengers are aboard. Where the notification reports special category passengers, the app SHALL present each with their seat, their special service code in words and code, and the remarks the form carries for that code, in the form's wording. For a battery-powered mobility aid the remarks SHALL say how its battery travels and which hold compartment the aid is in, as the API reports it.
+
+#### Scenario: A passenger with a battery-powered wheelchair
+
+- **WHEN** a passenger with a battery-powered mobility aid is reported
+- **THEN** their seat and code are presented
+- **AND** where the mobility aid and its battery are carried is presented
+
+#### Scenario: No special category passengers
+
+- **WHEN** the notification reports none
+- **THEN** no section for them is presented
 
 ### Requirement: Acknowledgement is reported, not requested
 

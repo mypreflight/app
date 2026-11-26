@@ -1,5 +1,6 @@
 import { Badge } from "flowbite-react";
 import React from "react";
+import { coldChainExplanationOf, netQuantityOf, responseCodeOf } from "~/features/cargo-manifest/lib/cargoWording";
 import type { IndexedShipment } from "~/features/cargo-manifest/lib/shipmentIndex";
 import { continuesBeyond } from "~/features/cargo-manifest/model";
 import { toHuman } from "~/i18n/translate";
@@ -96,8 +97,8 @@ export function WaybillCard({ entry }: Props) {
           <dl className="mt-1 grid w-fit grid-cols-[auto_auto] gap-x-3 gap-y-2">
             <SpecRow label="Subsidiary risk" value={dg.subsidiaryRisk} />
             <SpecRow label="Packing group" value={dg.packingGroup} />
-            <SpecRow label="Net per package" value={dg.netPerPackage} />
-            <SpecRow label="Response code" value={dg.ercCode} />
+            <SpecRow label="Net per package" value={netQuantityOf(dg.netQuantity)} />
+            <SpecRow label="Response code" value={responseCodeOf(dg.responseCode)} />
           </dl>
           {dg.sourceNote !== undefined && (
             <p className="mt-1 max-w-prose text-xs text-gray-500 dark:text-gray-400">{dg.sourceNote}</p>
@@ -116,7 +117,7 @@ export function WaybillCard({ entry }: Props) {
               {toHuman.cargoManifest.coldChainSolution(cold.solution)}
             </span>
           </div>
-          <p className="text-sm text-gray-600 dark:text-gray-300">{cold.explanation}</p>
+          <p className="text-sm text-gray-600 dark:text-gray-300">{coldChainExplanationOf(cold)}</p>
           <p className="text-xs text-gray-500 dark:text-gray-400">
             For information only — this assessment will not stop the flight being released or the load going aboard.
           </p>

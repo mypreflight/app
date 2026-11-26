@@ -1,44 +1,50 @@
 import React from "react";
 import type { FlightServiceType, Loadsheet } from "~/features/flight";
+import { LoadsheetLoad } from "~/features/flight/components/FuelAndLoadsheet/LoadsheetLoad";
+import type { LoadsheetVariant } from "~/features/flight/components/FuelAndLoadsheet/VariantSwitch";
 import { occupantsLabel } from "~/features/flight/lib/occupants";
+import { NotocStage } from "~/features/notoc/model";
 
-export function LoadsheetFigures({ loadsheet, serviceType }: { loadsheet: Loadsheet; serviceType: FlightServiceType }) {
+type Props = {
+  flightId: string;
+  loadsheet: Loadsheet;
+  variant: LoadsheetVariant;
+  serviceType: FlightServiceType;
+};
+
+function Figure({ label, value, unit }: { label: string; value: string; unit?: string }) {
   return (
-    <>
-      <Section title="Souls on board">
-        <StatBlock label="Pilots" value={loadsheet.flightCrew.pilots.toString()} />
-        <StatBlock label="Relief Pilots" value={loadsheet.flightCrew.reliefPilots.toString()} />
-        <StatBlock label="Cabin Crew" value={loadsheet.flightCrew.cabinCrew.toString()} />
-        <StatBlock label={occupantsLabel(serviceType)} value={loadsheet.passengers.toString()} />
-      </Section>
-
-      <Section title="Goods on board">
-        <StatBlock label="Zero-fuel weight" value={loadsheet.zeroFuelWeight.toString()} unit="t" />
-        <StatBlock label="Cargo" value={loadsheet.cargo.toString()} unit="t" />
-        <StatBlock label="Payload" value={loadsheet.payload.toString()} unit="t" />
-        <StatBlock label="Block Fuel" value={loadsheet.blockFuel.toString()} unit="t" />
-      </Section>
-    </>
-  );
-}
-
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <div>
-      <h3 className="mb-3 text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400">{title}</h3>
-      <div className="grid grid-cols-2 gap-2 @md:grid-cols-4">{children}</div>
+    <div className="flex flex-col">
+      <dt className="whitespace-nowrap text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+        {label}
+      </dt>
+      <dd className="font-mono text-sm font-bold tabular-nums text-gray-900 dark:text-white">
+        {value}
+        {unit && <span className="ms-0.5 text-xs font-normal text-gray-500 dark:text-gray-400">{unit}</span>}
+      </dd>
     </div>
   );
 }
 
-function StatBlock({ label, value, unit }: { label: string; value: string; unit?: string }) {
+export function LoadsheetFigures({ flightId, loadsheet, variant, serviceType }: Props) {
+  const { flightCrew } = loadsheet;
+  const crew =
+    flightCrew.reliefPilots > 0
+      ? `${flightCrew.pilots}+${flightCrew.reliefPilots}/${flightCrew.cabinCrew}`
+      : `${flightCrew.pilots}/${flightCrew.cabinCrew}`;
+
   return (
-    <div className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-center min-w-22 dark:border-gray-800 dark:bg-gray-950">
-      <span className="block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">{label}</span>
-      <span className="mt-0.5 block font-mono text-base font-bold text-gray-800 dark:text-gray-100">
-        {value}
-        {unit && <span className="ms-0.5 text-xs font-normal">{unit}</span>}
-      </span>
+    <div className="flex flex-col gap-4">
+      <dl className="flex flex-wrap gap-x-6 gap-y-2">
+        <Figure label={occupantsLabel(serviceType)} value={loadsheet.passengers.toString()} />
+        <Figure label="Crew" value={crew} />
+        <Figure label="ZFW" value={loadsheet.zeroFuelWeight.toString()} unit="t" />
+        <Figure label="Payload" value={loadsheet.payload.toString()} unit="t" />
+        <Figure label="Cargo" value={loadsheet.cargo.toString()} unit="t" />
+        <Figure label="Block fuel" value={loadsheet.blockFuel.toString()} unit="t" />
+      </dl>
+
+      <LoadsheetLoad flightId={flightId} stage={variant === "final" ? NotocStage.Final : NotocStage.Preliminary} />
     </div>
   );
 }

@@ -1,5 +1,7 @@
 import React from "react";
-import type { NotocChanges } from "~/features/notoc/model";
+import { designatorOf } from "~/features/cargo-hold/lib/designator";
+import type { LoadingPosition } from "~/features/cargo-hold/model";
+import type { NotocChanges, NotocReposition } from "~/features/notoc/model";
 import { FieldLabel } from "~/shared/ui/Display/FieldLabel";
 
 type Props = {
@@ -23,6 +25,14 @@ function waybills(label: string, list: string[]): React.ReactNode {
   );
 }
 
+function placed(position: LoadingPosition | null): string {
+  return position === null ? "loose" : designatorOf(position);
+}
+
+function repositionOf({ awb, fromPosition, toPosition }: NotocReposition): string {
+  return `${awb} ${placed(fromPosition)} → ${placed(toPosition)}`;
+}
+
 export function NotocChangesSummary({ changes }: Props) {
   if (!changes.changed) {
     return (
@@ -40,7 +50,7 @@ export function NotocChangesSummary({ changes }: Props) {
         {waybills("Dangerous goods removed", changes.dangerousGoodsRemoved)}
         {waybills("Special loads added", changes.specialLoadsAdded)}
         {waybills("Special loads removed", changes.specialLoadsRemoved)}
-        {waybills("Repositioned", changes.repositioned)}
+        {waybills("Repositioned", changes.repositioned.map(repositionOf))}
         {changes.cargoChangeKg !== 0 && (
           <li className="text-sm text-gray-700 dark:text-gray-200">Cargo {weightChange(changes.cargoChangeKg)}</li>
         )}

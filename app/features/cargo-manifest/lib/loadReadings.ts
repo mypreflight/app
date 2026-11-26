@@ -1,6 +1,6 @@
 import { LuArrowRight, LuLock, LuSnowflake, LuStar, LuTriangleAlert } from "react-icons/lu";
 import { TbPlaneOff } from "react-icons/tb";
-import { resolvePositionDesignator } from "~/features/cargo-hold/lib/designator";
+import { designatorOf } from "~/features/cargo-hold/lib/designator";
 import type {
   HoldReading,
   LegendEntry,
@@ -9,7 +9,7 @@ import type {
 } from "~/features/cargo-hold/lib/holdReading";
 import { isRefrigeratedType } from "~/features/cargo-hold/lib/uldCode";
 import type { HoldCompartment, HoldPosition, HoldVariant } from "~/features/cargo-hold/model";
-import { compartmentsOf, positionsOf } from "~/features/cargo-hold/model";
+import { compartmentsOf } from "~/features/cargo-hold/model";
 import type { CargoUnitEntry, FlightCargoManifest } from "~/features/cargo-manifest/model";
 import { ColdChainRisk, ContentClass, unitTotalKg } from "~/features/cargo-manifest/model";
 import { toHuman } from "~/i18n/translate";
@@ -20,7 +20,7 @@ export type LoadedPosition = {
 };
 
 export type LoadIndex = {
-  byDesignator: Map<string, LoadedPosition>;
+  byPosition: Map<string, LoadedPosition>;
   compartments: Map<number, HoldCompartment>;
 };
 
@@ -59,33 +59,28 @@ const COLD_ELEVATED = "border-amber-500 bg-amber-100 dark:border-amber-400 dark:
 const COLD_HIGH = "border-red-500 bg-red-100 dark:border-red-400 dark:bg-red-900";
 
 export function loadIndexOf(manifest: FlightCargoManifest, variant: HoldVariant | null): LoadIndex {
-  const published = new Set(variant === null ? [] : positionsOf(variant).map((position) => position.designator));
-  const byDesignator = new Map<string, LoadedPosition>();
+  const byPosition = new Map<string, LoadedPosition>();
 
   for (const unit of manifest.units) {
-    if (unit.positionDesignator === null) {
-      continue;
-    }
-    const designator = resolvePositionDesignator(unit.positionDesignator, unit.compartment, published);
-    if (designator !== null) {
-      byDesignator.set(designator, { unit, vacatedBy: null });
+    if (unit.loadingPosition !== null) {
+      byPosition.set(designatorOf(unit.loadingPosition), { unit, vacatedBy: null });
     }
   }
 
   for (const unit of manifest.units) {
     for (const shipment of unit.shipments) {
-      if (shipment.offloadedFrom === null) {
+      if (shipment.offloadedFromPosition === null) {
         continue;
       }
-      const designator = resolvePositionDesignator(shipment.offloadedFrom, unit.compartment, published);
-      if (designator !== null && !byDesignator.has(designator)) {
-        byDesignator.set(designator, { unit: null, vacatedBy: shipment.awb });
+      const vacated = designatorOf(shipment.offloadedFromPosition);
+      if (!byPosition.has(vacated)) {
+        byPosition.set(vacated, { unit: null, vacatedBy: shipment.awb });
       }
     }
   }
 
   return {
-    byDesignator,
+    byPosition,
     compartments: new Map(variant === null ? [] : compartmentsOf(variant).map((c) => [c.number, c])),
   };
 }
@@ -156,13 +151,13 @@ function loaded(position: HoldPosition, unit: CargoUnitEntry, fill: string, deta
 
 function describe(position: HoldPosition, unit: CargoUnitEntry | null, detail: string): string {
   if (unit === null) {
-    return `Position ${position.designator}, ${detail}`;
+    return `Position ${designatorOf(position)}, ${detail}`;
   }
-  return `Position ${position.designator}, ${unit.uldCode ?? "loose load"}, ${detail}`;
+  return `Position ${designatorOf(position)}, ${unit.uldCode ?? "loose load"}, ${detail}`;
 }
 
 function baseState(position: HoldPosition, load: LoadIndex): PositionAppearance | null {
-  const entry = load.byDesignator.get(position.designator);
+  const entry = load.byPosition.get(designatorOf(position));
 
   if (entry === undefined) {
     return { fill: EMPTY, description: describe(position, null, "empty") };
@@ -177,7 +172,7 @@ function baseState(position: HoldPosition, load: LoadIndex): PositionAppearance 
 }
 
 function unitAt(position: HoldPosition, load: LoadIndex): CargoUnitEntry | null {
-  return load.byDesignator.get(position.designator)?.unit ?? null;
+  return load.byPosition.get(designatorOf(position))?.unit ?? null;
 }
 
 function saturationFill(fraction: number): string {

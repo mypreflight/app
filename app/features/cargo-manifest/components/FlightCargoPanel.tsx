@@ -41,7 +41,7 @@ export function FlightCargoPanel({ flight }: Props) {
       manifest,
       variant,
       holdDataNote,
-      looseUnits: manifest.units.filter((unit) => unit.positionDesignator === null),
+      looseUnits: manifest.units.filter((unit) => unit.loadingPosition === null),
       entries,
       reconciliation: reconcile(manifest),
       advisories: loadAdvisories({

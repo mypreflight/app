@@ -1,0 +1,729 @@
+{
+  "flightId": "23952e79-6b38-49ed-a1db-bd4d9b3cedab",
+  "stage": "preliminary",
+  "issuedAt": "2026-01-01T13:00:00.000Z",
+  "acknowledgedById": null,
+  "acknowledgedAt": null,
+  "document": {
+    "dryIce": [],
+    "header": {
+      "flightDate": "2026-01-01",
+      "preparedBy": "Margie Hahn",
+      "aircraftType": "B77W",
+      "flightNumber": "AA4906",
+      "operatorName": "American Airlines, Inc.",
+      "stationOfLoading": "BOS",
+      "loadingSupervisor": "Kavon Mills",
+      "emergencyTelephone": "+44 20 7946 0639",
+      "aircraftRegistration": "N78881",
+      "stationOfLoadingCity": "Boston"
+    },
+    "summary": {
+      "cargoKg": 8500,
+      "baggageKg": 7838,
+      "deadloadKg": 16338,
+      "beyondCount": 6,
+      "palletCount": 0,
+      "compartments": [
+        {
+          "deck": "lower",
+          "dryIceKg": 0,
+          "weightKg": 3824,
+          "compartment": 1
+        },
+        {
+          "deck": "lower",
+          "dryIceKg": 0,
+          "weightKg": 3769,
+          "compartment": 2
+        },
+        {
+          "deck": "lower",
+          "dryIceKg": 0,
+          "weightKg": 3981,
+          "compartment": 3
+        },
+        {
+          "deck": "lower",
+          "dryIceKg": 0,
+          "weightKg": 4764,
+          "compartment": 4
+        }
+      ],
+      "looseLotCount": 0,
+      "containerCount": 20,
+      "tightestConnectionMinutes": 51
+    },
+    "coldChain": [
+      {
+        "awb": "001-86407624",
+        "risk": "low",
+        "reason": {
+          "kind": "within_margin"
+        },
+        "regime": "COL",
+        "solution": "active",
+        "description": "Blood plasma units, chilled",
+        "marginHours": 54.2,
+        "exposureHours": 17.8,
+        "enduranceHours": 72
+      },
+      {
+        "awb": "001-16838754",
+        "risk": "low",
+        "reason": {
+          "kind": "within_margin"
+        },
+        "regime": "COL",
+        "solution": "passive",
+        "description": "Diagnostic reagent kits, 2-8C",
+        "marginHours": 46.8,
+        "exposureHours": 13.2,
+        "enduranceHours": 60
+      },
+      {
+        "awb": "001-35411670",
+        "risk": "low",
+        "reason": {
+          "kind": "within_margin"
+        },
+        "regime": "CRT",
+        "solution": "passive",
+        "description": "Paintings, crated",
+        "marginHours": 92,
+        "exposureHours": 4,
+        "enduranceHours": 96
+      },
+      {
+        "awb": "001-79464851",
+        "risk": "low",
+        "reason": {
+          "kind": "within_margin"
+        },
+        "regime": "COL",
+        "solution": "passive",
+        "description": "Assay reagents, chilled",
+        "marginHours": 56,
+        "exposureHours": 4,
+        "enduranceHours": 60
+      },
+      {
+        "awb": "001-17412931",
+        "risk": "low",
+        "reason": {
+          "kind": "within_margin"
+        },
+        "regime": "COL",
+        "solution": "passive",
+        "description": "Assay reagents, chilled",
+        "marginHours": 56,
+        "exposureHours": 4,
+        "enduranceHours": 60
+      },
+      {
+        "awb": "001-94842941",
+        "risk": "low",
+        "reason": {
+          "kind": "within_margin"
+        },
+        "regime": "COL",
+        "solution": "passive",
+        "description": "Live lobster, graded",
+        "marginHours": 26,
+        "exposureHours": 4,
+        "enduranceHours": 30
+      },
+      {
+        "awb": "001-56036304",
+        "risk": "low",
+        "reason": {
+          "kind": "within_margin"
+        },
+        "regime": "COL",
+        "solution": "passive",
+        "description": "Diagnostic reagent kits, 2-8C",
+        "marginHours": 56,
+        "exposureHours": 4,
+        "enduranceHours": 60
+      },
+      {
+        "awb": "001-36230972",
+        "risk": "low",
+        "reason": {
+          "kind": "within_margin"
+        },
+        "regime": "COL",
+        "solution": "passive",
+        "description": "Diagnostic reagent kits, 2-8C",
+        "marginHours": 56,
+        "exposureHours": 4,
+        "enduranceHours": 60
+      },
+      {
+        "awb": "001-80040376",
+        "risk": "low",
+        "reason": {
+          "kind": "within_margin"
+        },
+        "regime": "COL",
+        "solution": "passive",
+        "description": "Assay reagents, chilled",
+        "marginHours": 45.8,
+        "exposureHours": 14.2,
+        "enduranceHours": 60
+      },
+      {
+        "awb": "108-71919724",
+        "risk": "low",
+        "reason": {
+          "kind": "within_margin"
+        },
+        "regime": "COL",
+        "solution": "passive",
+        "description": "Live lobster, packed in gel",
+        "marginHours": 26,
+        "exposureHours": 4,
+        "enduranceHours": 30
+      }
+    ],
+    "specialLoads": [
+      {
+        "awb": "001-86407624",
+        "shc": ["PIL", "COL", "ACT"],
+        "uldId": "RKN53167AA",
+        "pieces": 33,
+        "grossKg": 366,
+        "compartment": 4,
+        "description": "Blood plasma units, chilled",
+        "temperature": {
+          "maxC": 8,
+          "minC": 2
+        },
+        "heaviestPiece": null,
+        "holdCondition": null,
+        "handlingRemark": null,
+        "loadingPosition": {
+          "row": 2,
+          "deck": "lower",
+          "side": "L",
+          "compartment": 4
+        },
+        "unloadingAirport": "PHL"
+      },
+      {
+        "awb": "001-16838754",
+        "shc": ["PIL", "COL"],
+        "uldId": "RKN53167AA",
+        "pieces": 24,
+        "grossKg": 284,
+        "compartment": 4,
+        "description": "Diagnostic reagent kits, 2-8C",
+        "temperature": {
+          "maxC": 8,
+          "minC": 2
+        },
+        "heaviestPiece": null,
+        "holdCondition": null,
+        "handlingRemark": null,
+        "loadingPosition": {
+          "row": 2,
+          "deck": "lower",
+          "side": "L",
+          "compartment": 4
+        },
+        "unloadingAirport": "PHL"
+      },
+      {
+        "awb": "001-58359092",
+        "shc": ["PIL"],
+        "uldId": "AKE88836AA",
+        "pieces": 53,
+        "grossKg": 946,
+        "compartment": 1,
+        "description": "Surgical instrument sets",
+        "temperature": null,
+        "heaviestPiece": null,
+        "holdCondition": null,
+        "handlingRemark": null,
+        "loadingPosition": {
+          "row": 2,
+          "deck": "lower",
+          "side": "R",
+          "compartment": 1
+        },
+        "unloadingAirport": "PHL"
+      },
+      {
+        "awb": "057-26900370",
+        "shc": ["SWP"],
+        "uldId": "AKE06869AA",
+        "pieces": 7,
+        "grossKg": 126,
+        "compartment": 2,
+        "description": "Sporting rifles, cased",
+        "temperature": null,
+        "heaviestPiece": null,
+        "holdCondition": null,
+        "handlingRemark": null,
+        "loadingPosition": {
+          "row": 2,
+          "deck": "lower",
+          "side": "R",
+          "compartment": 2
+        },
+        "unloadingAirport": "PHL"
+      },
+      {
+        "awb": "001-86639722",
+        "shc": ["PIL"],
+        "uldId": "AKE06869AA",
+        "pieces": 36,
+        "grossKg": 890,
+        "compartment": 2,
+        "description": "Surgical instrument sets",
+        "temperature": null,
+        "heaviestPiece": null,
+        "holdCondition": null,
+        "handlingRemark": null,
+        "loadingPosition": {
+          "row": 2,
+          "deck": "lower",
+          "side": "R",
+          "compartment": 2
+        },
+        "unloadingAirport": "PHL"
+      },
+      {
+        "awb": "001-35411670",
+        "shc": ["VAL", "BIG", "CRT"],
+        "uldId": "AKE42345AA",
+        "pieces": 4,
+        "grossKg": 849,
+        "compartment": 3,
+        "description": "Paintings, crated",
+        "temperature": {
+          "maxC": 22,
+          "minC": 18
+        },
+        "heaviestPiece": null,
+        "holdCondition": null,
+        "handlingRemark": "secured_stowage",
+        "loadingPosition": {
+          "row": 2,
+          "deck": "lower",
+          "side": "R",
+          "compartment": 3
+        },
+        "unloadingAirport": "PHL"
+      },
+      {
+        "awb": "001-79464851",
+        "shc": ["PIL", "COL"],
+        "uldId": "AKE49357AA",
+        "pieces": 38,
+        "grossKg": 386,
+        "compartment": 4,
+        "description": "Assay reagents, chilled",
+        "temperature": {
+          "maxC": 8,
+          "minC": 2
+        },
+        "heaviestPiece": null,
+        "holdCondition": null,
+        "handlingRemark": null,
+        "loadingPosition": {
+          "row": 2,
+          "deck": "lower",
+          "side": "R",
+          "compartment": 4
+        },
+        "unloadingAirport": "PHL"
+      },
+      {
+        "awb": "001-17412931",
+        "shc": ["PIL", "COL"],
+        "uldId": "AKE49357AA",
+        "pieces": 26,
+        "grossKg": 399,
+        "compartment": 4,
+        "description": "Assay reagents, chilled",
+        "temperature": {
+          "maxC": 8,
+          "minC": 2
+        },
+        "heaviestPiece": null,
+        "holdCondition": null,
+        "handlingRemark": null,
+        "loadingPosition": {
+          "row": 2,
+          "deck": "lower",
+          "side": "R",
+          "compartment": 4
+        },
+        "unloadingAirport": "PHL"
+      },
+      {
+        "awb": "001-94842941",
+        "shc": ["PER", "PES", "WET"],
+        "uldId": "AKE49357AA",
+        "pieces": 22,
+        "grossKg": 522,
+        "compartment": 4,
+        "description": "Live lobster, graded",
+        "temperature": {
+          "maxC": 8,
+          "minC": 2
+        },
+        "heaviestPiece": null,
+        "holdCondition": "ventilated",
+        "handlingRemark": null,
+        "loadingPosition": {
+          "row": 2,
+          "deck": "lower",
+          "side": "R",
+          "compartment": 4
+        },
+        "unloadingAirport": "PHL"
+      },
+      {
+        "awb": "001-56036304",
+        "shc": ["PIL", "COL"],
+        "uldId": "AKE64632AA",
+        "pieces": 64,
+        "grossKg": 533,
+        "compartment": 1,
+        "description": "Diagnostic reagent kits, 2-8C",
+        "temperature": {
+          "maxC": 8,
+          "minC": 2
+        },
+        "heaviestPiece": null,
+        "holdCondition": null,
+        "handlingRemark": null,
+        "loadingPosition": {
+          "row": 3,
+          "deck": "lower",
+          "side": "L",
+          "compartment": 1
+        },
+        "unloadingAirport": "PHL"
+      },
+      {
+        "awb": "001-36230972",
+        "shc": ["PIL", "COL"],
+        "uldId": "AKE12779AA",
+        "pieces": 35,
+        "grossKg": 408,
+        "compartment": 2,
+        "description": "Diagnostic reagent kits, 2-8C",
+        "temperature": {
+          "maxC": 8,
+          "minC": 2
+        },
+        "heaviestPiece": null,
+        "holdCondition": null,
+        "handlingRemark": null,
+        "loadingPosition": {
+          "row": 3,
+          "deck": "lower",
+          "side": "L",
+          "compartment": 2
+        },
+        "unloadingAirport": "PHL"
+      },
+      {
+        "awb": "001-69131005",
+        "shc": ["PIL"],
+        "uldId": "AKE94780AA",
+        "pieces": 80,
+        "grossKg": 946,
+        "compartment": 3,
+        "description": "Surgical instrument sets",
+        "temperature": null,
+        "heaviestPiece": null,
+        "holdCondition": null,
+        "handlingRemark": null,
+        "loadingPosition": {
+          "row": 3,
+          "deck": "lower",
+          "side": "L",
+          "compartment": 3
+        },
+        "unloadingAirport": "PHL"
+      },
+      {
+        "awb": "001-80040376",
+        "shc": ["PIL", "COL"],
+        "uldId": "AKE10371AA",
+        "pieces": 21,
+        "grossKg": 328,
+        "compartment": 4,
+        "description": "Assay reagents, chilled",
+        "temperature": {
+          "maxC": 8,
+          "minC": 2
+        },
+        "heaviestPiece": null,
+        "holdCondition": null,
+        "handlingRemark": null,
+        "loadingPosition": {
+          "row": 3,
+          "deck": "lower",
+          "side": "L",
+          "compartment": 4
+        },
+        "unloadingAirport": "PHL"
+      },
+      {
+        "awb": "108-71919724",
+        "shc": ["PER", "PES", "WET"],
+        "uldId": "AKE10371AA",
+        "pieces": 25,
+        "grossKg": 611,
+        "compartment": 4,
+        "description": "Live lobster, packed in gel",
+        "temperature": {
+          "maxC": 8,
+          "minC": 2
+        },
+        "heaviestPiece": null,
+        "holdCondition": "ventilated",
+        "handlingRemark": null,
+        "loadingPosition": {
+          "row": 3,
+          "deck": "lower",
+          "side": "L",
+          "compartment": 4
+        },
+        "unloadingAirport": "PHL"
+      }
+    ],
+    "dangerousGoods": [],
+    "specialPassengers": [
+      {
+        "ssr": "DEAF",
+        "seat": "01G",
+        "mobilityAid": null
+      },
+      {
+        "ssr": "WCBW",
+        "seat": "05G",
+        "mobilityAid": {
+          "compartment": 4
+        }
+      },
+      {
+        "ssr": "UMNR",
+        "seat": "07J",
+        "mobilityAid": null
+      },
+      {
+        "ssr": "INFT",
+        "seat": "09D",
+        "mobilityAid": null
+      },
+      {
+        "ssr": "INAD",
+        "seat": "11J",
+        "mobilityAid": null
+      },
+      {
+        "ssr": "INFT",
+        "seat": "13G",
+        "mobilityAid": null
+      },
+      {
+        "ssr": "INFT",
+        "seat": "15G",
+        "mobilityAid": null
+      },
+      {
+        "ssr": "WCHR",
+        "seat": "15J",
+        "mobilityAid": null
+      },
+      {
+        "ssr": "INFT",
+        "seat": "16E",
+        "mobilityAid": null
+      },
+      {
+        "ssr": "WCLB",
+        "seat": "17C",
+        "mobilityAid": {
+          "compartment": 4
+        }
+      },
+      {
+        "ssr": "DEPU",
+        "seat": "17L",
+        "mobilityAid": null
+      },
+      {
+        "ssr": "PETC",
+        "seat": "18A",
+        "mobilityAid": null
+      },
+      {
+        "ssr": "INFT",
+        "seat": "20C",
+        "mobilityAid": null
+      },
+      {
+        "ssr": "MEDA",
+        "seat": "20G",
+        "mobilityAid": null
+      },
+      {
+        "ssr": "WCHS",
+        "seat": "21A",
+        "mobilityAid": null
+      },
+      {
+        "ssr": "WCHR",
+        "seat": "21D",
+        "mobilityAid": null
+      },
+      {
+        "ssr": "INFT",
+        "seat": "21G",
+        "mobilityAid": null
+      },
+      {
+        "ssr": "WCHR",
+        "seat": "22B",
+        "mobilityAid": null
+      },
+      {
+        "ssr": "WCHS",
+        "seat": "23G",
+        "mobilityAid": null
+      },
+      {
+        "ssr": "WCHR",
+        "seat": "23K",
+        "mobilityAid": null
+      },
+      {
+        "ssr": "PETC",
+        "seat": "23L",
+        "mobilityAid": null
+      },
+      {
+        "ssr": "WCLB",
+        "seat": "24A",
+        "mobilityAid": {
+          "compartment": 4
+        }
+      },
+      {
+        "ssr": "DEPU",
+        "seat": "24D",
+        "mobilityAid": null
+      },
+      {
+        "ssr": "WCHR",
+        "seat": "26G",
+        "mobilityAid": null
+      },
+      {
+        "ssr": "INFT",
+        "seat": "26J",
+        "mobilityAid": null
+      },
+      {
+        "ssr": "WCHS",
+        "seat": "27H",
+        "mobilityAid": null
+      },
+      {
+        "ssr": "WCHR",
+        "seat": "28E",
+        "mobilityAid": null
+      },
+      {
+        "ssr": "INFT",
+        "seat": "28J",
+        "mobilityAid": null
+      },
+      {
+        "ssr": "INFT",
+        "seat": "31L",
+        "mobilityAid": null
+      },
+      {
+        "ssr": "INFT",
+        "seat": "32A",
+        "mobilityAid": null
+      },
+      {
+        "ssr": "WCLB",
+        "seat": "33L",
+        "mobilityAid": {
+          "compartment": 4
+        }
+      },
+      {
+        "ssr": "INFT",
+        "seat": "34J",
+        "mobilityAid": null
+      },
+      {
+        "ssr": "WCHR",
+        "seat": "35E",
+        "mobilityAid": null
+      },
+      {
+        "ssr": "INFT",
+        "seat": "35H",
+        "mobilityAid": null
+      },
+      {
+        "ssr": "PETC",
+        "seat": "36H",
+        "mobilityAid": null
+      },
+      {
+        "ssr": "INFT",
+        "seat": "38D",
+        "mobilityAid": null
+      },
+      {
+        "ssr": "PETC",
+        "seat": "38H",
+        "mobilityAid": null
+      },
+      {
+        "ssr": "INFT",
+        "seat": "38L",
+        "mobilityAid": null
+      },
+      {
+        "ssr": "WCHS",
+        "seat": "39A",
+        "mobilityAid": null
+      },
+      {
+        "ssr": "WCHC",
+        "seat": "39G",
+        "mobilityAid": null
+      },
+      {
+        "ssr": "INFT",
+        "seat": "39H",
+        "mobilityAid": null
+      },
+      {
+        "ssr": "INFT",
+        "seat": "40A",
+        "mobilityAid": null
+      },
+      {
+        "ssr": "INFT",
+        "seat": "44E",
+        "mobilityAid": null
+      }
+    ]
+  },
+  "changes": null
+}

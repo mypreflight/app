@@ -1,4 +1,5 @@
 import React from "react";
+import { responseCodeOf } from "~/features/cargo-manifest/lib/cargoWording";
 import type { NotocDrill } from "~/features/notoc/model";
 import { FieldLabel } from "~/shared/ui/Display/FieldLabel";
 
@@ -11,7 +12,9 @@ export function DrillCard({ drill }: Props) {
     <div className="flex flex-col gap-2.5 rounded-lg bg-gray-50 px-3 py-3 dark:bg-gray-800">
       <div className="flex flex-col gap-0.5">
         <FieldLabel>Emergency response code</FieldLabel>
-        <span className="font-mono text-sm font-bold text-gray-900 dark:text-white">{drill.ercCode}</span>
+        <span className="font-mono text-sm font-bold text-gray-900 dark:text-white">
+          {responseCodeOf(drill.responseCode)}
+        </span>
       </div>
 
       <div className="flex flex-col gap-0.5">

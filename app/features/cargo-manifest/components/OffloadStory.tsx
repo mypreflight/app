@@ -1,6 +1,7 @@
 import { Badge } from "flowbite-react";
 import React, { useEffect, useState } from "react";
 import { LuPackageCheck, LuTriangleAlert } from "react-icons/lu";
+import { designatorOf } from "~/features/cargo-hold/lib/designator";
 import type { IndexedShipment } from "~/features/cargo-manifest/lib/shipmentIndex";
 import { shipmentIndex } from "~/features/cargo-manifest/lib/shipmentIndex";
 import { ShipmentStatus } from "~/features/cargo-manifest/model";
@@ -88,9 +89,9 @@ export function OffloadStory({ flightId }: Props) {
             {shipment.offloadReason !== null && (
               <Badge color="warning">{toHuman.cargoManifest.offloadReason(shipment.offloadReason)}</Badge>
             )}
-            {shipment.offloadedFrom !== null && (
+            {shipment.offloadedFromPosition !== null && (
               <Badge color="gray">
-                Pulled from <span className="font-mono">{shipment.offloadedFrom}</span>
+                Pulled from <span className="font-mono">{designatorOf(shipment.offloadedFromPosition)}</span>
               </Badge>
             )}
             <span className="w-24 shrink-0 text-right font-mono text-sm tabular-nums text-gray-700 dark:text-gray-200">

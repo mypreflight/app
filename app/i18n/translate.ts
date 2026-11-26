@@ -54,7 +54,13 @@ import {
   translateStatus,
   translateStatusNextAction,
 } from "~/features/flight/i18n";
-import { translateNotocStage } from "~/features/notoc/i18n";
+import {
+  translateHandlingRemark,
+  translateHoldCondition,
+  translateNotocStage,
+  translatePassengerRemarks,
+  translateTemperatureSolution,
+} from "~/features/notoc/i18n";
 import { translatePostcardStatus } from "~/features/postcard/i18n";
 import { translateRotationStatus } from "~/features/rotation/i18n";
 import {
@@ -134,6 +140,10 @@ export const toHuman = {
   },
   notoc: {
     stage: translateNotocStage,
+    handlingRemark: translateHandlingRemark,
+    holdCondition: translateHoldCondition,
+    temperatureSolution: translateTemperatureSolution,
+    passengerRemarks: translatePassengerRemarks,
   },
   postcard: {
     status: translatePostcardStatus,
